@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 antialiased font-sans selection:bg-indigo-100 selection:text-indigo-900 dark:selection:bg-zinc-800 dark:selection:text-white;
+    min-height: 100vh;
+  }
+}
+
+/* Muhasebe Defteri ve Tablo Özel Çizgileri (OLED Dark & Neutral) */
+.ledger-t-left {
+  border-right: 2px solid #334155;
+}
+.dark .ledger-t-left {
+  border-right: 2px solid #27272a;
+}
+
+.ledger-t-header {
+  border-bottom: 2px solid #334155;
+}
+.dark .ledger-t-header {
+  border-bottom: 2px solid #27272a;
+}
+
+.double-underline {
+  border-bottom: 3px double #334155;
+}
+.dark .double-underline {
+  border-bottom: 3px double #52525b;
+}
