@@ -130,25 +130,25 @@ export const LedgerView: React.FC = () => {
       case 'GIDER':
         return 'bg-rose-100 text-rose-800 border-rose-200';
       default:
-        return 'bg-slate-100 text-slate-800 border-slate-200';
+        return 'bg-zinc-100 text-zinc-800 border-zinc-200';
     }
   };
 
   return (
     <div className="space-y-6">
       {/* Üst Bilgi ve Mod Değiştirici Çubuğu */}
-      <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <Scale className="w-5 h-5 text-black dark:text-zinc-200" />
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="text-base font-bold text-zinc-900 dark:text-white">
               Büyük Defter (T-Hesapları)
             </h3>
             <span className="text-xs bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 px-2.5 py-0.5 rounded-full font-semibold border border-zinc-200 dark:border-zinc-800">
               {ledgerAccounts.length} Aktif Hesap
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             {viewMode === 'auto' 
               ? 'Yevmiye defterinden otomatik aktarılan hesap hareketleri ve canlı T-cetveli bakiyeleri'
               : 'Sınav Provası: Yevmiyeye bakarak her hesabın borç/alacak toplamlarını ve bakiyesini kendiniz çıkarın'}
@@ -157,14 +157,14 @@ export const LedgerView: React.FC = () => {
 
         {/* Görünüm Seçici (Otomatik vs Sınav Provası) */}
         <div className="flex items-center gap-2">
-          <div className="flex bg-slate-100 dark:bg-zinc-900 p-1 rounded-xl border border-slate-200 dark:border-zinc-800 text-xs font-semibold">
+          <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs font-semibold">
             <button
               type="button"
               onClick={() => setViewMode('auto')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'auto'
                   ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
@@ -176,7 +176,7 @@ export const LedgerView: React.FC = () => {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'practice'
                   ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -196,7 +196,7 @@ export const LedgerView: React.FC = () => {
                 <strong className="block font-bold text-amber-900 dark:text-amber-200">
                   Nasıl Doldurulur? (Sınav Alıştırması)
                 </strong>
-                <span className="text-slate-700 dark:text-zinc-300 leading-relaxed">
+                <span className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
                   Yevmiye defterine yaptığınız kayıtlara bakarak her hesabın toplam <strong>Borç</strong> ve <strong>Alacak</strong> tutarlarını giriniz.
                   Ardından aradaki farkı <strong>Kalan Bakiye</strong> kutusuna yazıp, bakiye türünü (Borç Bakiyesi / Alacak Bakiyesi) seçiniz.
                 </span>
@@ -241,7 +241,7 @@ export const LedgerView: React.FC = () => {
                     <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                     <span>Düzeltilmesi Gereken Hatalar ({practiceResult.errors.length}):</span>
                   </div>
-                  <ul className="list-disc list-inside space-y-1 text-slate-800 dark:text-zinc-300 pl-1">
+                  <ul className="list-disc list-inside space-y-1 text-zinc-800 dark:text-zinc-300 pl-1">
                     {practiceResult.errors.map((err, idx) => (
                       <li key={idx}>{err}</li>
                     ))}
@@ -258,13 +258,13 @@ export const LedgerView: React.FC = () => {
         <div className="flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 flex-1 max-w-sm">
             <div className="relative w-full">
-              <Search className="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-2.5 top-2.5" />
+              <Search className="w-4 h-4 text-zinc-400 dark:text-zinc-500 absolute left-2.5 top-2.5" />
               <input
                 type="text"
                 value={filterQuery}
                 onChange={(e) => setFilterQuery(e.target.value)}
                 placeholder="Hesap kodu veya adı ara..."
-                className="w-full text-xs pl-8 pr-3 py-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white shadow-2xs"
+                className="w-full text-xs pl-8 pr-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white shadow-2xs"
               />
             </div>
           </div>
@@ -272,7 +272,7 @@ export const LedgerView: React.FC = () => {
           <select
             value={filterClass}
             onChange={(e) => setFilterClass(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-            className="text-xs py-2 px-2.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg focus:outline-none cursor-pointer text-slate-700 dark:text-zinc-300 font-medium shadow-2xs"
+            className="text-xs py-2 px-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg focus:outline-none cursor-pointer text-zinc-700 dark:text-zinc-300 font-medium shadow-2xs"
           >
             <option value="all">Tüm Hesap Sınıfları</option>
             <option value="1">1: Dönen Varlıklar</option>
@@ -304,15 +304,15 @@ export const LedgerView: React.FC = () => {
               return (
                 <div 
                   key={acc.accountCode} 
-                  className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-slate-300 dark:border-zinc-800 overflow-hidden flex flex-col hover:border-slate-400 dark:hover:border-zinc-700 transition-all"
+                  className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
                 >
                   {/* Başlık */}
-                  <div className="bg-slate-100 dark:bg-zinc-900 px-4 py-2.5 border-b-2 border-slate-700 dark:border-zinc-700 flex items-center justify-between">
+                  <div className="bg-zinc-100/80 dark:bg-zinc-900 px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-sm text-slate-900 dark:text-white bg-white dark:bg-zinc-800 px-2 py-0.5 rounded border border-slate-300 dark:border-zinc-700">
+                      <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white bg-white dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">
                         {acc.accountCode}
                       </span>
-                      <h4 className="font-bold text-sm text-slate-800 dark:text-zinc-100 truncate">
+                      <h4 className="font-bold text-sm text-zinc-800 dark:text-zinc-100 truncate">
                         {acc.accountName}
                       </h4>
                     </div>
@@ -322,16 +322,16 @@ export const LedgerView: React.FC = () => {
                   </div>
 
                   {/* Sütun Başlıkları */}
-                  <div className="grid grid-cols-2 text-center text-[11px] font-extrabold uppercase tracking-wider bg-slate-50 dark:bg-zinc-900/60 border-b border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-300">
-                    <div className="py-1.5 border-r border-slate-700 dark:border-zinc-700">BORÇ (SOL)</div>
+                  <div className="grid grid-cols-2 text-center text-[11px] font-extrabold uppercase tracking-wider bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
+                    <div className="py-1.5 border-r border-zinc-200 dark:border-zinc-700">BORÇ (SOL)</div>
                     <div className="py-1.5">ALACAK (SAĞ)</div>
                   </div>
 
                   {/* Giriş Alanları */}
-                  <div className="p-3.5 space-y-3 bg-slate-50/50 dark:bg-black/40 flex-1 text-xs">
+                  <div className="p-3.5 space-y-3 bg-zinc-50/50 dark:bg-black/40 flex-1 text-xs">
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 dark:text-zinc-300 mb-1">
+                        <label className="block text-[11px] font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                           Borç Toplamı:
                         </label>
                         <input
@@ -339,11 +339,11 @@ export const LedgerView: React.FC = () => {
                           value={uData.debitTotal}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'debitTotal', e.target.value)}
                           placeholder="0,00"
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 dark:text-zinc-300 mb-1">
+                        <label className="block text-[11px] font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                           Alacak Toplamı:
                         </label>
                         <input
@@ -351,14 +351,14 @@ export const LedgerView: React.FC = () => {
                           value={uData.creditTotal}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'creditTotal', e.target.value)}
                           placeholder="0,00"
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white"
                         />
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-200 dark:border-zinc-800 grid grid-cols-2 gap-2">
+                    <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 dark:text-zinc-300 mb-1">
+                        <label className="block text-[11px] font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                           Kalan Bakiye:
                         </label>
                         <input
@@ -366,17 +366,17 @@ export const LedgerView: React.FC = () => {
                           value={uData.balance}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'balance', e.target.value)}
                           placeholder="Fark tutarı"
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white font-semibold"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white font-semibold"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 dark:text-zinc-300 mb-1">
+                        <label className="block text-[11px] font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                           Bakiye Yönü:
                         </label>
                         <select
                           value={uData.direction}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'direction', e.target.value)}
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white cursor-pointer"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg text-xs font-semibold text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white cursor-pointer"
                         >
                           <option value="BORC">Borç Bakiyesi</option>
                           <option value="ALACAK">Alacak Bakiyesi</option>
@@ -393,15 +393,15 @@ export const LedgerView: React.FC = () => {
             return (
               <div 
                 key={acc.accountCode} 
-                className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-slate-300 dark:border-zinc-800 overflow-hidden flex flex-col hover:border-slate-400 dark:hover:border-zinc-700 transition-all"
+                className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
               >
                 {/* T-Hesabı Başlığı */}
-                <div className="bg-slate-100 dark:bg-zinc-900 px-4 py-2.5 border-b-2 border-slate-700 dark:border-zinc-700 flex items-center justify-between">
+                <div className="bg-zinc-100/80 dark:bg-zinc-900 px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-sm text-slate-900 dark:text-white bg-white dark:bg-zinc-800 px-2 py-0.5 rounded border border-slate-300 dark:border-zinc-700">
+                    <span className="font-mono font-bold text-sm text-zinc-900 dark:text-white bg-white dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">
                       {acc.accountCode}
                     </span>
-                    <h4 className="font-bold text-sm text-slate-800 dark:text-zinc-100 truncate">
+                    <h4 className="font-bold text-sm text-zinc-800 dark:text-zinc-100 truncate">
                       {acc.accountName}
                     </h4>
                   </div>
@@ -411,8 +411,8 @@ export const LedgerView: React.FC = () => {
                 </div>
 
                 {/* T-Cetveli Sütun Başlıkları: Sol BORÇ, Sağ ALACAK */}
-                <div className="grid grid-cols-2 text-center text-[11px] font-extrabold uppercase tracking-wider bg-slate-50 dark:bg-zinc-900/60 border-b border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-300">
-                  <div className="py-1.5 border-r border-slate-700 dark:border-zinc-700 flex items-center justify-center gap-1">
+                <div className="grid grid-cols-2 text-center text-[11px] font-extrabold uppercase tracking-wider bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
+                  <div className="py-1.5 border-r border-zinc-200 dark:border-zinc-700 flex items-center justify-center gap-1">
                     <ArrowDownLeft className="w-3 h-3 text-blue-600 dark:text-blue-400" />
                     <span>BORÇ (B)</span>
                   </div>
@@ -425,50 +425,50 @@ export const LedgerView: React.FC = () => {
                 {/* T-Gövdesi: Hareketler */}
                 <div className="flex-1 grid grid-cols-2 text-xs font-mono min-h-[120px]">
                   {/* Sol Taraf: Borç Hareketleri */}
-                  <div className="border-r border-slate-700 dark:border-zinc-700 p-2 divide-y divide-slate-100 dark:divide-zinc-800">
+                  <div className="border-r border-zinc-200 dark:border-zinc-700 p-2 divide-y divide-zinc-100 dark:divide-zinc-800">
                     {hasDebit ? (
                       acc.debitMovements.map((mov, idx) => (
                         <div
                           key={idx}
                           onClick={() => handleMovementClick(mov.transactionId)}
-                          className="py-1.5 px-1 hover:bg-blue-50/60 dark:hover:bg-zinc-900 rounded cursor-pointer transition-colors flex items-center justify-between text-slate-800 dark:text-zinc-200"
+                          className="py-1.5 px-1 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded cursor-pointer transition-colors flex items-center justify-between text-zinc-800 dark:text-zinc-200"
                           title={`İşlem #${mov.entryNo}: ${mov.explanation || ''} (Yevmiyeye gitmek için tıklayın)`}
                         >
-                          <span className="text-[10px] text-slate-600 dark:text-zinc-400 font-sans">
+                          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-sans">
                             #{mov.entryNo}
                           </span>
-                          <span className="font-semibold text-blue-900 dark:text-blue-400">
+                          <span className="font-semibold text-blue-700 dark:text-blue-400">
                             {formatCurrency(mov.amount)}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="h-full flex items-center justify-center text-[11px] text-slate-500 dark:text-zinc-500 font-sans italic">
+                      <div className="h-full flex items-center justify-center text-[11px] text-zinc-400 dark:text-zinc-500 font-sans italic">
                         Hareket yok
                       </div>
                     )}
                   </div>
 
                   {/* Sağ Taraf: Alacak Hareketleri */}
-                  <div className="p-2 divide-y divide-slate-100 dark:divide-zinc-800">
+                  <div className="p-2 divide-y divide-zinc-100 dark:divide-zinc-800">
                     {hasCredit ? (
                       acc.creditMovements.map((mov, idx) => (
                         <div
                           key={idx}
                           onClick={() => handleMovementClick(mov.transactionId)}
-                          className="py-1.5 px-1 hover:bg-amber-50/60 dark:hover:bg-zinc-900 rounded cursor-pointer transition-colors flex items-center justify-between text-slate-800 dark:text-zinc-200"
+                          className="py-1.5 px-1 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded cursor-pointer transition-colors flex items-center justify-between text-zinc-800 dark:text-zinc-200"
                           title={`İşlem #${mov.entryNo}: ${mov.explanation || ''} (Yevmiyeye gitmek için tıklayın)`}
                         >
-                          <span className="text-[10px] text-slate-600 dark:text-zinc-400 font-sans">
+                          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-sans">
                             #{mov.entryNo}
                           </span>
-                          <span className="font-semibold text-amber-900 dark:text-amber-400">
+                          <span className="font-semibold text-amber-700 dark:text-amber-400">
                             {formatCurrency(mov.amount)}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="h-full flex items-center justify-center text-[11px] text-slate-500 dark:text-zinc-500 font-sans italic">
+                      <div className="h-full flex items-center justify-center text-[11px] text-zinc-400 dark:text-zinc-500 font-sans italic">
                         Hareket yok
                       </div>
                     )}
@@ -476,28 +476,28 @@ export const LedgerView: React.FC = () => {
                 </div>
 
                 {/* T-Hesabı Alt Toplamları */}
-                <div className="grid grid-cols-2 text-xs font-mono font-bold bg-slate-100 dark:bg-zinc-900/90 border-t-2 border-slate-400 dark:border-zinc-700">
-                  <div className="py-2 px-3 border-r border-slate-700 dark:border-zinc-700 text-right text-slate-900 dark:text-white">
+                <div className="grid grid-cols-2 text-xs font-mono font-bold bg-zinc-100/90 dark:bg-zinc-900/90 border-t border-zinc-200 dark:border-zinc-700">
+                  <div className="py-2 px-3 border-r border-zinc-200 dark:border-zinc-700 text-right text-zinc-900 dark:text-white font-extrabold">
                     {formatCurrency(acc.totalDebit)}
                   </div>
-                  <div className="py-2 px-3 text-right text-slate-900 dark:text-white">
+                  <div className="py-2 px-3 text-right text-zinc-900 dark:text-white font-extrabold">
                     {formatCurrency(acc.totalCredit)}
                   </div>
                 </div>
 
                 {/* Bakiye Bilgisi (Kalan) */}
-                <div className="bg-slate-800 dark:bg-black text-white px-4 py-2 text-xs flex items-center justify-between border-t dark:border-zinc-800">
-                  <span className="text-slate-300 dark:text-zinc-400 font-medium">Hesap Bakiyesi:</span>
+                <div className="bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white px-4 py-2.5 text-xs flex items-center justify-between border-t border-zinc-200 dark:border-zinc-800">
+                  <span className="text-zinc-600 dark:text-zinc-400 font-medium">Hesap Bakiyesi:</span>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono font-bold text-sm">
+                    <span className="font-mono font-bold text-sm text-zinc-950 dark:text-white">
                       {formatCurrency(acc.balance)}
                     </span>
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                       acc.balanceDirection === 'BORC'
-                        ? 'bg-blue-900 dark:bg-blue-950/70 text-blue-200 dark:text-blue-300 border dark:border-blue-900/50'
+                        ? 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-950/70 dark:text-blue-300 dark:border-blue-900/50'
                         : acc.balanceDirection === 'ALACAK'
-                        ? 'bg-amber-900 dark:bg-amber-950/70 text-amber-200 dark:text-amber-300 border dark:border-amber-900/50'
-                        : 'bg-slate-700 dark:bg-zinc-800 text-slate-300'
+                        ? 'bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-900/50'
+                        : 'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
                     }`}>
                       {acc.balanceDirection === 'BORC' ? 'BORÇ BAKİYESİ' : acc.balanceDirection === 'ALACAK' ? 'ALACAK BAKİYESİ' : 'DENK (KAPALI)'}
                     </span>
@@ -508,12 +508,12 @@ export const LedgerView: React.FC = () => {
           })}
         </div>
       ) : (
-        <div className="p-12 text-center bg-white dark:bg-zinc-950 rounded-2xl border border-slate-200 dark:border-zinc-800">
-          <Scale className="w-10 h-10 text-slate-300 dark:text-zinc-600 mx-auto mb-3" />
-          <h4 className="text-sm font-semibold text-slate-700 dark:text-zinc-300">
+        <div className="p-12 text-center bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+          <Scale className="w-10 h-10 text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
+          <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
             Henüz T-Hesabı Hareketi Yok
           </h4>
-          <p className="text-xs text-slate-500 dark:text-zinc-500 mt-1 max-w-sm mx-auto">
+          <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1 max-w-sm mx-auto">
             Yevmiye defterine kayıt girdikçe hesapların T-cetvelleri ve bakiyeleri otomatik olarak burada listelenecektir.
           </p>
         </div>

@@ -44,19 +44,19 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-zinc-100 flex flex-col justify-between transition-colors">
+    <div className="min-h-screen bg-[#fafafa] dark:bg-black text-zinc-900 dark:text-zinc-100 flex flex-col justify-between transition-colors">
       {/* Üst Bar */}
-      <header className="border-b border-slate-200 dark:border-zinc-800 bg-white/80 dark:bg-black/90 backdrop-blur-md sticky top-0 z-20">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-black/90 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-black dark:bg-zinc-900 dark:border dark:border-zinc-800 flex items-center justify-center text-white shadow-md dark:shadow-none">
               <Building2 className="w-5 h-5 text-white dark:text-zinc-200" />
             </div>
             <div>
-              <h1 className="font-bold text-base sm:text-lg leading-tight text-slate-900 dark:text-white">
+              <h1 className="font-bold text-base sm:text-lg leading-tight text-zinc-900 dark:text-white">
                 Genel Muhasebe
               </h1>
-              <p className="text-xs text-slate-500 dark:text-zinc-400 hidden sm:block">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 hidden sm:block">
                 Üniversite Seviyesi İnteraktif Muhasebe Laboratuvarı
               </p>
             </div>
@@ -66,7 +66,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
             <button
               type="button"
               onClick={onOpenAccountsGuide}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-200 bg-slate-100 dark:bg-zinc-900 dark:border dark:border-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 dark:border dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-zinc-700 dark:text-zinc-400" />
               <span className="hidden sm:inline">Hesap Planı Rehberi</span>
@@ -77,7 +77,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
               type="button"
               onClick={toggleTheme}
               aria-label="Temayı Değiştir"
-              className="p-2 text-slate-600 dark:text-zinc-300 bg-slate-100 dark:bg-zinc-900 dark:border dark:border-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
+              className="p-2 text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-900 dark:border dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
@@ -97,11 +97,11 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
             <Sparkles className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
             <span>Ezber yok, gerçek muhasebe mantığı var</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             İşlemleri Kaydet, Defteri Tut, <br className="hidden sm:inline" />
             <span className="text-black dark:text-zinc-200 underline decoration-zinc-300 dark:decoration-zinc-700 decoration-2 underline-offset-6">Bilanço ve Mizanı Canlı Gör</span>
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
             İşletmenin kuruluşundan dönem sonu bilançosuna kadar tüm süreci bizzat yöneteceksiniz. Hatalarınızda sistem sizi kırmadan pedagojik ipuçlarıyla yönlendirir.
           </p>
         </div>
@@ -109,7 +109,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
         {/* 1. Aşama: Senaryo Seçimi */}
         <section className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs flex items-center justify-center font-bold">1</span>
               <span>Çalışmak İstediğiniz Senaryoyu Seçin</span>
             </h3>
@@ -142,32 +142,32 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
                   className={`relative rounded-2xl p-5 border-2 cursor-pointer transition-all ${
                     isSelected
                       ? 'border-black dark:border-white bg-white dark:bg-zinc-900 shadow-md ring-2 ring-black/10 dark:ring-white/20'
-                      : 'border-slate-200 dark:border-zinc-800/90 bg-white/70 dark:bg-zinc-950/80 hover:border-slate-300 dark:hover:border-zinc-700 hover:bg-white dark:hover:bg-zinc-900/60'
+                      : 'border-zinc-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-950/80 hover:border-zinc-400 dark:hover:border-zinc-700 hover:shadow-sm'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-3 pr-7">
                     <span className={`text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${badgeColors}`}>
                       {s.difficulty} Seviye
                     </span>
-                    <span className="text-xs font-semibold text-slate-500 dark:text-zinc-400 font-mono">
+                    <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 font-mono">
                       {s.transactions.length} İşlem
                     </span>
                   </div>
 
-                  <h4 className="font-bold text-base text-slate-900 dark:text-white mb-1">
+                  <h4 className="font-bold text-base text-zinc-900 dark:text-white mb-1">
                     {s.companyName}
                   </h4>
-                  <p className="text-xs text-slate-600 dark:text-zinc-400 line-clamp-2 mb-4 leading-relaxed">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4 leading-relaxed">
                     {s.description}
                   </p>
 
-                  <div className="pt-3 border-t border-slate-100 dark:border-zinc-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
+                  <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
                     <span className="flex items-center gap-1">
                       <Wallet className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                       {formatCurrency(s.initialCapital)}
                     </span>
                     <span className="flex items-center gap-1 font-mono text-[11px]">
-                      <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+                      <Calendar className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
                       {s.establishedDate}
                     </span>
                   </div>
@@ -184,17 +184,17 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
             {/* Özel Senaryo Üretme Kartı */}
             <div
               onClick={() => setShowGeneratorModal(true)}
-              className="rounded-2xl p-5 border-2 border-dashed border-zinc-300 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/60 hover:bg-zinc-100 dark:hover:bg-zinc-900/60 hover:border-black dark:hover:border-zinc-600 cursor-pointer transition-all flex flex-col justify-between group min-h-[170px]"
+              className="rounded-2xl p-5 border-2 border-dashed border-zinc-300 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/60 hover:bg-zinc-100 dark:hover:bg-zinc-900/60 hover:border-zinc-500 dark:hover:border-zinc-600 cursor-pointer transition-all flex flex-col justify-between group min-h-[170px]"
             >
               <div className="space-y-2">
                 <div className="w-9 h-9 rounded-xl bg-black dark:bg-zinc-800 text-white dark:text-zinc-200 flex items-center justify-center group-hover:scale-105 transition-transform">
                   <Wand2 className="w-4 h-4" />
                 </div>
-                <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-1.5">
+                <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-white flex items-center gap-1.5">
                   <span>Kendi Görevini Türet</span>
                   <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                   İşlem sayısını ve zorluğu seçin, durum makinesi algoritması size özel benzersiz bir şirket simülasyonu oluştursun.
                 </p>
               </div>
@@ -209,7 +209,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
         {/* 2. Aşama: Çalışma Modu Seçimi */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs flex items-center justify-center font-bold">2</span>
               <span>Çalışma Modunuzu Belirleyin</span>
             </h3>
@@ -222,7 +222,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
               className={`rounded-2xl p-5 border-2 cursor-pointer transition-all flex gap-4 ${
                 selectedMode === 'ogrenme'
                   ? 'border-black dark:border-white bg-white dark:bg-zinc-900 shadow-md ring-2 ring-black/10 dark:ring-white/20'
-                  : 'border-slate-200 dark:border-zinc-800/90 bg-white/70 dark:bg-zinc-950/80 hover:border-slate-300 dark:hover:border-zinc-700'
+                  : 'border-zinc-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-950/80 hover:border-zinc-400 dark:hover:border-zinc-700 hover:shadow-sm'
               }`}
             >
               <div className="w-10 h-10 rounded-xl bg-black dark:bg-zinc-800 text-white dark:text-zinc-200 flex items-center justify-center shrink-0">
@@ -230,11 +230,11 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                  <h4 className="font-bold text-sm text-zinc-900 dark:text-white">
                     Öğrenme Modu (Tavsiye Edilen)
                   </h4>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                   İlk kez öğrenenler için idealdir. Takıldığınızda 4 aşamalı ipucu alabilir, her işlem için anlık kural açıklamalarını görebilirsiniz.
                 </p>
               </div>
@@ -246,19 +246,19 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
               className={`rounded-2xl p-5 border-2 cursor-pointer transition-all flex gap-4 ${
                 selectedMode === 'calisma'
                   ? 'border-black dark:border-white bg-white dark:bg-zinc-900 shadow-md ring-2 ring-black/10 dark:ring-white/20'
-                  : 'border-slate-200 dark:border-zinc-800/90 bg-white/70 dark:bg-zinc-950/80 hover:border-slate-300 dark:hover:border-zinc-700'
+                  : 'border-zinc-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-950/80 hover:border-zinc-400 dark:hover:border-zinc-700 hover:shadow-sm'
               }`}
             >
-              <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                  <h4 className="font-bold text-sm text-zinc-900 dark:text-white">
                     Sınav / Çalışma Modu
                   </h4>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                   İpucu ve anlık düzeltme yok. Kayıtlarınızı kendi bilginizle tamamlayıp sonunda kapsamlı bir karne ve denetim raporu alırsınız.
                 </p>
               </div>
@@ -315,7 +315,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onOpenAccountsGuid
       </main>
 
       {/* Alt Bilgi */}
-      <footer className="border-t border-slate-200 dark:border-zinc-800 bg-white dark:bg-black py-4 text-center text-xs text-slate-500 dark:text-zinc-500">
+      <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black py-4 text-center text-xs text-zinc-500 dark:text-zinc-500">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>Genel Muhasebe İnteraktif Öğrenme Platformu • Üniversite Müfredatı Uyumlu</span>
           <span className="font-mono text-[11px]">Türkiye Muhasebe Standartları & Tekdüzen Hesap Planı</span>

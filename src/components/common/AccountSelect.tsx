@@ -117,7 +117,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
       case 'GIDER':
         return 'bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-900/60';
       default:
-        return 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800';
+        return 'bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800';
     }
   };
 
@@ -130,7 +130,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
         className={`w-full text-left px-3 py-2 bg-white dark:bg-zinc-900 border rounded-lg shadow-xs flex items-center justify-between text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white cursor-pointer ${
           isOpen 
             ? 'border-black dark:border-white ring-1 ring-black/15 dark:ring-white/20' 
-            : 'border-slate-300 dark:border-zinc-800 hover:border-slate-400 dark:hover:border-zinc-700'
+            : 'border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700'
         }`}
       >
         <div className="flex items-center gap-2 truncate">
@@ -139,13 +139,13 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
               <span className="font-mono font-bold text-black dark:text-white bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-xs shrink-0">
                 {selectedAccount.code}
               </span>
-              <span className="font-medium text-slate-800 dark:text-zinc-200 truncate">{selectedAccount.name}</span>
+              <span className="font-medium text-zinc-800 dark:text-zinc-200 truncate">{selectedAccount.name}</span>
             </>
           ) : (
-            <span className="text-slate-400 dark:text-zinc-500">{placeholder}</span>
+            <span className="text-zinc-400 dark:text-zinc-500">{placeholder}</span>
           )}
         </div>
-        <ChevronDown className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 ml-1" />
+        <ChevronDown className="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0 ml-1" />
       </button>
 
       {/* React Portal ile document.body'ye taşınan açılır menü (overflow-hidden veya table engeline takılmaz) */}
@@ -161,24 +161,24 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
               width: `${position.width}px`,
               zIndex: 99999,
             }}
-            className="bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 ring-1 ring-slate-900/10 dark:ring-zinc-800"
+            className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 ring-1 ring-black/5 dark:ring-zinc-800"
           >
             {/* Arama Çubuğu */}
-            <div className="p-2.5 border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900 flex items-center gap-2">
-              <Search className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
+            <div className="p-2.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center gap-2">
+              <Search className="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Hesap kodu (örn: 100) veya adı ile filtrele..."
-                className="w-full text-xs bg-transparent border-none focus:outline-none focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 font-medium"
+                className="w-full text-xs bg-transparent border-none focus:outline-none focus:ring-0 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 font-medium"
               />
               {searchTerm && (
                 <button
                   type="button"
                   onClick={() => setSearchTerm('')}
-                  className="text-xs text-slate-400 hover:text-slate-600 dark:text-zinc-400 dark:hover:text-zinc-200 px-1"
+                  className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-200 px-1"
                 >
                   Temizle
                 </button>
@@ -186,7 +186,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
             </div>
 
             {/* Hesap Listesi */}
-            <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 dark:divide-zinc-800">
+            <div className="max-h-64 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800">
               {filteredAccounts.length > 0 ? (
                 filteredAccounts.map((acc) => {
                   const isSelected = acc.code === value;
@@ -199,14 +199,14 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
                       }`}
                     >
                       <div className="flex items-center gap-2.5 pr-2 truncate">
-                        <span className="font-mono font-bold text-slate-800 dark:text-zinc-200 text-xs w-10 shrink-0">
+                        <span className="font-mono font-bold text-zinc-800 dark:text-zinc-200 text-xs w-10 shrink-0">
                           {acc.code}
                         </span>
                         <div className="truncate">
-                          <span className="text-slate-900 dark:text-white text-xs font-medium block truncate">
+                          <span className="text-zinc-900 dark:text-white text-xs font-medium block truncate">
                             {acc.name}
                           </span>
-                          <span className="text-[10px] text-slate-500 dark:text-zinc-400 block truncate font-normal">
+                          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block truncate font-normal">
                             {acc.description}
                           </span>
                         </div>
@@ -226,14 +226,14 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
                   );
                 })
               ) : (
-                <div className="p-5 text-center text-xs text-slate-500 dark:text-zinc-400 font-medium">
+                <div className="p-5 text-center text-xs text-zinc-500 dark:text-zinc-400 font-medium">
                   &quot;{searchTerm}&quot; ile eşleşen hesap bulunamadı.
                 </div>
               )}
             </div>
 
             {/* Alt Çubuk: Hızlı Bilgi */}
-            <div className="px-3 py-1.5 bg-slate-50 dark:bg-zinc-900 border-t border-slate-100 dark:border-zinc-800 text-[10px] text-slate-500 dark:text-zinc-400 flex items-center justify-between">
+            <div className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 text-[10px] text-zinc-500 dark:text-zinc-400 flex items-center justify-between">
               <span>{filteredAccounts.length} hesap listeleniyor</span>
               <span className="font-mono">THP Standart</span>
             </div>

@@ -142,11 +142,11 @@ export const BalanceSheetView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Üst Bilgi ve Mod Seçimi */}
-      <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <Landmark className="w-5 h-5 text-black dark:text-zinc-200" />
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="text-base font-bold text-zinc-900 dark:text-white">
               Bilanço ({scenario.companyName})
             </h3>
             {balanceSheet.isBalanced && balanceSheet.assets.totalAssets > 0 ? (
@@ -161,7 +161,7 @@ export const BalanceSheetView: React.FC = () => {
               </span>
             ) : null}
           </div>
-          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             {viewMode === 'auto'
               ? 'İşletmenin belirli bir tarihteki varlıklarını ve kaynaklarını gösteren resmi T-Bilanço'
               : 'Sınav Provası: Hesapları ve bakiyelerini Aktif/Pasif taraflarına kendiniz yerleştirin'}
@@ -169,14 +169,14 @@ export const BalanceSheetView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex bg-slate-100 dark:bg-zinc-900 p-1 rounded-xl border border-slate-200 dark:border-zinc-800 text-xs font-semibold">
+          <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs font-semibold">
             <button
               type="button"
               onClick={() => setViewMode('auto')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'auto'
                   ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
@@ -188,7 +188,7 @@ export const BalanceSheetView: React.FC = () => {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'practice'
                   ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -208,7 +208,7 @@ export const BalanceSheetView: React.FC = () => {
                 <strong className="block font-bold text-amber-900 dark:text-amber-200">
                   Bilanço Çıkarma Sınav Alıştırması:
                 </strong>
-                <span className="text-slate-700 dark:text-zinc-300 leading-relaxed">
+                <span className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
                   T-hesaplarındaki kalan bakiyelere bakarak: <strong>Aktif (Sol)</strong> tarafa işletmenin varlıklarını (Kasa, Banka, Mallar...),
                   <strong>Pasif (Sağ)</strong> tarafa ise borçlarını ve sermayesini yerleştiriniz. Son olarak denetleyin!
                 </span>
@@ -253,7 +253,7 @@ export const BalanceSheetView: React.FC = () => {
                     <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                     <span>Bilançonuzda Düzeltilmesi Gereken Noktalar ({practiceFeedback.errors.length}):</span>
                   </div>
-                  <ul className="list-disc list-inside space-y-1 text-slate-800 dark:text-zinc-300 pl-1">
+                  <ul className="list-disc list-inside space-y-1 text-zinc-800 dark:text-zinc-300 pl-1">
                     {practiceFeedback.errors.map((err, idx) => (
                       <li key={idx}>{err}</li>
                     ))}
@@ -269,40 +269,40 @@ export const BalanceSheetView: React.FC = () => {
       {/* 1. KENDİN DOLDUR (İNTERAKTİF BİLANÇO PROVASI) GÖRÜNÜMÜ */}
       {/* ============================================================== */}
       {viewMode === 'practice' && (
-        <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-slate-300 dark:border-zinc-800 overflow-hidden transition-colors">
-          <div className="bg-slate-900 dark:bg-black text-white py-3 px-6 text-center border-b border-slate-700 dark:border-zinc-800">
+        <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 overflow-hidden transition-colors">
+          <div className="bg-zinc-100/90 dark:bg-black text-zinc-900 dark:text-white py-3 px-6 text-center border-b border-zinc-200 dark:border-zinc-800">
             <h2 className="text-sm font-bold tracking-wide uppercase">
               {scenario.companyName}
             </h2>
-            <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5 font-mono">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-mono">
               Sınav Provası • İnteraktif Bilanço Çizimi
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x-2 divide-slate-400 dark:divide-zinc-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-zinc-200 dark:divide-zinc-700">
             {/* AKTİF (SOL TARAF) */}
             <div className="flex flex-col">
-              <div className="bg-blue-50 dark:bg-blue-950/40 py-2.5 px-4 border-b border-slate-300 dark:border-zinc-700 flex items-center justify-between">
-                <span className="font-bold text-sm text-blue-900 dark:text-blue-300 tracking-wider">
+              <div className="bg-zinc-50 dark:bg-zinc-900/60 py-2.5 px-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
+                <span className="font-bold text-xs uppercase text-zinc-800 dark:text-zinc-200 tracking-wider">
                   AKTİF (VARLIKLAR)
                 </span>
                 <button
                   type="button"
                   onClick={handleAddAsset}
-                  className="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 bg-black hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Varlık Ekle</span>
                 </button>
               </div>
 
-              <div className="p-4 space-y-3 flex-1 bg-slate-50/30 dark:bg-black/30">
+              <div className="p-4 space-y-3 flex-1 bg-zinc-50/50 dark:bg-black/30">
                 {userAssetItems.map((item) => (
-                  <div key={item.id} className="flex items-center gap-2 bg-slate-50 dark:bg-zinc-900 p-2 rounded-xl border border-slate-200 dark:border-zinc-800">
+                  <div key={item.id} className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-900 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <select
                       value={item.code}
                       onChange={(e) => handleUpdateAsset(item.id, { code: e.target.value })}
-                      className="flex-1 p-1.5 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs font-medium text-slate-900 dark:text-white cursor-pointer"
+                      className="flex-1 p-1.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-lg text-xs font-medium text-zinc-900 dark:text-white cursor-pointer"
                     >
                       <option value="">Hesap Seçin...</option>
                       {ACCOUNTS_LIST.map((acc) => (
@@ -315,7 +315,7 @@ export const BalanceSheetView: React.FC = () => {
                     <select
                       value={item.group}
                       onChange={(e) => handleUpdateAsset(item.id, { group: e.target.value as 'DONEN' | 'DURAN' })}
-                      className="w-32 p-1.5 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs text-slate-700 dark:text-zinc-300 cursor-pointer"
+                      className="w-32 p-1.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-lg text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer"
                     >
                       <option value="DONEN">I. Dönen Varlık</option>
                       <option value="DURAN">II. Duran Varlık</option>
@@ -326,13 +326,13 @@ export const BalanceSheetView: React.FC = () => {
                       value={item.amount > 0 ? item.amount : ''}
                       onChange={(e) => handleUpdateAsset(item.id, { amount: parseFloat(e.target.value) || 0 })}
                       placeholder="Tutar (TL)"
-                      className="w-28 p-1.5 text-right font-mono text-xs bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-white"
+                      className="w-28 p-1.5 text-right font-mono text-xs bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white"
                     />
 
                     <button
                       type="button"
                       onClick={() => handleRemoveAsset(item.id)}
-                      className="text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 p-1 cursor-pointer"
+                      className="text-zinc-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 p-1 cursor-pointer"
                       title="Sil"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -342,9 +342,9 @@ export const BalanceSheetView: React.FC = () => {
               </div>
 
               {/* Aktif Toplamı */}
-              <div className="bg-slate-100 dark:bg-zinc-900/90 p-3.5 border-t-2 border-b-4 border-double border-slate-700 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-slate-900 dark:text-white">
+              <div className="bg-zinc-100/90 dark:bg-zinc-900/90 p-3.5 border-t border-b-2 border-zinc-300 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-zinc-900 dark:text-white">
                 <span className="uppercase tracking-wider">HESAPLANAN AKTİF TOPLAMI:</span>
-                <span className="font-mono text-base text-blue-950 dark:text-blue-300 font-black">
+                <span className="font-mono text-base text-zinc-950 dark:text-white font-black">
                   {formatCurrency(userTotalAssets)}
                 </span>
               </div>
@@ -352,27 +352,27 @@ export const BalanceSheetView: React.FC = () => {
 
             {/* PASİF (SAĞ TARAF) */}
             <div className="flex flex-col">
-              <div className="bg-amber-50 dark:bg-amber-950/40 py-2.5 px-4 border-b border-slate-300 dark:border-zinc-700 flex items-center justify-between">
-                <span className="font-bold text-sm text-amber-900 dark:text-amber-300 tracking-wider">
+              <div className="bg-zinc-50 dark:bg-zinc-900/60 py-2.5 px-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
+                <span className="font-bold text-xs uppercase text-zinc-800 dark:text-zinc-200 tracking-wider">
                   PASİF (KAYNAKLAR)
                 </span>
                 <button
                   type="button"
                   onClick={handleAddLiability}
-                  className="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 bg-black hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Kaynak Ekle</span>
                 </button>
               </div>
 
-              <div className="p-4 space-y-3 flex-1 bg-slate-50/30 dark:bg-black/30">
+              <div className="p-4 space-y-3 flex-1 bg-zinc-50/50 dark:bg-black/30">
                 {userLiabilityItems.map((item) => (
-                  <div key={item.id} className="flex items-center gap-2 bg-slate-50 dark:bg-zinc-900 p-2 rounded-xl border border-slate-200 dark:border-zinc-800">
+                  <div key={item.id} className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-900 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <select
                       value={item.code}
                       onChange={(e) => handleUpdateLiability(item.id, { code: e.target.value })}
-                      className="flex-1 p-1.5 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs font-medium text-slate-900 dark:text-white cursor-pointer"
+                      className="flex-1 p-1.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-lg text-xs font-medium text-zinc-900 dark:text-white cursor-pointer"
                     >
                       <option value="">Hesap Seçin...</option>
                       {ACCOUNTS_LIST.map((acc) => (
@@ -386,7 +386,7 @@ export const BalanceSheetView: React.FC = () => {
                     <select
                       value={item.group}
                       onChange={(e) => handleUpdateLiability(item.id, { group: e.target.value as 'KVYK' | 'UVYK' | 'OZKAYNAK' })}
-                      className="w-32 p-1.5 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs text-slate-700 dark:text-zinc-300 cursor-pointer"
+                      className="w-32 p-1.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-lg text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer"
                     >
                       <option value="KVYK">III. Kısa Vadeli</option>
                       <option value="UVYK">IV. Uzun Vadeli</option>
@@ -398,13 +398,13 @@ export const BalanceSheetView: React.FC = () => {
                       value={item.amount > 0 ? item.amount : ''}
                       onChange={(e) => handleUpdateLiability(item.id, { amount: parseFloat(e.target.value) || 0 })}
                       placeholder="Tutar (TL)"
-                      className="w-28 p-1.5 text-right font-mono text-xs bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-white"
+                      className="w-28 p-1.5 text-right font-mono text-xs bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white"
                     />
 
                     <button
                       type="button"
                       onClick={() => handleRemoveLiability(item.id)}
-                      className="text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 p-1 cursor-pointer"
+                      className="text-zinc-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 p-1 cursor-pointer"
                       title="Sil"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -414,9 +414,9 @@ export const BalanceSheetView: React.FC = () => {
               </div>
 
               {/* Pasif Toplamı */}
-              <div className="bg-slate-100 dark:bg-zinc-900/90 p-3.5 border-t-2 border-b-4 border-double border-slate-700 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-slate-900 dark:text-white">
+              <div className="bg-zinc-100/90 dark:bg-zinc-900/90 p-3.5 border-t-2 border-b-4 border-double border-zinc-400 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-zinc-900 dark:text-white">
                 <span className="uppercase tracking-wider">HESAPLANAN PASİF TOPLAMI:</span>
-                <span className="font-mono text-base text-amber-950 dark:text-amber-300 font-black">
+                <span className="font-mono text-base text-zinc-950 dark:text-white font-black">
                   {formatCurrency(userTotalLiabilities)}
                 </span>
               </div>
@@ -429,23 +429,23 @@ export const BalanceSheetView: React.FC = () => {
       {/* 2. OTOMATİK BİLANÇO GÖRÜNÜMÜ */}
       {/* ============================================================== */}
       {viewMode === 'auto' && (
-        <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-slate-300 dark:border-zinc-800 overflow-hidden transition-colors">
+        <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 overflow-hidden transition-colors">
           {/* Tablo Üst Başlığı */}
-          <div className="bg-slate-900 dark:bg-black text-white py-3 px-6 text-center border-b border-slate-700 dark:border-zinc-800">
+          <div className="bg-zinc-100/90 dark:bg-black text-zinc-900 dark:text-white py-3.5 px-6 text-center border-b border-zinc-200 dark:border-zinc-800">
             <h2 className="text-sm font-bold tracking-wide uppercase">
               {scenario.companyName}
             </h2>
-            <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5 font-mono">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-mono">
               Tarih: {balanceSheet.date} • Temel Bilanço (T-Cetveli)
             </p>
           </div>
 
           {/* Bilanço Gövdesi */}
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x-2 divide-slate-400 dark:divide-zinc-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-zinc-200 dark:divide-zinc-700">
             {/* ================= SOL: AKTİF (VARLIKLAR) ================= */}
             <div className="flex flex-col">
-              <div className="bg-blue-50 dark:bg-blue-950/40 py-2.5 px-4 border-b border-slate-300 dark:border-zinc-700 text-center">
-                <span className="font-bold text-sm text-blue-900 dark:text-blue-300 tracking-wider">
+              <div className="bg-zinc-50 dark:bg-zinc-900/60 py-2.5 px-4 border-b border-zinc-200 dark:border-zinc-700 text-center">
+                <span className="font-bold text-xs uppercase text-zinc-800 dark:text-zinc-200 tracking-wider">
                   AKTİF (VARLIKLAR)
                 </span>
               </div>
@@ -453,7 +453,7 @@ export const BalanceSheetView: React.FC = () => {
               <div className="p-4 flex-1 space-y-5 text-xs">
                 {/* I. DÖNEN VARLIKLAR */}
                 <div>
-                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-zinc-200 dark:border-zinc-800 font-bold text-zinc-800 dark:text-zinc-200">
                     <span>{balanceSheet.assets.currentAssets.title}</span>
                     <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.assets.currentAssets.total)}
@@ -462,25 +462,25 @@ export const BalanceSheetView: React.FC = () => {
                   <div className="mt-2 space-y-1.5 pl-2">
                     {balanceSheet.assets.currentAssets.items.length > 0 ? (
                       balanceSheet.assets.currentAssets.items.map((item) => (
-                        <div key={item.code} className="flex items-center justify-between py-1 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/40">
+                        <div key={item.code} className="flex items-center justify-between py-1 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-slate-500 dark:text-zinc-400">{item.code}</span>
+                            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">{item.code}</span>
                             <span>{item.name}</span>
                           </div>
-                          <span className="font-mono font-medium text-slate-900 dark:text-white">
+                          <span className="font-mono font-medium text-zinc-900 dark:text-white">
                             {formatCurrency(item.amount)}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-slate-400 dark:text-zinc-500 italic py-1 text-[11px]">Dönen varlık hareketi yok</div>
+                      <div className="text-zinc-400 dark:text-zinc-500 italic py-1 text-[11px]">Dönen varlık hareketi yok</div>
                     )}
                   </div>
                 </div>
 
                 {/* II. DURAN VARLIKLAR */}
                 <div>
-                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-zinc-200 dark:border-zinc-800 font-bold text-zinc-800 dark:text-zinc-200">
                     <span>{balanceSheet.assets.nonCurrentAssets.title}</span>
                     <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.assets.nonCurrentAssets.total)}
@@ -489,27 +489,27 @@ export const BalanceSheetView: React.FC = () => {
                   <div className="mt-2 space-y-1.5 pl-2">
                     {balanceSheet.assets.nonCurrentAssets.items.length > 0 ? (
                       balanceSheet.assets.nonCurrentAssets.items.map((item) => (
-                        <div key={item.code} className="flex items-center justify-between py-1 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/40">
+                        <div key={item.code} className="flex items-center justify-between py-1 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-slate-500 dark:text-zinc-400">{item.code}</span>
+                            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">{item.code}</span>
                             <span>{item.name}</span>
                           </div>
-                          <span className="font-mono font-medium text-slate-900 dark:text-white">
+                          <span className="font-mono font-medium text-zinc-900 dark:text-white">
                             {formatCurrency(item.amount)}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-slate-400 dark:text-zinc-500 italic py-1 text-[11px]">Duran varlık hareketi yok</div>
+                      <div className="text-zinc-400 dark:text-zinc-500 italic py-1 text-[11px]">Duran varlık hareketi yok</div>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* AKTİF TOPLAMI */}
-              <div className="bg-slate-100 dark:bg-zinc-900/90 p-3.5 border-t-2 border-b-4 border-double border-slate-700 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-slate-900 dark:text-white">
+              <div className="bg-zinc-100/90 dark:bg-zinc-900/90 p-3.5 border-t border-b-2 border-zinc-300 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-zinc-900 dark:text-white">
                 <span className="uppercase tracking-wider">AKTİF TOPLAMI:</span>
-                <span className="font-mono text-base text-black dark:text-white font-black">
+                <span className="font-mono text-base text-zinc-950 dark:text-white font-black">
                   {formatCurrency(balanceSheet.assets.totalAssets)}
                 </span>
               </div>
@@ -517,8 +517,8 @@ export const BalanceSheetView: React.FC = () => {
 
             {/* ================= SAĞ: PASİF (KAYNAKLAR) ================= */}
             <div className="flex flex-col">
-              <div className="bg-amber-50 dark:bg-amber-950/40 py-2.5 px-4 border-b border-slate-300 dark:border-zinc-700 text-center">
-                <span className="font-bold text-sm text-amber-900 dark:text-amber-300 tracking-wider">
+              <div className="bg-zinc-50 dark:bg-zinc-900/60 py-2.5 px-4 border-b border-zinc-200 dark:border-zinc-700 text-center">
+                <span className="font-bold text-xs uppercase text-zinc-800 dark:text-zinc-200 tracking-wider">
                   PASİF (KAYNAKLAR)
                 </span>
               </div>
@@ -526,7 +526,7 @@ export const BalanceSheetView: React.FC = () => {
               <div className="p-4 flex-1 space-y-5 text-xs">
                 {/* III. KISA VADELİ YABANCI KAYNAKLAR */}
                 <div>
-                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-zinc-200 dark:border-zinc-800 font-bold text-zinc-800 dark:text-zinc-200">
                     <span>{balanceSheet.liabilities.shortTermLiabilities.title}</span>
                     <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.liabilities.shortTermLiabilities.total)}
@@ -535,25 +535,25 @@ export const BalanceSheetView: React.FC = () => {
                   <div className="mt-2 space-y-1.5 pl-2">
                     {balanceSheet.liabilities.shortTermLiabilities.items.length > 0 ? (
                       balanceSheet.liabilities.shortTermLiabilities.items.map((item) => (
-                        <div key={item.code} className="flex items-center justify-between py-1 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/40">
+                        <div key={item.code} className="flex items-center justify-between py-1 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-slate-500 dark:text-zinc-400">{item.code}</span>
+                            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">{item.code}</span>
                             <span>{item.name}</span>
                           </div>
-                          <span className="font-mono font-medium text-slate-900 dark:text-white">
+                          <span className="font-mono font-medium text-zinc-900 dark:text-white">
                             {formatCurrency(item.amount)}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-slate-400 dark:text-zinc-500 italic py-1 text-[11px]">Kısa vadeli borç yok</div>
+                      <div className="text-zinc-400 dark:text-zinc-500 italic py-1 text-[11px]">Kısa vadeli borç yok</div>
                     )}
                   </div>
                 </div>
 
                 {/* IV. UZUN VADELİ YABANCI KAYNAKLAR */}
                 <div>
-                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-zinc-200 dark:border-zinc-800 font-bold text-zinc-800 dark:text-zinc-200">
                     <span>{balanceSheet.liabilities.longTermLiabilities.title}</span>
                     <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.liabilities.longTermLiabilities.total)}
@@ -562,25 +562,25 @@ export const BalanceSheetView: React.FC = () => {
                   <div className="mt-2 space-y-1.5 pl-2">
                     {balanceSheet.liabilities.longTermLiabilities.items.length > 0 ? (
                       balanceSheet.liabilities.longTermLiabilities.items.map((item) => (
-                        <div key={item.code} className="flex items-center justify-between py-1 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/40">
+                        <div key={item.code} className="flex items-center justify-between py-1 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-slate-500 dark:text-zinc-400">{item.code}</span>
+                            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">{item.code}</span>
                             <span>{item.name}</span>
                           </div>
-                          <span className="font-mono font-medium text-slate-900 dark:text-white">
+                          <span className="font-mono font-medium text-zinc-900 dark:text-white">
                             {formatCurrency(item.amount)}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-slate-400 dark:text-zinc-500 italic py-1 text-[11px]">Uzun vadeli borç yok</div>
+                      <div className="text-zinc-400 dark:text-zinc-500 italic py-1 text-[11px]">Uzun vadeli borç yok</div>
                     )}
                   </div>
                 </div>
 
                 {/* V. ÖZ KAYNAKLAR */}
                 <div>
-                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-zinc-200 dark:border-zinc-800 font-bold text-zinc-800 dark:text-zinc-200">
                     <span>{balanceSheet.liabilities.equity.title}</span>
                     <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.liabilities.equity.total)}
@@ -589,27 +589,27 @@ export const BalanceSheetView: React.FC = () => {
                   <div className="mt-2 space-y-1.5 pl-2">
                     {balanceSheet.liabilities.equity.items.length > 0 ? (
                       balanceSheet.liabilities.equity.items.map((item) => (
-                        <div key={item.code} className="flex items-center justify-between py-1 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/40">
+                        <div key={item.code} className="flex items-center justify-between py-1 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-slate-500 dark:text-zinc-400">{item.code}</span>
+                            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">{item.code}</span>
                             <span>{item.name}</span>
                           </div>
-                          <span className={`font-mono font-medium ${item.amount < 0 ? 'text-rose-700 dark:text-rose-400' : 'text-slate-900 dark:text-white'}`}>
+                          <span className={`font-mono font-medium ${item.amount < 0 ? 'text-rose-700 dark:text-rose-400' : 'text-zinc-900 dark:text-white'}`}>
                             {formatCurrency(item.amount)}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-slate-400 dark:text-zinc-500 italic py-1 text-[11px]">Özkaynak hareketi yok</div>
+                      <div className="text-zinc-400 dark:text-zinc-500 italic py-1 text-[11px]">Özkaynak hareketi yok</div>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* PASİF TOPLAMI */}
-              <div className="bg-slate-100 dark:bg-zinc-900/90 p-3.5 border-t-2 border-b-4 border-double border-slate-700 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-slate-900 dark:text-white">
+              <div className="bg-zinc-100/90 dark:bg-zinc-900/90 p-3.5 border-t border-b-2 border-zinc-300 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-zinc-900 dark:text-white">
                 <span className="uppercase tracking-wider">PASİF TOPLAMI:</span>
-                <span className="font-mono text-base text-amber-950 dark:text-amber-300 font-black">
+                <span className="font-mono text-base text-zinc-950 dark:text-white font-black">
                   {formatCurrency(balanceSheet.liabilities.totalLiabilitiesAndEquity)}
                 </span>
               </div>
@@ -617,10 +617,10 @@ export const BalanceSheetView: React.FC = () => {
           </div>
 
           {/* Bilanço Denkliği Dipnotu */}
-          <div className="bg-slate-50 dark:bg-zinc-950 p-4 border-t border-slate-300 dark:border-zinc-800 text-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="bg-zinc-50/70 dark:bg-zinc-950 p-4 border-t border-zinc-200 dark:border-zinc-800 text-xs flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-700 dark:text-zinc-300">Muhasebe Temel Eşitliği:</span>
-              <span className="font-mono bg-white dark:bg-zinc-900 px-2 py-0.5 border border-slate-200 dark:border-zinc-800 rounded text-slate-800 dark:text-zinc-200">
+              <span className="font-bold text-zinc-700 dark:text-zinc-300">Muhasebe Temel Eşitliği:</span>
+              <span className="font-mono bg-white dark:bg-zinc-900 px-2.5 py-0.5 border border-zinc-200 dark:border-zinc-800 rounded text-zinc-800 dark:text-zinc-200 font-semibold">
                 Varlıklar = Kaynaklar (Aktif = Pasif)
               </span>
             </div>

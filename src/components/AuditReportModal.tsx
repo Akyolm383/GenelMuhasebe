@@ -47,10 +47,10 @@ export const AuditReportModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-2xl max-w-3xl w-full border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Başlığı */}
-        <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+        <div className="bg-black dark:bg-zinc-900 text-white px-6 py-4 flex items-center justify-between border-b border-zinc-800">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-zinc-800 rounded-xl">
               <Award className="w-6 h-6 text-white" />
@@ -59,7 +59,7 @@ export const AuditReportModal: React.FC = () => {
               <h3 className="font-bold text-base">
                 Muhasebe Denetim & Başarı Raporu
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-zinc-400">
                 {scenario.companyName} • Genel Değerlendirme Karnesi
               </p>
             </div>
@@ -68,7 +68,7 @@ export const AuditReportModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowAuditModal(false)}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -85,46 +85,46 @@ export const AuditReportModal: React.FC = () => {
               </span>
             </div>
 
-            <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 text-center">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Doğru Kayıt</span>
-              <span className="text-2xl font-bold font-mono text-emerald-700 mt-1 block">
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 text-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 block">Doğru Kayıt</span>
+              <span className="text-2xl font-bold font-mono text-emerald-700 dark:text-emerald-400 mt-1 block">
                 {auditResult.correctCount} / {auditResult.totalTransactions}
               </span>
             </div>
 
-            <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 text-center">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Hatalı Kayıt</span>
-              <span className="text-2xl font-bold font-mono text-rose-700 mt-1 block">
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 text-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 block">Hatalı Kayıt</span>
+              <span className="text-2xl font-bold font-mono text-rose-700 dark:text-rose-400 mt-1 block">
                 {auditResult.incorrectCount}
               </span>
             </div>
 
-            <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 text-center">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Dengesiz Madde</span>
-              <span className="text-2xl font-bold font-mono text-amber-700 mt-1 block">
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 text-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 block">Dengesiz Madde</span>
+              <span className="text-2xl font-bold font-mono text-amber-700 dark:text-amber-400 mt-1 block">
                 {auditResult.balanceErrorsCount}
               </span>
             </div>
           </div>
 
           {/* Hata Analizi Özeti */}
-          <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-2 text-xs">
-            <h4 className="font-bold text-slate-800 flex items-center gap-1.5">
-              <TrendingUp className="w-4 h-4 text-black" />
+          <div className="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-4 border border-zinc-200 dark:border-zinc-800 space-y-2 text-xs">
+            <h4 className="font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
+              <TrendingUp className="w-4 h-4 text-black dark:text-white" />
               <span>Hata Dağılımı ve Nedenleri:</span>
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-              <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                <span className="text-slate-500 block text-[11px]">Yanlış Hesap Seçimi:</span>
-                <span className="font-bold text-slate-900 text-sm">{auditResult.accountSelectionErrorsCount} adet</span>
+              <div className="p-2.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg">
+                <span className="text-zinc-500 dark:text-zinc-400 block text-[11px]">Yanlış Hesap Seçimi:</span>
+                <span className="font-bold text-zinc-900 dark:text-white text-sm">{auditResult.accountSelectionErrorsCount} adet</span>
               </div>
-              <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                <span className="text-slate-500 block text-[11px]">Ters Kayıt (Yön Hatası):</span>
-                <span className="font-bold text-slate-900 text-sm">{auditResult.directionErrorsCount} adet</span>
+              <div className="p-2.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg">
+                <span className="text-zinc-500 dark:text-zinc-400 block text-[11px]">Ters Kayıt (Yön Hatası):</span>
+                <span className="font-bold text-zinc-900 dark:text-white text-sm">{auditResult.directionErrorsCount} adet</span>
               </div>
-              <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                <span className="text-slate-500 block text-[11px]">Borç/Alacak Farkı:</span>
-                <span className="font-bold text-slate-900 text-sm">{auditResult.balanceErrorsCount} adet</span>
+              <div className="p-2.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg">
+                <span className="text-zinc-500 dark:text-zinc-400 block text-[11px]">Borç/Alacak Farkı:</span>
+                <span className="font-bold text-zinc-900 dark:text-white text-sm">{auditResult.balanceErrorsCount} adet</span>
               </div>
             </div>
           </div>
@@ -176,8 +176,8 @@ export const AuditReportModal: React.FC = () => {
 
           {/* İşlem Bazlı Detay Listesi */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-              <FileCheck className="w-4 h-4 text-slate-500" />
+            <h4 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+              <FileCheck className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
               <span>İşlem Bazında Denetim Çıktısı</span>
             </h4>
 
@@ -187,8 +187,8 @@ export const AuditReportModal: React.FC = () => {
                   key={txRes.transactionId}
                   className={`p-3.5 rounded-xl border transition-all text-xs ${
                     txRes.isValid 
-                      ? 'bg-emerald-50/40 border-emerald-200' 
-                      : 'bg-rose-50/40 border-rose-200'
+                      ? 'bg-emerald-50/40 border-emerald-200 dark:border-emerald-900/50' 
+                      : 'bg-rose-50/40 border-rose-200 dark:border-rose-900/50'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -198,7 +198,7 @@ export const AuditReportModal: React.FC = () => {
                       ) : (
                         <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
                       )}
-                      <span className="text-slate-900">
+                      <span className="text-zinc-900 dark:text-white">
                         #{txRes.order} - {txRes.title}
                       </span>
                     </div>
@@ -207,7 +207,7 @@ export const AuditReportModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleFixTransaction(txRes.transactionId)}
-                        className="text-[11px] font-bold text-black hover:text-zinc-700 underline flex items-center gap-1 shrink-0 cursor-pointer"
+                        className="text-[11px] font-bold text-black dark:text-white hover:text-zinc-700 dark:hover:text-zinc-300 underline flex items-center gap-1 shrink-0 cursor-pointer"
                       >
                         <span>Düzelt</span>
                         <ArrowRight className="w-3 h-3" />
@@ -216,20 +216,20 @@ export const AuditReportModal: React.FC = () => {
                   </div>
 
                   <div className="mt-2 text-[11px] font-mono grid grid-cols-1 sm:grid-cols-2 gap-2 pl-6">
-                    <div className="bg-white/80 p-2 rounded border border-slate-200">
-                      <span className="text-slate-500 block font-sans text-[10px]">Sizin Kaydınız:</span>
-                      <span className="text-slate-800">{txRes.userSummary}</span>
+                    <div className="bg-white/80 dark:bg-black/60 p-2 rounded border border-zinc-200 dark:border-zinc-800">
+                      <span className="text-zinc-500 dark:text-zinc-400 block font-sans text-[10px]">Sizin Kaydınız:</span>
+                      <span className="text-zinc-800 dark:text-zinc-200">{txRes.userSummary}</span>
                     </div>
-                    <div className="bg-white/80 p-2 rounded border border-slate-200">
-                      <span className="text-slate-500 block font-sans text-[10px]">Doğru Kayıt:</span>
-                      <span className="text-black font-bold">{txRes.expectedSummary}</span>
+                    <div className="bg-white/80 dark:bg-black/60 p-2 rounded border border-zinc-200 dark:border-zinc-800">
+                      <span className="text-zinc-500 dark:text-zinc-400 block font-sans text-[10px]">Doğru Kayıt:</span>
+                      <span className="text-black dark:text-white font-bold">{txRes.expectedSummary}</span>
                     </div>
                   </div>
 
                   {txRes.errors.length > 0 && (
                     <div className="mt-2 pl-6 space-y-1">
                       {txRes.errors.map((err, eIdx) => (
-                        <div key={eIdx} className="text-rose-700 text-[11px] flex items-center gap-1">
+                        <div key={eIdx} className="text-rose-700 dark:text-rose-400 text-[11px] flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3 shrink-0" />
                           <span>{err}</span>
                         </div>
@@ -243,14 +243,14 @@ export const AuditReportModal: React.FC = () => {
         </div>
 
         {/* Modal Alt Kapat Çubuğu */}
-        <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-          <span className="text-xs text-slate-500">
+        <div className="px-6 py-3.5 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
             Hatalı işlemleri inceleyip yevmiye defterinden düzeltebilirsiniz.
           </span>
           <button
             type="button"
             onClick={() => setShowAuditModal(false)}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            className="px-4 py-2 bg-black hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
           >
             Kapat
           </button>

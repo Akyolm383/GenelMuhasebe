@@ -4,28 +4,28 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 antialiased font-sans selection:bg-zinc-200 selection:text-black dark:selection:bg-zinc-800 dark:selection:text-white;
+    @apply bg-[#fafafa] text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased font-sans selection:bg-zinc-200 selection:text-black dark:selection:bg-zinc-800 dark:selection:text-white;
     min-height: 100vh;
   }
 }
 
-/* Muhasebe Defteri ve Tablo Özel Çizgileri (OLED Dark & Neutral) */
+/* Muhasebe Defteri ve Tablo Özel Çizgileri (Monochrome Neutral & OLED Dark) */
 .ledger-t-left {
-  border-right: 2px solid #334155;
+  border-right: 1.5px solid #e4e4e7;
 }
 .dark .ledger-t-left {
-  border-right: 2px solid #27272a;
+  border-right: 1.5px solid #27272a;
 }
 
 .ledger-t-header {
-  border-bottom: 2px solid #334155;
+  border-bottom: 1.5px solid #e4e4e7;
 }
 .dark .ledger-t-header {
-  border-bottom: 2px solid #27272a;
+  border-bottom: 1.5px solid #27272a;
 }
 
 .double-underline {
-  border-bottom: 3px double #334155;
+  border-bottom: 3px double #d4d4d8;
 }
 .dark .double-underline {
   border-bottom: 3px double #52525b;
@@ -38,7 +38,7 @@
 /* Firefox için modern scrollbar desteği */
 html {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: #d4d4d8 transparent;
 }
 html.dark,
 .dark {
@@ -56,7 +56,7 @@ html.dark,
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1; /* slate-300 */
+  background-color: #d4d4d8; /* zinc-300 */
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
@@ -64,7 +64,7 @@ html.dark,
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8; /* slate-400 */
+  background-color: #a1a1aa; /* zinc-400 */
 }
 
 ::-webkit-scrollbar-corner {

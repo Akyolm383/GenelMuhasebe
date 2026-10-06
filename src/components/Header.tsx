@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <header className="bg-white border-b border-zinc-200 sticky top-0 z-40 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between py-3 gap-3">
           {/* Logo ve Başlık */}
@@ -41,14 +41,14 @@ export const Header: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-slate-900 leading-tight">
+                <h1 className="text-lg font-bold text-zinc-900 leading-tight">
                   Genel Muhasebe Defteri
                 </h1>
                 <span className="text-[11px] font-semibold bg-zinc-100 text-zinc-900 border border-zinc-200 px-2 py-0.5 rounded-full">
                   İnteraktif
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-zinc-500">
                 Yevmiye → Büyük Defter → Mizan → Bilanço Öğrenme Simülatörü
               </p>
             </div>
@@ -57,12 +57,12 @@ export const Header: React.FC = () => {
           {/* Orta Kısım: Senaryo Seçici & Mod Değiştirici */}
           <div className="flex items-center flex-wrap gap-2.5">
             {/* Senaryo Seçici */}
-            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
-              <Building2 className="w-4 h-4 text-slate-500 ml-1.5" />
+            <div className="flex items-center gap-1.5 bg-zinc-100 p-1 rounded-lg border border-zinc-200 text-xs">
+              <Building2 className="w-4 h-4 text-zinc-500 ml-1.5" />
               <select
                 value={currentScenarioId}
                 onChange={(e) => setScenario(e.target.value)}
-                className="bg-transparent font-medium text-slate-800 focus:outline-none cursor-pointer pr-2 py-0.5 text-xs"
+                className="bg-transparent font-medium text-zinc-800 focus:outline-none cursor-pointer pr-2 py-0.5 text-xs"
               >
                 {SCENARIOS.map((sc) => (
                   <option key={sc.id} value={sc.id}>
@@ -73,14 +73,14 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Mod Seçici (Öğrenme vs Çalışma) */}
-            <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-medium">
+            <div className="flex bg-zinc-100 p-1 rounded-lg border border-zinc-200 text-xs font-medium">
               <button
                 type="button"
                 onClick={() => setMode('ogrenme')}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all ${
                   mode === 'ogrenme'
                     ? 'bg-white text-black shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-zinc-600 hover:text-zinc-900'
                 }`}
                 title="Her işlemde anlık geri bildirim ve aşamalı ipuçları sunar."
               >
@@ -94,7 +94,7 @@ export const Header: React.FC = () => {
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all ${
                   mode === 'calisma'
                     ? 'bg-white text-emerald-700 shadow-xs font-semibold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-zinc-600 hover:text-zinc-900'
                 }`}
                 title="Sınav ortamı gibi: İpuçsuz çözün, en sonunda kapsamlı denetim raporu alın."
               >
@@ -129,7 +129,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={handleReset}
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+              className="p-1.5 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
               title="Kayıtları Sıfırla"
             >
               <RotateCcw className="w-4 h-4" />

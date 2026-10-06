@@ -37,9 +37,9 @@ export const NavbarTabs: React.FC = () => {
   ];
 
   return (
-    <div className="bg-slate-100/80 dark:bg-black border-b border-slate-200 dark:border-zinc-800">
+    <div className="bg-zinc-100/70 dark:bg-black border-b border-zinc-200/90 dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex space-x-2 py-2 overflow-x-auto" aria-label="Tabs">
+        <nav className="flex space-x-1.5 py-2 overflow-x-auto" aria-label="Tabs">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -51,17 +51,17 @@ export const NavbarTabs: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 py-2 px-3.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-white dark:bg-zinc-900 text-black dark:text-zinc-100 shadow-sm border border-slate-300 dark:border-zinc-700 font-bold'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-200/60 dark:hover:bg-zinc-900'
+                    ? 'bg-white dark:bg-zinc-900 text-black dark:text-zinc-100 shadow-xs border border-zinc-200/90 dark:border-zinc-700 font-bold'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-200/60 dark:hover:bg-zinc-900 border border-transparent'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-black dark:text-white' : 'text-slate-400 dark:text-zinc-500'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-black dark:text-white' : 'text-zinc-400 dark:text-zinc-500'}`} />
                 <span>{tab.label}</span>
                 {tab.badge && (
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1 ${
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-1 border ${
                     tab.badge === 'Dengeli'
-                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-400 dark:border dark:border-emerald-800/60'
-                      : 'bg-rose-100 text-rose-800 dark:bg-rose-950/70 dark:text-rose-400 dark:border dark:border-rose-800/60'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-950/70 dark:text-emerald-400 dark:border-emerald-800/60'
+                      : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/70 dark:text-rose-400 dark:border-rose-800/60'
                   }`}>
                     {tab.badge}
                   </span>

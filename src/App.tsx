@@ -28,7 +28,7 @@ export const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-zinc-100 flex flex-col font-sans transition-colors">
+    <div className="min-h-screen bg-[#fafafa] dark:bg-black text-zinc-900 dark:text-zinc-100 flex flex-col font-sans transition-colors">
       {/* 1. Ekran Yönlendirmesi */}
       {currentScreen === 'welcome' && (
         <WelcomeScreen onOpenAccountsGuide={() => setShowAccountsReference(true)} />
@@ -48,7 +48,7 @@ export const App: React.FC = () => {
       {/* 3. Hesap Planı Hızlı Başvuru Rehberi Modalı (OLED Dark Uyumlu) */}
       {showAccountsReference && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-950 rounded-3xl shadow-2xl max-w-2xl w-full border border-slate-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-zinc-950 rounded-3xl shadow-2xl max-w-2xl w-full border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
             <div className="bg-black dark:bg-zinc-900 text-white px-5 py-4 flex items-center justify-between border-b border-zinc-800 dark:border-zinc-800">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-zinc-300 dark:text-zinc-400" />
@@ -57,44 +57,44 @@ export const App: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowAccountsReference(false)}
-                className="p-1.5 text-slate-300 hover:text-white dark:text-zinc-400 dark:hover:text-zinc-100 rounded-lg cursor-pointer"
+                className="p-1.5 text-zinc-400 hover:text-white dark:text-zinc-400 dark:hover:text-zinc-100 rounded-lg cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-3 bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">
+            <div className="p-3 bg-zinc-50 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800">
               <input
                 type="text"
                 value={refSearch}
                 onChange={(e) => setRefSearch(e.target.value)}
                 placeholder="Hesap kodu veya adı arayın (Örn: 100, Kasa, 153)..."
-                className="w-full text-xs p-2.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500"
+                className="w-full text-xs p-2.5 bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500"
               />
             </div>
 
             <div className="p-4 space-y-3 overflow-y-auto flex-1 text-xs">
               {filteredReference.map((acc) => (
-                <div key={acc.code} className="p-3.5 bg-slate-50 dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-1.5">
-                  <div className="flex items-center justify-between font-bold text-slate-900 dark:text-white">
+                <div key={acc.code} className="p-3.5 bg-zinc-50/70 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl space-y-1.5">
+                  <div className="flex items-center justify-between font-bold text-zinc-900 dark:text-white">
                     <span className="font-mono text-black dark:text-zinc-200 font-bold">{acc.code} {acc.name}</span>
-                    <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300">
+                    <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300">
                       {acc.nature} • Normal Bakiye: {acc.normalBalance}
                     </span>
                   </div>
-                  <p className="text-slate-600 dark:text-zinc-400 leading-relaxed">{acc.description}</p>
-                  <p className="text-slate-900 dark:text-zinc-300 font-medium pt-1">
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">{acc.description}</p>
+                  <p className="text-zinc-900 dark:text-zinc-300 font-medium pt-1">
                     ⚖️ <strong>Kural:</strong> {acc.ruleExplanation}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div className="p-3 bg-slate-50 dark:bg-zinc-900/80 border-t border-slate-200 dark:border-zinc-800 text-right">
+            <div className="p-3 bg-zinc-50 dark:bg-zinc-900/80 border-t border-zinc-200 dark:border-zinc-800 text-right">
               <button
                 type="button"
                 onClick={() => setShowAccountsReference(false)}
-                className="px-5 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white text-xs font-semibold rounded-xl cursor-pointer"
+                className="px-5 py-2 bg-black hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-semibold rounded-xl cursor-pointer"
               >
                 Kapat
               </button>

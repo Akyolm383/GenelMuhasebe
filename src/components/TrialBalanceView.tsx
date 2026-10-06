@@ -71,11 +71,11 @@ export const TrialBalanceView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Üst Başlık ve Mod Değiştirici */}
-      <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <TableProperties className="w-5 h-5 text-black dark:text-zinc-200" />
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="text-base font-bold text-zinc-900 dark:text-white">
               Mizan (Geçici Mizan Cetveli)
             </h3>
             {trialBalance.isBalanced ? (
@@ -90,20 +90,20 @@ export const TrialBalanceView: React.FC = () => {
               </span>
             ) : null}
           </div>
-          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             T-hesaplarının toplamlarını ve bakiye denkliklerini doğrulayan kontrol tablosu
           </p>
         </div>
 
         {/* Görünüm Seçici (Otomatik vs Kendin Doldur) */}
-        <div className="flex bg-slate-100 dark:bg-zinc-900 p-1 rounded-xl border border-slate-200 dark:border-zinc-800 text-xs font-semibold">
+        <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs font-semibold">
           <button
             type="button"
             onClick={() => setViewMode('auto')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               viewMode === 'auto'
                 ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
-                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
@@ -115,7 +115,7 @@ export const TrialBalanceView: React.FC = () => {
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               viewMode === 'practice'
                 ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
-                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
             }`}
           >
             <Edit3 className="w-3.5 h-3.5" />
@@ -159,7 +159,7 @@ export const TrialBalanceView: React.FC = () => {
                 <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                 <span>Mizanınızda tespit edilen hatalar ({practiceCheckResult.errors.length}):</span>
               </div>
-              <ul className="list-disc list-inside space-y-1 text-slate-700 dark:text-zinc-300">
+              <ul className="list-disc list-inside space-y-1 text-zinc-700 dark:text-zinc-300">
                 {practiceCheckResult.errors.map((err, idx) => (
                   <li key={idx}>{err}</li>
                 ))}
@@ -170,70 +170,70 @@ export const TrialBalanceView: React.FC = () => {
       )}
 
       {/* Mizan Tablosu */}
-      <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-slate-200 dark:border-zinc-800 overflow-hidden transition-colors">
+      <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-xs border border-zinc-200 dark:border-zinc-800 overflow-hidden transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               {/* Birinci Katman Başlıklar */}
-              <tr className="bg-slate-800 dark:bg-black text-white text-xs font-bold text-center border-b dark:border-zinc-800">
-                <th colSpan={2} className="py-2.5 px-4 text-left border-r border-slate-700 dark:border-zinc-800">
+              <tr className="bg-zinc-100/90 dark:bg-black text-zinc-900 dark:text-white text-xs font-bold text-center border-b border-zinc-200 dark:border-zinc-800">
+                <th colSpan={2} className="py-2.5 px-4 text-left border-r border-zinc-200 dark:border-zinc-800">
                   HESAP BİLGİSİ
                 </th>
-                <th colSpan={2} className="py-2.5 px-4 border-r border-slate-700 dark:border-zinc-800 bg-slate-750 dark:bg-zinc-900/60">
+                <th colSpan={2} className="py-2.5 px-4 border-r border-zinc-200 dark:border-zinc-800 bg-zinc-200/50 dark:bg-zinc-900/60">
                   TUTARLAR (TL)
                 </th>
-                <th colSpan={2} className="py-2.5 px-4 bg-slate-700 dark:bg-zinc-900">
+                <th colSpan={2} className="py-2.5 px-4 bg-zinc-100 dark:bg-zinc-900">
                   BAKİYELER (KALANLAR) (TL)
                 </th>
               </tr>
               {/* İkinci Katman Sütunlar */}
-              <tr className="bg-slate-100/90 dark:bg-zinc-900/90 text-[11px] font-bold text-slate-600 dark:text-zinc-300 uppercase tracking-wider border-b border-slate-300 dark:border-zinc-700">
-                <th className="py-2 px-3 w-20 text-center border-r border-slate-200 dark:border-zinc-700">Kod</th>
-                <th className="py-2 px-4 border-r border-slate-200 dark:border-zinc-700">Hesap Adı</th>
-                <th className="py-2 px-4 w-36 text-right border-r border-slate-200 dark:border-zinc-700">Borç</th>
-                <th className="py-2 px-4 w-36 text-right border-r border-slate-200 dark:border-zinc-700">Alacak</th>
-                <th className="py-2 px-4 w-36 text-right border-r border-slate-200 dark:border-zinc-700">Borç Bakiye</th>
+              <tr className="bg-zinc-50 dark:bg-zinc-900/90 text-[11px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                <th className="py-2 px-3 w-20 text-center border-r border-zinc-200 dark:border-zinc-800">Kod</th>
+                <th className="py-2 px-4 border-r border-zinc-200 dark:border-zinc-800">Hesap Adı</th>
+                <th className="py-2 px-4 w-36 text-right border-r border-zinc-200 dark:border-zinc-800">Borç</th>
+                <th className="py-2 px-4 w-36 text-right border-r border-zinc-200 dark:border-zinc-800">Alacak</th>
+                <th className="py-2 px-4 w-36 text-right border-r border-zinc-200 dark:border-zinc-800">Borç Bakiye</th>
                 <th className="py-2 px-4 w-36 text-right">Alacak Bakiye</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-xs font-mono">
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800 text-xs font-mono">
               {trialBalance.rows.length > 0 ? (
                 trialBalance.rows.map((row) => {
                   if (viewMode === 'practice') {
                     const user = practiceRows[row.accountCode] || { totalDebit: '', totalCredit: '', debitBalance: '', creditBalance: '' };
                     return (
-                      <tr key={row.accountCode} className="hover:bg-slate-50 dark:hover:bg-zinc-900/40">
-                        <td className="py-2.5 px-3 text-center font-bold text-slate-800 dark:text-zinc-200 border-r border-slate-100 dark:border-zinc-800">
+                      <tr key={row.accountCode} className="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                        <td className="py-2.5 px-3 text-center font-bold text-zinc-800 dark:text-zinc-200 border-r border-zinc-100 dark:border-zinc-800">
                           {row.accountCode}
                         </td>
-                        <td className="py-2.5 px-4 font-sans font-medium text-slate-800 dark:text-zinc-200 border-r border-slate-100 dark:border-zinc-800">
+                        <td className="py-2.5 px-4 font-sans font-medium text-zinc-800 dark:text-zinc-200 border-r border-zinc-100 dark:border-zinc-800">
                           {row.accountName}
                         </td>
-                        <td className="py-1 px-2 border-r border-slate-100 dark:border-zinc-800">
+                        <td className="py-1 px-2 border-r border-zinc-100 dark:border-zinc-800">
                           <input
                             type="number"
                             value={user.totalDebit}
                             onChange={(e) => handlePracticeChange(row.accountCode, 'totalDebit', e.target.value)}
                             placeholder="0"
-                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-md font-mono text-xs text-slate-900 dark:text-white"
+                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md font-mono text-xs text-zinc-900 dark:text-white"
                           />
                         </td>
-                        <td className="py-1 px-2 border-r border-slate-100 dark:border-zinc-800">
+                        <td className="py-1 px-2 border-r border-zinc-100 dark:border-zinc-800">
                           <input
                             type="number"
                             value={user.totalCredit}
                             onChange={(e) => handlePracticeChange(row.accountCode, 'totalCredit', e.target.value)}
                             placeholder="0"
-                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-md font-mono text-xs text-slate-900 dark:text-white"
+                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md font-mono text-xs text-zinc-900 dark:text-white"
                           />
                         </td>
-                        <td className="py-1 px-2 border-r border-slate-100 dark:border-zinc-800">
+                        <td className="py-1 px-2 border-r border-zinc-100 dark:border-zinc-800">
                           <input
                             type="number"
                             value={user.debitBalance}
                             onChange={(e) => handlePracticeChange(row.accountCode, 'debitBalance', e.target.value)}
                             placeholder="0"
-                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-md font-mono text-xs text-slate-900 dark:text-white"
+                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md font-mono text-xs text-zinc-900 dark:text-white"
                           />
                         </td>
                         <td className="py-1 px-2">
@@ -242,7 +242,7 @@ export const TrialBalanceView: React.FC = () => {
                             value={user.creditBalance}
                             onChange={(e) => handlePracticeChange(row.accountCode, 'creditBalance', e.target.value)}
                             placeholder="0"
-                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-md font-mono text-xs text-slate-900 dark:text-white"
+                            className="w-full text-right p-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md font-mono text-xs text-zinc-900 dark:text-white"
                           />
                         </td>
                       </tr>
@@ -251,20 +251,20 @@ export const TrialBalanceView: React.FC = () => {
 
                   // Normal Otomatik Görünüm
                   return (
-                    <tr key={row.accountCode} className="hover:bg-slate-50 dark:hover:bg-zinc-900/40 transition-colors">
-                      <td className="py-2.5 px-3 text-center font-bold text-slate-900 dark:text-white border-r border-slate-100 dark:border-zinc-800">
+                    <tr key={row.accountCode} className="hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors">
+                      <td className="py-2.5 px-3 text-center font-bold text-zinc-900 dark:text-white border-r border-zinc-100 dark:border-zinc-800">
                         {row.accountCode}
                       </td>
-                      <td className="py-2.5 px-4 font-sans font-medium text-slate-800 dark:text-zinc-200 border-r border-slate-100 dark:border-zinc-800">
+                      <td className="py-2.5 px-4 font-sans font-medium text-zinc-800 dark:text-zinc-200 border-r border-zinc-100 dark:border-zinc-800">
                         {row.accountName}
                       </td>
-                      <td className="py-2.5 px-4 text-right text-slate-900 dark:text-white border-r border-slate-100 dark:border-zinc-800">
+                      <td className="py-2.5 px-4 text-right text-zinc-900 dark:text-white border-r border-zinc-100 dark:border-zinc-800">
                         {row.totalDebit > 0 ? formatCurrency(row.totalDebit) : '-'}
                       </td>
-                      <td className="py-2.5 px-4 text-right text-slate-900 dark:text-white border-r border-slate-100 dark:border-zinc-800">
+                      <td className="py-2.5 px-4 text-right text-zinc-900 dark:text-white border-r border-zinc-100 dark:border-zinc-800">
                         {row.totalCredit > 0 ? formatCurrency(row.totalCredit) : '-'}
                       </td>
-                      <td className="py-2.5 px-4 text-right text-blue-900 dark:text-blue-400 font-semibold border-r border-slate-100 dark:border-zinc-800">
+                      <td className="py-2.5 px-4 text-right text-blue-900 dark:text-blue-400 font-semibold border-r border-zinc-100 dark:border-zinc-800">
                         {row.debitBalance > 0 ? formatCurrency(row.debitBalance) : '-'}
                       </td>
                       <td className="py-2.5 px-4 text-right text-amber-900 dark:text-amber-400 font-semibold">
@@ -275,7 +275,7 @@ export const TrialBalanceView: React.FC = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-slate-400 dark:text-zinc-500 font-sans">
+                  <td colSpan={6} className="py-8 text-center text-zinc-400 dark:text-zinc-500 font-sans">
                     Henüz yevmiye kaydı girilmediği için mizan satırı oluşmadı.
                   </td>
                 </tr>
@@ -284,20 +284,20 @@ export const TrialBalanceView: React.FC = () => {
 
             {/* Mizan Genel Toplamlar ve Denklik Satırı */}
             <tfoot>
-              <tr className="bg-slate-100 dark:bg-zinc-900/90 font-bold border-t-2 border-slate-400 dark:border-zinc-700 text-xs">
-                <td colSpan={2} className="py-3 px-4 font-sans text-slate-900 dark:text-white border-r border-slate-300 dark:border-zinc-700">
+              <tr className="bg-zinc-100/90 dark:bg-zinc-900/90 font-bold border-t border-zinc-200 dark:border-zinc-700 text-xs">
+                <td colSpan={2} className="py-3 px-4 font-sans text-zinc-900 dark:text-white border-r border-zinc-200 dark:border-zinc-700">
                   GENEL TOPLAMLAR:
                 </td>
-                <td className="py-3 px-4 text-right font-mono text-slate-950 dark:text-white border-r border-slate-300 dark:border-zinc-700">
+                <td className="py-3 px-4 text-right font-mono text-zinc-950 dark:text-white font-extrabold border-r border-zinc-200 dark:border-zinc-700">
                   {formatCurrency(trialBalance.totalDebit)}
                 </td>
-                <td className="py-3 px-4 text-right font-mono text-slate-950 dark:text-white border-r border-slate-300 dark:border-zinc-700">
+                <td className="py-3 px-4 text-right font-mono text-zinc-950 dark:text-white font-extrabold border-r border-zinc-200 dark:border-zinc-700">
                   {formatCurrency(trialBalance.totalCredit)}
                 </td>
-                <td className="py-3 px-4 text-right font-mono text-blue-950 dark:text-blue-300 border-r border-slate-300 dark:border-zinc-700">
+                <td className="py-3 px-4 text-right font-mono text-blue-700 dark:text-blue-300 font-extrabold border-r border-zinc-200 dark:border-zinc-700">
                   {formatCurrency(trialBalance.totalDebitBalance)}
                 </td>
-                <td className="py-3 px-4 text-right font-mono text-amber-950 dark:text-amber-300">
+                <td className="py-3 px-4 text-right font-mono text-amber-700 dark:text-amber-300 font-extrabold">
                   {formatCurrency(trialBalance.totalCreditBalance)}
                 </td>
               </tr>
@@ -306,10 +306,10 @@ export const TrialBalanceView: React.FC = () => {
         </div>
 
         {/* Eşitlik Kontrol Kuralları Çubuğu */}
-        <div className="bg-slate-50 dark:bg-zinc-950 px-5 py-3 border-t border-slate-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div className="bg-zinc-50/70 dark:bg-zinc-950 px-5 py-3 border-t border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-1.5">
-              <span className="text-slate-600 dark:text-zinc-400 font-medium">1. Eşitlik (Tutarlar):</span>
+              <span className="text-zinc-600 dark:text-zinc-400 font-medium">1. Eşitlik (Tutarlar):</span>
               {Math.abs(trialBalance.totalDebit - trialBalance.totalCredit) < 0.01 ? (
                 <span className="text-emerald-700 dark:text-emerald-400 font-bold">✓ Borç = Alacak</span>
               ) : (
@@ -317,7 +317,7 @@ export const TrialBalanceView: React.FC = () => {
               )}
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-slate-600 dark:text-zinc-400 font-medium">2. Eşitlik (Bakiyeler):</span>
+              <span className="text-zinc-600 dark:text-zinc-400 font-medium">2. Eşitlik (Bakiyeler):</span>
               {Math.abs(trialBalance.totalDebitBalance - trialBalance.totalCreditBalance) < 0.01 ? (
                 <span className="text-emerald-700 dark:text-emerald-400 font-bold">✓ Borç Kalan = Alacak Kalan</span>
               ) : (
@@ -326,7 +326,7 @@ export const TrialBalanceView: React.FC = () => {
             </div>
           </div>
 
-          <div className="text-slate-500 dark:text-zinc-500 text-[11px]">
+          <div className="text-zinc-500 dark:text-zinc-500 text-[11px]">
             {trialBalance.rows.length} Hesap Hareket Gördü
           </div>
         </div>
