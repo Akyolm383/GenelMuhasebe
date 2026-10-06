@@ -145,7 +145,7 @@ export const BalanceSheetView: React.FC = () => {
       <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
-            <Landmark className="w-5 h-5 text-indigo-600 dark:text-zinc-200" />
+            <Landmark className="w-5 h-5 text-black dark:text-zinc-200" />
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
               Bilanço ({scenario.companyName})
             </h3>
@@ -175,7 +175,7 @@ export const BalanceSheetView: React.FC = () => {
               onClick={() => setViewMode('auto')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'auto'
-                  ? 'bg-white dark:bg-zinc-800 text-indigo-700 dark:text-zinc-100 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
                   : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
               }`}
             >
@@ -187,7 +187,7 @@ export const BalanceSheetView: React.FC = () => {
               onClick={() => setViewMode('practice')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'practice'
-                  ? 'bg-white dark:bg-zinc-800 text-indigo-700 dark:text-zinc-100 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
                   : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
               }`}
             >
@@ -455,7 +455,7 @@ export const BalanceSheetView: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
                     <span>{balanceSheet.assets.currentAssets.title}</span>
-                    <span className="font-mono text-indigo-900 dark:text-zinc-200">
+                    <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.assets.currentAssets.total)}
                     </span>
                   </div>
@@ -482,7 +482,7 @@ export const BalanceSheetView: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
                     <span>{balanceSheet.assets.nonCurrentAssets.title}</span>
-                    <span className="font-mono text-indigo-900 dark:text-zinc-200">
+                    <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.assets.nonCurrentAssets.total)}
                     </span>
                   </div>
@@ -509,7 +509,7 @@ export const BalanceSheetView: React.FC = () => {
               {/* AKTİF TOPLAMI */}
               <div className="bg-slate-100 dark:bg-zinc-900/90 p-3.5 border-t-2 border-b-4 border-double border-slate-700 dark:border-zinc-700 flex items-center justify-between font-bold text-sm text-slate-900 dark:text-white">
                 <span className="uppercase tracking-wider">AKTİF TOPLAMI:</span>
-                <span className="font-mono text-base text-blue-950 dark:text-blue-300 font-black">
+                <span className="font-mono text-base text-black dark:text-white font-black">
                   {formatCurrency(balanceSheet.assets.totalAssets)}
                 </span>
               </div>
@@ -528,7 +528,7 @@ export const BalanceSheetView: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
                     <span>{balanceSheet.liabilities.shortTermLiabilities.title}</span>
-                    <span className="font-mono text-indigo-900 dark:text-zinc-200">
+                    <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.liabilities.shortTermLiabilities.total)}
                     </span>
                   </div>
@@ -555,7 +555,7 @@ export const BalanceSheetView: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
                     <span>{balanceSheet.liabilities.longTermLiabilities.title}</span>
-                    <span className="font-mono text-indigo-900 dark:text-zinc-200">
+                    <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.liabilities.longTermLiabilities.total)}
                     </span>
                   </div>
@@ -582,7 +582,7 @@ export const BalanceSheetView: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-zinc-800 font-bold text-slate-800 dark:text-zinc-200">
                     <span>{balanceSheet.liabilities.equity.title}</span>
-                    <span className="font-mono text-indigo-900 dark:text-zinc-200">
+                    <span className="font-mono font-bold text-black dark:text-zinc-200">
                       {formatCurrency(balanceSheet.liabilities.equity.total)}
                     </span>
                   </div>

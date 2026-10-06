@@ -51,11 +51,11 @@ export const NavbarTabs: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 py-2 px-3.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-white dark:bg-zinc-900 text-indigo-700 dark:text-zinc-100 shadow-xs border border-slate-200/80 dark:border-zinc-700'
+                    ? 'bg-white dark:bg-zinc-900 text-black dark:text-zinc-100 shadow-sm border border-slate-300 dark:border-zinc-700 font-bold'
                     : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-200/60 dark:hover:bg-zinc-900'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600 dark:text-white' : 'text-slate-400 dark:text-zinc-500'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-black dark:text-white' : 'text-slate-400 dark:text-zinc-500'}`} />
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1 ${

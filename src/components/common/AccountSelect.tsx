@@ -127,16 +127,16 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
         ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full text-left px-3 py-2 bg-white dark:bg-zinc-900 border rounded-lg shadow-xs flex items-center justify-between text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer ${
+        className={`w-full text-left px-3 py-2 bg-white dark:bg-zinc-900 border rounded-lg shadow-xs flex items-center justify-between text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white cursor-pointer ${
           isOpen 
-            ? 'border-indigo-500 ring-2 ring-indigo-500/20' 
+            ? 'border-black dark:border-white ring-1 ring-black/15 dark:ring-white/20' 
             : 'border-slate-300 dark:border-zinc-800 hover:border-slate-400 dark:hover:border-zinc-700'
         }`}
       >
         <div className="flex items-center gap-2 truncate">
           {selectedAccount ? (
             <>
-              <span className="font-mono font-bold text-indigo-700 dark:text-zinc-200 bg-indigo-50 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-xs shrink-0">
+              <span className="font-mono font-bold text-black dark:text-white bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-xs shrink-0">
                 {selectedAccount.code}
               </span>
               <span className="font-medium text-slate-800 dark:text-zinc-200 truncate">{selectedAccount.name}</span>
@@ -194,8 +194,8 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
                     <div
                       key={acc.code}
                       onClick={() => handleSelect(acc.code)}
-                      className={`px-3 py-2.5 cursor-pointer flex items-center justify-between hover:bg-indigo-50/80 dark:hover:bg-zinc-900 transition-colors text-xs ${
-                        isSelected ? 'bg-indigo-50/90 dark:bg-zinc-900/90 font-semibold' : ''
+                      className={`px-3 py-2.5 cursor-pointer flex items-center justify-between hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-xs ${
+                        isSelected ? 'bg-zinc-100 dark:bg-zinc-900 font-semibold' : ''
                       }`}
                     >
                       <div className="flex items-center gap-2.5 pr-2 truncate">
@@ -220,7 +220,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
                         >
                           {acc.nature}
                         </span>
-                        {isSelected && <Check className="w-4 h-4 text-indigo-600 dark:text-zinc-200 ml-1 shrink-0" />}
+                        {isSelected && <Check className="w-4 h-4 text-black dark:text-white ml-1 shrink-0" />}
                       </div>
                     </div>
                   );

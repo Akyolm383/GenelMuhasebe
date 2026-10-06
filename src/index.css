@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 antialiased font-sans selection:bg-indigo-100 selection:text-indigo-900 dark:selection:bg-zinc-800 dark:selection:text-white;
+    @apply bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 antialiased font-sans selection:bg-zinc-200 selection:text-black dark:selection:bg-zinc-800 dark:selection:text-white;
     min-height: 100vh;
   }
 }

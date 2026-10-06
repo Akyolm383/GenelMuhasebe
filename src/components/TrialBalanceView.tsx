@@ -74,7 +74,7 @@ export const TrialBalanceView: React.FC = () => {
       <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
-            <TableProperties className="w-5 h-5 text-indigo-600 dark:text-zinc-200" />
+            <TableProperties className="w-5 h-5 text-black dark:text-zinc-200" />
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
               Mizan (Geçici Mizan Cetveli)
             </h3>
@@ -102,7 +102,7 @@ export const TrialBalanceView: React.FC = () => {
             onClick={() => setViewMode('auto')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               viewMode === 'auto'
-                ? 'bg-white dark:bg-zinc-800 text-indigo-700 dark:text-zinc-100 shadow-xs'
+                ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
                 : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
             }`}
           >
@@ -114,7 +114,7 @@ export const TrialBalanceView: React.FC = () => {
             onClick={() => setViewMode('practice')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               viewMode === 'practice'
-                ? 'bg-white dark:bg-zinc-800 text-indigo-700 dark:text-zinc-100 shadow-xs'
+                ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
                 : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
             }`}
           >

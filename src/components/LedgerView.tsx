@@ -140,11 +140,11 @@ export const LedgerView: React.FC = () => {
       <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl shadow-xs border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
-            <Scale className="w-5 h-5 text-indigo-600 dark:text-zinc-200" />
+            <Scale className="w-5 h-5 text-black dark:text-zinc-200" />
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
               Büyük Defter (T-Hesapları)
             </h3>
-            <span className="text-xs bg-indigo-50 dark:bg-zinc-900 text-indigo-700 dark:text-zinc-300 px-2.5 py-0.5 rounded-full font-semibold border dark:border-zinc-800">
+            <span className="text-xs bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 px-2.5 py-0.5 rounded-full font-semibold border border-zinc-200 dark:border-zinc-800">
               {ledgerAccounts.length} Aktif Hesap
             </span>
           </div>
@@ -163,7 +163,7 @@ export const LedgerView: React.FC = () => {
               onClick={() => setViewMode('auto')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'auto'
-                  ? 'bg-white dark:bg-zinc-800 text-indigo-700 dark:text-zinc-100 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
                   : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
               }`}
             >
@@ -175,7 +175,7 @@ export const LedgerView: React.FC = () => {
               onClick={() => setViewMode('practice')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'practice'
-                  ? 'bg-white dark:bg-zinc-800 text-indigo-700 dark:text-zinc-100 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-zinc-100 font-bold shadow-xs'
                   : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
               }`}
             >
@@ -264,7 +264,7 @@ export const LedgerView: React.FC = () => {
                 value={filterQuery}
                 onChange={(e) => setFilterQuery(e.target.value)}
                 placeholder="Hesap kodu veya adı ara..."
-                className="w-full text-xs pl-8 pr-3 py-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-2xs"
+                className="w-full text-xs pl-8 pr-3 py-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white shadow-2xs"
               />
             </div>
           </div>
@@ -339,7 +339,7 @@ export const LedgerView: React.FC = () => {
                           value={uData.debitTotal}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'debitTotal', e.target.value)}
                           placeholder="0,00"
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:ring-1 focus:ring-indigo-500"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white"
                         />
                       </div>
                       <div>
@@ -351,7 +351,7 @@ export const LedgerView: React.FC = () => {
                           value={uData.creditTotal}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'creditTotal', e.target.value)}
                           placeholder="0,00"
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:ring-1 focus:ring-indigo-500"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white"
                         />
                       </div>
                     </div>
@@ -366,7 +366,7 @@ export const LedgerView: React.FC = () => {
                           value={uData.balance}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'balance', e.target.value)}
                           placeholder="Fark tutarı"
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:ring-1 focus:ring-indigo-500 font-semibold"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg font-mono text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white font-semibold"
                         />
                       </div>
                       <div>
@@ -376,7 +376,7 @@ export const LedgerView: React.FC = () => {
                         <select
                           value={uData.direction}
                           onChange={(e) => handlePracticeChange(acc.accountCode, 'direction', e.target.value)}
-                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg text-xs font-semibold text-slate-900 dark:text-white focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                          className="w-full p-2 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-lg text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white cursor-pointer"
                         >
                           <option value="BORC">Borç Bakiyesi</option>
                           <option value="ALACAK">Alacak Bakiyesi</option>

@@ -35,7 +35,7 @@ export const ScenarioBar: React.FC = () => {
         {/* Üst Kısım: İşletme Künyesi Bilgi Çubuğu */}
         <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-50 text-indigo-700 rounded-lg">
+            <div className="p-2 bg-black text-white dark:bg-white dark:text-black rounded-lg">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
@@ -105,23 +105,23 @@ export const ScenarioBar: React.FC = () => {
                   onClick={() => setActiveTransactionIndex(idx)}
                   className={`flex flex-col p-2 text-left rounded-lg border transition-all text-xs cursor-pointer ${
                     isActive
-                      ? 'border-indigo-600 bg-indigo-50/70 shadow-xs ring-1 ring-indigo-600'
+                      ? 'border-black bg-zinc-100 shadow-xs ring-1 ring-black/10'
                       : hasRecords
                       ? 'border-slate-200 bg-white hover:border-slate-300'
                       : 'border-dashed border-slate-200 bg-slate-50/50 hover:bg-white text-slate-400'
                   }`}
                 >
                   <div className="flex items-center justify-between w-full mb-1">
-                    <span className={`font-mono font-bold text-[11px] ${isActive ? 'text-indigo-700' : 'text-slate-700'}`}>
+                    <span className={`font-mono font-bold text-[11px] ${isActive ? 'text-black font-extrabold' : 'text-slate-700'}`}>
                       #{tx.order}
                     </span>
                     {hasRecords ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     ) : (
                       <div className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
                     )}
                   </div>
-                  <span className={`truncate font-medium text-[11px] ${isActive ? 'text-indigo-950 font-semibold' : 'text-slate-700'}`}>
+                  <span className={`truncate font-medium text-[11px] ${isActive ? 'text-black font-semibold' : 'text-slate-700'}`}>
                     {tx.date}
                   </span>
                 </button>
@@ -131,10 +131,10 @@ export const ScenarioBar: React.FC = () => {
         </div>
 
         {/* Alt Kısım: Seçili İşlem Detay Kartı */}
-        <div className="mt-3 p-3.5 bg-gradient-to-r from-slate-50 to-indigo-50/30 rounded-xl border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="mt-3 p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 bg-indigo-600 text-white font-mono text-[11px] font-bold rounded">
+              <span className="px-2 py-0.5 bg-black text-white font-mono text-[11px] font-bold rounded">
                 İşlem {activeTx.order}
               </span>
               <span className="text-xs font-semibold text-slate-500">
@@ -152,7 +152,7 @@ export const ScenarioBar: React.FC = () => {
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
             <div className="text-right mr-1">
               <span className="block text-[10px] text-slate-400 uppercase font-semibold">Tutar</span>
-              <span className="font-mono font-bold text-sm text-indigo-900">
+              <span className="font-mono font-bold text-sm text-black">
                 {formatCurrency(activeTx.amount)}
               </span>
             </div>
@@ -176,10 +176,10 @@ export const ScenarioBar: React.FC = () => {
                       autoFillCorrectSolution(activeTx.id);
                     }
                   }}
-                  className="px-2.5 py-1.5 text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
+                  className="px-2.5 py-1.5 text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border border-zinc-300 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
                   title="Örnek Çözümü Yükle"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <Sparkles className="w-3.5 h-3.5 text-black" />
                   <span>Çözümü Göster</span>
                 </button>
               </>

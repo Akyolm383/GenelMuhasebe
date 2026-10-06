@@ -71,13 +71,13 @@ export const ScenarioGeneratorModal: React.FC<ScenarioGeneratorModalProps> = ({
         {/* Başlık */}
         <div className="px-6 py-4.5 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between bg-slate-50/50 dark:bg-zinc-900/40">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600/10 dark:bg-white/10 text-indigo-600 dark:text-zinc-100 flex items-center justify-center border border-indigo-200 dark:border-zinc-800">
+            <div className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/10 text-black dark:text-zinc-100 flex items-center justify-center border border-slate-300 dark:border-zinc-800">
               <Wand2 className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
                 Rastgele Görev / Senaryo Üretici
-                <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-zinc-800 text-indigo-700 dark:text-zinc-300">
+                <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300">
                   Algoritmik
                 </span>
               </h3>
@@ -122,7 +122,7 @@ export const ScenarioGeneratorModal: React.FC<ScenarioGeneratorModalProps> = ({
                     }}
                     className={`py-3 px-3 rounded-xl border text-center transition-all cursor-pointer font-medium text-xs sm:text-sm flex flex-col items-center gap-1.5 ${
                       isSelected
-                        ? 'border-indigo-600 dark:border-white bg-indigo-50/50 dark:bg-white/10 text-indigo-900 dark:text-white font-semibold shadow-sm'
+                        ? 'border-black dark:border-white bg-zinc-100 dark:bg-white/10 text-black dark:text-white font-bold shadow-xs'
                         : 'border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/60 text-slate-700 dark:text-zinc-300'
                     }`}
                   >
@@ -154,7 +154,7 @@ export const ScenarioGeneratorModal: React.FC<ScenarioGeneratorModalProps> = ({
                     onClick={() => setTransactionCount(cnt)}
                     className={`py-2 px-3 rounded-lg border text-center transition-all cursor-pointer text-xs font-semibold ${
                       isSelected
-                        ? 'border-indigo-600 dark:border-white bg-indigo-50/70 dark:bg-white/10 text-indigo-900 dark:text-white'
+                        ? 'border-black dark:border-white bg-zinc-100 dark:bg-white/10 text-black dark:text-white font-bold'
                         : 'border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/40 text-slate-700 dark:text-zinc-400'
                     }`}
                   >
@@ -178,7 +178,7 @@ export const ScenarioGeneratorModal: React.FC<ScenarioGeneratorModalProps> = ({
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="İşletme adını yazın veya zar atın..."
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-white transition-colors"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-colors"
                 />
               </div>
               <button
@@ -187,7 +187,7 @@ export const ScenarioGeneratorModal: React.FC<ScenarioGeneratorModalProps> = ({
                 title="Rastgele Unvan Seç"
                 className="px-3 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-700 dark:text-zinc-300 transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer"
               >
-                <Dice5 className="w-4 h-4 text-indigo-500 dark:text-zinc-400" />
+                <Dice5 className="w-4 h-4 text-zinc-700 dark:text-zinc-400" />
                 <span className="hidden sm:inline">Zar At</span>
               </button>
             </div>
@@ -229,7 +229,7 @@ export const ScenarioGeneratorModal: React.FC<ScenarioGeneratorModalProps> = ({
           <button
             type="button"
             onClick={handleGenerateAndStart}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white dark:text-black bg-indigo-600 hover:bg-indigo-700 dark:bg-white dark:hover:bg-zinc-200 transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white dark:text-black bg-black hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 transition-colors shadow-sm cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
             <span>Senaryoyu Türet ve Başla</span>

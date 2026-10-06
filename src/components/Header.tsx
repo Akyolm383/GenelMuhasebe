@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between py-3 gap-3">
           {/* Logo ve Başlık */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white shadow-sm shrink-0">
               <span className="font-mono font-bold text-lg tracking-tighter">GM</span>
             </div>
             <div>
@@ -44,7 +44,7 @@ export const Header: React.FC = () => {
                 <h1 className="text-lg font-bold text-slate-900 leading-tight">
                   Genel Muhasebe Defteri
                 </h1>
-                <span className="text-[11px] font-semibold bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold bg-zinc-100 text-zinc-900 border border-zinc-200 px-2 py-0.5 rounded-full">
                   İnteraktif
                 </span>
               </div>
@@ -79,7 +79,7 @@ export const Header: React.FC = () => {
                 onClick={() => setMode('ogrenme')}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all ${
                   mode === 'ogrenme'
-                    ? 'bg-white text-indigo-700 shadow-xs font-semibold'
+                    ? 'bg-white text-black shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
                 title="Her işlemde anlık geri bildirim ve aşamalı ipuçları sunar."
@@ -120,7 +120,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={runScenarioAudit}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black hover:bg-zinc-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
             >
               <Award className="w-3.5 h-3.5" />
               <span>{mode === 'calisma' ? 'Kayıtları Denetle & Karne' : 'Genel Başarı Raporu'}</span>

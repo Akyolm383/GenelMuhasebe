@@ -74,7 +74,7 @@ export const JournalEntryForm: React.FC = () => {
             <button
               type="button"
               onClick={() => addLine(activeTx.id)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Satır Ekle</span>
@@ -350,7 +350,7 @@ export const JournalEntryForm: React.FC = () => {
                       addLine(activeTx.id);
                     }
                   }}
-                  className="text-[11px] font-bold text-indigo-700 dark:text-zinc-200 hover:text-indigo-900 bg-indigo-50 dark:bg-zinc-900 hover:bg-indigo-100 dark:hover:bg-zinc-800 px-2 py-0.5 rounded border border-indigo-200 dark:border-zinc-700 cursor-pointer transition-colors"
+                  className="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 hover:text-black bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-300 dark:border-zinc-700 cursor-pointer transition-colors"
                 >
                   Farkı {validation.totalDebit < validation.totalCredit ? 'Borca' : 'Alacağa'} Ekle
                 </button>
@@ -398,7 +398,7 @@ export const JournalEntryForm: React.FC = () => {
             <div className="p-4 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-indigo-600 dark:text-zinc-300" />
+                  <Info className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                   <span className="text-xs font-bold text-slate-800 dark:text-zinc-200 uppercase tracking-wide">
                     Öğretici Geri Bildirim ve Teşhis
                   </span>
@@ -438,7 +438,7 @@ export const JournalEntryForm: React.FC = () => {
                         💡 <strong>Muhasebe Mantığı:</strong> {diag.pedagogicalTip}
                       </p>
                       {diag.suggestedAction && (
-                        <p className="text-indigo-800 dark:text-zinc-300 text-[11px] font-medium pt-0.5">
+                        <p className="text-zinc-800 dark:text-zinc-300 text-[11px] font-medium pt-0.5">
                           👉 <strong>Öneri:</strong> {diag.suggestedAction}
                         </p>
                       )}

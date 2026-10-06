@@ -52,7 +52,7 @@ export const AuditReportModal: React.FC = () => {
         {/* Modal Başlığı */}
         <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-600 rounded-xl">
+            <div className="p-2 bg-zinc-800 rounded-xl">
               <Award className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -110,7 +110,7 @@ export const AuditReportModal: React.FC = () => {
           {/* Hata Analizi Özeti */}
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-2 text-xs">
             <h4 className="font-bold text-slate-800 flex items-center gap-1.5">
-              <TrendingUp className="w-4 h-4 text-indigo-600" />
+              <TrendingUp className="w-4 h-4 text-black" />
               <span>Hata Dağılımı ve Nedenleri:</span>
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
@@ -207,7 +207,7 @@ export const AuditReportModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleFixTransaction(txRes.transactionId)}
-                        className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 shrink-0 cursor-pointer"
+                        className="text-[11px] font-bold text-black hover:text-zinc-700 underline flex items-center gap-1 shrink-0 cursor-pointer"
                       >
                         <span>Düzelt</span>
                         <ArrowRight className="w-3 h-3" />
@@ -222,7 +222,7 @@ export const AuditReportModal: React.FC = () => {
                     </div>
                     <div className="bg-white/80 p-2 rounded border border-slate-200">
                       <span className="text-slate-500 block font-sans text-[10px]">Doğru Kayıt:</span>
-                      <span className="text-indigo-900 font-semibold">{txRes.expectedSummary}</span>
+                      <span className="text-black font-bold">{txRes.expectedSummary}</span>
                     </div>
                   </div>
 
