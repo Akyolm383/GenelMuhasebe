@@ -3,763 +3,973 @@ import type { CompanyScenario } from '../types/scenario';
 export const SCENARIOS: CompanyScenario[] = [
   {
     id: 'abc-ticaret-temel',
-    title: 'ABC Ticaret İşletmesi - Kuruluş ve Temel Döngü',
+    title: 'ABC Ticaret İşletmesi - Kuruluş, Çek ve Temel Döngü',
     difficulty: 'Kolay',
     companyName: 'ABC Ticaret İşletmesi',
     establishedDate: '01.10.2026',
     initialCapital: 100000,
-    description: 'İşletmenin kuruluşu ile başlayıp peşin/veresiye mal alımı, banka işlemleri, satış hasılatı, borç ödeme ve genel gider işlemlerini kapsayan Genel Muhasebe temel çalışma senaryosu.',
+    description:
+      'Genel Muhasebe dersinin ilk haftalarında işlenen kuruluş sermayesi, peşin/veresiye mal alımı, müşteriden çek alma (101), kendi çekimizi verme (103) ve çek ödeme işlemlerini kapsayan temel çalışma seti.',
     learningObjectives: [
-      'Kuruluş sermayesinin varlık ve özkaynak hesaplarına doğru kaydedilmesi',
-      'Ticari mallar ve kasa arasındaki çift taraflı hareketin kavranması',
-      'Veresiye mal alımında 320 Satıcılar hesabının işleyişi',
-      'Kasa ve Banka arasındaki likit varlık transferleri',
-      'Hasılat kaydında 600 Yurtiçi Satışlar hesabının alacaklandırılması',
-      'Borç ödemelerinde pasif hesabın borçlandırılması mantığı',
-      'Gider kayıtlarında 770 Genel Yönetim Giderleri hesabının borçlandırılması',
+      'Kuruluş sermayesinin 100 Kasa (Borç) ve 500 Sermaye (Alacak) hesaplarına kaydedilmesi',
+      'Peşin ve veresiye mal alımlarında 153 Ticari Mallar ve 320 Satıcılar hesaplarının işleyişi',
+      'Müşteriden çek alındığında 101 Alınan Çekler hesabının borçlandırılması',
+      'Kendi çekimizi düzenleyip (keşide edip) verdiğimizde 103 Verilen Çekler (-) hesabının alacaklandırılması',
+      'Verilen çek bankadan ödendiğinde 103 hesabının borçlandırılarak kapatılması',
+      'Gider ödemelerinde 770 Genel Yönetim Giderleri hesabının borçlandırılması',
     ],
     transactions: [
       {
         id: 'tx-1',
         order: 1,
         date: '01.10.2026',
-        title: 'İşletmenin Kuruluşu ve Nakit Sermaye Tahsisi',
-        description: 'İşletme, sahibi tarafından 100.000 TL nakit sermaye tahsis edilerek kurulmuştur. Nakit para kasaya konulmuştur.',
+        title: 'İşletmenin Kuruluşu ve Nakit Sermaye Konulması',
+        description:
+          'İşletme, sahibi tarafından 100.000 TL nakit sermaye konularak kurulmuştur. Tutarın tamamı işletme kasasına yatırılmıştır.',
         amount: 100000,
         expectedEntry: {
-          educationalNotes: 'Kasaya nakit girişi olduğundan 100 Kasa (Aktif) borçlandırılır; işletmeye kaynak sağlandığından 500 Sermaye (Özkaynak) alacaklandırılır.',
+          educationalNotes:
+            'Kasaya nakit para girdiği için 100 Kasa (Varlık/Aktif) borçlandırılır; işletmeye sermaye konulduğu için 500 Sermaye (Öz Kaynak/Pasif) alacaklandırılır.',
           lines: [
             { accountCode: '100', debit: 100000, credit: 0 },
             { accountCode: '500', debit: 0, credit: 100000 },
-          ]
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Bu işlem işletmenin "nakit para mevcudunu" ve işletmeye konulan "özkaynağı (sermaye)" etkilemektedir.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'İşletmenin kasasındaki "nakit para" arttı ve işletmeye kurucu tarafından "sermaye" konuldu.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: 'Nakit para "100 Kasa" (Aktif/Varlık) hesabında; konulan sermaye ise "500 Sermaye" (Pasif/Özkaynak) hesabında izlenir.'
+            title: '2. Aşama: Hangi Hesap Kodları Kullanılır?',
+            content:
+              'Nakit para için "100 Kasa" (Varlık/Aktif); konulan sermaye için "500 Sermaye" (Öz Kaynak/Pasif) hesabı kullanılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: 'İşletmenin kasasındaki para artmıştır (Aktifteki artış → BORÇ). Aynı zamanda özkaynağı da artmıştır (Kaynaktaki artış → ALACAK).'
+            title: '3. Aşama: Hangisi Borç (Sol), Hangisi Alacak (Sağ)?',
+            content:
+              'Varlık hesapları (100 Kasa) arttığında BORÇ (Sol); Kaynak/Sermaye hesapları (500 Sermaye) arttığında ALACAK (Sağ) yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '100 Kasa (Borç: 100.000 TL) / 500 Sermaye (Alacak: 100.000 TL)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '100 Kasa (Borç: 100.000 TL) / 500 Sermaye (Alacak: 100.000 TL)',
+          },
+        ],
       },
       {
         id: 'tx-2',
         order: 2,
-        date: '02.10.2026',
-        title: 'Peşin Ticari Mal Alımı',
-        description: 'İşletme, satılmak üzere 20.000 TL tutarında ticari malı peşin (nakit) olarak satın almıştır.',
-        amount: 20000,
+        date: '03.10.2026',
+        title: 'Bankadaki Hesaba Nakit Para Yatırılması',
+        description:
+          'İşletme kasasından 40.000 TL nakit para alınarak işletmenin bankadaki vadesiz mevduat hesabına yatırılmıştır.',
+        amount: 40000,
         expectedEntry: {
-          educationalNotes: 'Satın alınan ticari mal varlığı arttığı için 153 Ticari Mallar borçlandırılır; nakit ödeme nedeniyle para azaldığı için 100 Kasa alacaklandırılır.',
+          educationalNotes:
+            'Bankadaki paramız arttığı için 102 Bankalar borçlandırılır; kasadaki nakit para azaldığı için 100 Kasa alacaklandırılır.',
           lines: [
-            { accountCode: '153', debit: 20000, credit: 0 },
-            { accountCode: '100', debit: 0, credit: 20000 },
-          ]
+            { accountCode: '102', debit: 40000, credit: 0 },
+            { accountCode: '100', debit: 0, credit: 40000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'İşletmeye yeni bir mal girişi olmuş ve karşılığında kasadan nakit para çıkışı gerçekleşmiştir.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Kasadan para çıktı (azaldı) ve banka hesabımıza para girdi (arttı).',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: 'Alınan mallar için "153 Ticari Mallar" (Aktif), nakit ödeme için "100 Kasa" (Aktif) kullanılır. Bu işlem aktif içi bir değişimdir.'
+            title: '2. Aşama: Hangi Hesap Kodları Kullanılır?',
+            content:
+              '"102 Bankalar" ve "100 Kasa" hesaplarının ikisi de Varlık (Aktif) hesabıdır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: 'Ticari mallarımız arttığı için BORÇ kaydedilir. Kasadaki nakdimiz azaldığı için ALACAK kaydedilir.'
+            title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+            content:
+              'Artan varlık (102 Bankalar) BORÇ; azalan varlık (100 Kasa) ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '153 Ticari Mallar (Borç: 20.000 TL) / 100 Kasa (Alacak: 20.000 TL)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '102 Bankalar (Borç: 40.000 TL) / 100 Kasa (Alacak: 40.000 TL)',
+          },
+        ],
       },
       {
         id: 'tx-3',
         order: 3,
-        date: '04.10.2026',
-        title: 'Veresiye (Kredili) Ticari Mal Alımı',
-        description: 'İşletme, satıcılardan 15.000 TL tutarında ticari malı veresiye (bedeli daha sonra ödenmek üzere senetsiz) satın almıştır.',
-        amount: 15000,
+        date: '05.10.2026',
+        title: 'Peşin Ticari Mal Alımı',
+        description:
+          'İşletme, satmak amacıyla 20.000 TL tutarında ticari malı peşin (nakit) olarak satın almıştır.',
+        amount: 20000,
         expectedEntry: {
-          educationalNotes: 'Mal stoku arttığı için 153 Ticari Mallar borçlandırılır; satıcıya olan senetsiz ticari borç arttığı için 320 Satıcılar alacaklandırılır.',
+          educationalNotes:
+            'Depodaki malımız arttığı için 153 Ticari Mallar borçlandırılır; kasadan nakit ödendiği için 100 Kasa alacaklandırılır.',
           lines: [
-            { accountCode: '153', debit: 15000, credit: 0 },
-            { accountCode: '320', debit: 0, credit: 15000 },
-          ]
+            { accountCode: '153', debit: 20000, credit: 0 },
+            { accountCode: '100', debit: 0, credit: 20000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'İşletmenin stokları artmış, ancak ödeme yapılmadığı için satıcıya olan borç da artmıştır.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Depomuza yeni mal girdi ve kasamızdan nakit para çıktı.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: 'Ticari mallar "153 Ticari Mallar" (Aktif); satıcılara olan senetsiz borç "320 Satıcılar" (Pasif/Borç) hesabında takip edilir.'
+            title: '2. Aşama: Hangi Hesap Kodları Kullanılır?',
+            content:
+              'Alınan mallar için "153 Ticari Mallar" (Varlık/Aktif), nakit ödeme için "100 Kasa" (Varlık/Aktif) kullanılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: '153 Ticari Mallar aktif bir hesap olup arttığı için BORÇ; 320 Satıcılar pasif bir hesap olup borcumuz arttığı için ALACAK kaydedilir.'
+            title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+            content:
+              'Ticari mallarımız arttığı için 153 BORÇ; kasadaki nakdimiz azaldığı için 100 ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '153 Ticari Mallar (Borç: 15.000 TL) / 320 Satıcılar (Alacak: 15.000 TL)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '153 Ticari Mallar (Borç: 20.000 TL) / 100 Kasa (Alacak: 20.000 TL)',
+          },
+        ],
       },
       {
         id: 'tx-4',
         order: 4,
-        date: '06.10.2026',
-        title: 'Bankadaki Mevduat Hesabına Para Yatırılması',
-        description: 'İşletme kasasından 25.000 TL nakit para alınarak işletmenin bankadaki vadesiz mevduat hesabına yatırılmıştır.',
-        amount: 25000,
+        date: '07.10.2026',
+        title: 'Çek Düzenleyerek (Keşide Ederek) Ticari Mal Alımı',
+        description:
+          'İşletme, toptancıdan 15.000 TL tutarında ticari mal satın almış ve karşılığında kendi çek defterinden 15.000 TL\'lik bir çek yazıp (keşide edip) satıcıya vermiştir.',
+        amount: 15000,
         expectedEntry: {
-          educationalNotes: 'Bankadaki paramız arttığı için 102 Bankalar borçlandırılır; kasadaki nakit çıktığı için 100 Kasa alacaklandırılır.',
+          educationalNotes:
+            'Çok Önemli Ders Vurgusu: Mal aldığımız için 153 Ticari Mallar borçlandırılır. Kendi çekimizi verdiğimizde ise "103 Verilen Çekler ve Ödeme Emirleri (-)" hesabı kullanılır ve bu hesap sonunda (-) işareti olduğu için pasif gibi çalışarak ALACAKLANDIRILIR.',
           lines: [
-            { accountCode: '102', debit: 25000, credit: 0 },
-            { accountCode: '100', debit: 0, credit: 25000 },
-          ]
+            { accountCode: '153', debit: 15000, credit: 0 },
+            { accountCode: '103', debit: 0, credit: 15000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'İşletmenin iki farklı likit varlığı arasında yer değiştirme olmuştur: Banka hesabı ve Kasa.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Ticari mal aldık ve karşılığında kendi banka çek defterimizden bir çek imzalayıp (keşide edip) verdik.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '"102 Bankalar" ve "100 Kasa" hesaplarının her ikisi de Aktif (Dönen Varlık) karakterlidir.'
+            title: '2. Aşama: 101 mi Yoksa 103 mü Kullanılır?',
+            content:
+              'Dikkat! Müşteriden çek almadık, KENDİ çekimizi verdik. Bu yüzden "103 Verilen Çekler ve Ödeme Emirleri (-)" hesabı kullanılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: 'Bankadaki mevduat arttığı için 102 Bankalar BORÇ; kasadaki nakit azaldığı için 100 Kasa ALACAK kaydedilir.'
+            title: '3. Aşama: 103 Hesabı Neden Alacak Yazılır?',
+            content:
+              '103 hesabı 1 ile başlamasına rağmen sonunda (-) işareti bulunan "Aktifi Düzenleyen Pasif" bir hesaptır. Çek verildiğinde ALACAK yazılır!',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '102 Bankalar (Borç: 25.000 TL) / 100 Kasa (Alacak: 25.000 TL)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '153 Ticari Mallar (Borç: 15.000 TL) / 103 Verilen Çekler ve Ödeme Emirleri (-) (Alacak: 15.000 TL)',
+          },
+        ],
       },
       {
         id: 'tx-5',
         order: 5,
-        date: '08.10.2026',
-        title: 'Peşin Ticari Mal Satışı (Satış Hasılatı)',
-        description: 'İşletme, 30.000 TL tutarında ticari malı müşteriye peşin satmış ve bedelini nakit olarak tahsil etmiştir.',
+        date: '10.10.2026',
+        title: 'Müşteriden Çek Alarak Ticari Mal Satışı',
+        description:
+          'İşletme, müşteriye 30.000 TL tutarında ticari mal satmış ve satış bedeli karşılığında müşteriden 30.000 TL\'lik bir çek teslim almıştır.',
         amount: 30000,
         expectedEntry: {
-          educationalNotes: 'Kasaya para girdiği için 100 Kasa borçlandırılır; mal satışı hasılat doğurduğu için 600 Yurtiçi Satışlar alacaklandırılır.',
+          educationalNotes:
+            'Müşteriden çek aldığımızda çek cüzdanımızdaki varlık arttığı için "101 Alınan Çekler" (Aktif) borçlandırılır; satış geliri doğduğu için "600 Yurtiçi Satışlar" alacaklandırılır.',
           lines: [
-            { accountCode: '100', debit: 30000, credit: 0 },
+            { accountCode: '101', debit: 30000, credit: 0 },
             { accountCode: '600', debit: 0, credit: 30000 },
-          ]
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Müşteriden nakit tahsilat yapılmış ve ticari mal satışı geliri (hasılat) doğmuştur.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Müşteriye mal sattık (gelir doğdu) ve karşılığında müşterinin çekini aldık.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: 'Nakit tahsilat için "100 Kasa" (Aktif); satış hasılatı için Gelir Tablosu hesabı olan "600 Yurtiçi Satışlar" (Gelir) kullanılır.'
+            title: '2. Aşama: Hangi Hesap Kodları Kullanılır?',
+            content:
+              'Müşteriden alınan çekler "101 Alınan Çekler" (Varlık/Aktif) hesabında, satış geliri ise "600 Yurtiçi Satışlar" (Gelir) hesabında izlenir.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: 'Kasaya nakit girdiği için 100 Kasa BORÇ; gelir hesapları kural gereği hasılat doğduğunda daima ALACAK kaydedilir.'
+            title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+            content:
+              'Elimizdeki müşteri çeki arttığı için 101 Alınan Çekler BORÇ; satış geliri doğduğu için 600 Yurtiçi Satışlar ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '100 Kasa (Borç: 30.000 TL) / 600 Yurtiçi Satışlar (Alacak: 30.000 TL)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '101 Alınan Çekler (Borç: 30.000 TL) / 600 Yurtiçi Satışlar (Alacak: 30.000 TL)',
+          },
+        ],
       },
       {
         id: 'tx-6',
         order: 6,
-        date: '10.10.2026',
-        title: 'Satıcılara Olan Borcun Bankadan Ödenmesi',
-        description: 'İşletme, satıcılara olan veresiye borcunun 10.000 TL\'lik kısmını banka mevduat hesabından havale ile ödemiştir.',
-        amount: 10000,
+        date: '12.10.2026',
+        title: 'Satıcıya Verdiğimiz Çekin Bankadan Ödenmesi',
+        description:
+          'Daha önce mal alırken satıcıya keşide edip verdiğimiz 15.000 TL tutarındaki çek, satıcı tarafından bankaya ibraz edilmiş ve işletmemizin banka hesabından ödenmiştir.',
+        amount: 15000,
         expectedEntry: {
-          educationalNotes: 'Satıcılara olan borç azaldığı için 320 Satıcılar borçlandırılır; bankadaki mevduat azaldığı için 102 Bankalar alacaklandırılır.',
+          educationalNotes:
+            'Daha önce alacaklandırdığımız 103 Verilen Çekler (-) hesabı, çek ödendiğinde BORÇLANDIRILARAK kapatılır; para banka hesabımızdan çıktığı için 102 Bankalar alacaklandırılır.',
           lines: [
-            { accountCode: '320', debit: 10000, credit: 0 },
-            { accountCode: '102', debit: 0, credit: 10000 },
-          ]
+            { accountCode: '103', debit: 15000, credit: 0 },
+            { accountCode: '102', debit: 0, credit: 15000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Satıcıya olan borç kapatılmakta ve ödeme banka hesabından karşılanmaktadır.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              '4. işlemde satıcıya verdiğimiz 15.000 TL\'lik çek banka hesabımızdan ödendi ve çek borcumuz kapandı.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: 'Satıcı borcu "320 Satıcılar" (Pasif); banka mevduatı "102 Bankalar" (Aktif) hesabıdır.'
+            title: '2. Aşama: Hangi Hesap Kodları Kullanılır?',
+            content:
+              'Verilen çekler için "103 Verilen Çekler ve Ödeme Emirleri (-)", banka ödemesi için "102 Bankalar" kullanılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: 'Pasif hesaplar azaldığında BORÇ kaydedilir (borcumuz eksildi). Aktif hesaplar azaldığında ALACAK kaydedilir (bankadaki para eksildi).'
+            title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+            content:
+              'Çeki verirken 103 hesabını Alacak yazmıştık; şimdi çek ödendiği (kapandığı) için 103 BORÇ yazılır. Bankadaki paramız azaldığı için 102 Bankalar ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '320 Satıcılar (Borç: 10.000 TL) / 102 Bankalar (Alacak: 10.000 TL)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '103 Verilen Çekler ve Ödeme Emirleri (-) (Borç: 15.000 TL) / 102 Bankalar (Alacak: 15.000 TL)',
+          },
+        ],
       },
       {
         id: 'tx-7',
         order: 7,
-        date: '12.10.2026',
-        title: 'Kira Giderinin Nakit Olarak Ödenmesi',
-        description: 'İşletme faaliyetlerinin yürütüldüğü idari ofisin 5.000 TL tutarındaki aylık kira bedeli kasadan nakit olarak ödenmiştir.',
-        amount: 5000,
+        date: '15.10.2026',
+        title: 'Veresiye (Açık Hesap) Ticari Mal Alımı',
+        description:
+          'İşletme, satıcılardan 12.000 TL tutarında ticari malı veresiye (bedeli daha sonra ödenmek üzere senetsiz/açık hesap) satın almıştır.',
+        amount: 12000,
         expectedEntry: {
-          educationalNotes: 'Dönem içi genel yönetim gideri doğduğu için 770 Genel Yönetim Giderleri borçlandırılır; kasadan nakit çıktığı için 100 Kasa alacaklandırılır.',
+          educationalNotes:
+            'Mal stoğumuz arttığı için 153 Ticari Mallar borçlandırılır; satıcıya olan senetsiz borcumuz arttığı için 320 Satıcılar alacaklandırılır.',
           lines: [
-            { accountCode: '770', debit: 5000, credit: 0 },
-            { accountCode: '100', debit: 0, credit: 5000 },
-          ]
+            { accountCode: '153', debit: 12000, credit: 0 },
+            { accountCode: '320', debit: 0, credit: 12000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'İşletmenin bir yönetim gideri doğmuş ve karşılığında nakit ödeme yapılmıştır.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Depodaki mallarımız arttı ve satıcıya olan veresiye borcumuz arttı.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: 'Kira gideri "770 Genel Yönetim Giderleri" (Gider); nakit çıkışı "100 Kasa" (Aktif) hesabıdır.'
+            title: '2. Aşama: Hangi Hesap Kodları Kullanılır?',
+            content:
+              'Alınan mal için "153 Ticari Mallar" (Aktif), veresiye borç için "320 Satıcılar" (Pasif) kullanılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: 'Gider hesapları ortaya çıktığında daima BORÇ kaydedilir. Kasadan para çıktığı için (aktif azalışı) 100 Kasa ALACAK kaydedilir.'
+            title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+            content:
+              'Varlık artışı (153) BORÇ; borç/kaynak artışı (320) ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '770 Genel Yönetim Giderleri (Borç: 5.000 TL) / 100 Kasa (Alacak: 5.000 TL)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '153 Ticari Mallar (Borç: 12.000 TL) / 320 Satıcılar (Alacak: 12.000 TL)',
+          },
+        ],
       },
       {
         id: 'tx-8',
         order: 8,
-        date: '14.10.2026',
-        title: 'Veresiye (Kredili) Mal Satışı',
-        description: 'İşletme, bir müşteriye 12.000 TL tutarında ticari malı veresiye (bedeli daha sonra tahsil edilmek üzere senetsiz) satmıştır.',
-        amount: 12000,
+        date: '18.10.2026',
+        title: 'Ofis Kira Giderinin Nakit Ödenmesi',
+        description:
+          'İşletmenin faaliyet gösterdiği mağaza ve ofisin 5.000 TL tutarındaki aylık kira bedeli kasadan nakit olarak ödenmiştir.',
+        amount: 5000,
         expectedEntry: {
-          educationalNotes: 'Müşteriden senetsiz alacak doğduğu için 120 Alıcılar borçlandırılır; satış hasılatı gerçekleştiği için 600 Yurtiçi Satışlar alacaklandırılır.',
+          educationalNotes:
+            'İşletme gideri doğduğu için 770 Genel Yönetim Giderleri borçlandırılır; kasadan nakit para çıktığı için 100 Kasa alacaklandırılır.',
           lines: [
-            { accountCode: '120', debit: 12000, credit: 0 },
-            { accountCode: '600', debit: 0, credit: 12000 },
-          ]
+            { accountCode: '770', debit: 5000, credit: 0 },
+            { accountCode: '100', debit: 0, credit: 5000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Müşteriden ticari alacağımız doğmuş ve mal satışı hasılatı elde edilmiştir.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Kira gideri oluştu ve kasadaki nakit paramız azaldı.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: 'Müşteriden senetsiz alacaklar "120 Alıcılar" (Aktif/Dönen Varlık); hasılat "600 Yurtiçi Satışlar" (Gelir) hesabında takip edilir.'
+            title: '2. Aşama: Hangi Hesap Kodları Kullanılır?',
+            content:
+              'Kira gideri için "770 Genel Yönetim Giderleri", nakit çıkış için "100 Kasa" kullanılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış ve Azalış Yönü',
-            content: 'Alacaklarımız arttığı için 120 Alıcılar BORÇ; gelir hesapları hasılat olduğunda daima ALACAK kaydedilir.'
+            title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+            content:
+              'Tüm gider hesapları doğduğunda daima BORÇ (770) yazılır; kasadan para çıktığı için 100 Kasa ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Yevmiye Maddesi',
-            content: '120 Alıcılar (Borç: 12.000 TL) / 600 Yurtiçi Satışlar (Alacak: 12.000 TL)'
-          }
-        ]
-      }
-    ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '770 Genel Yönetim Giderleri (Borç: 5.000 TL) / 100 Kasa (Alacak: 5.000 TL)',
+          },
+        ],
+      },
+    ],
   },
   {
-    id: 'gunes-dagitim-orta',
-    title: 'Güneş Ticaret A.Ş. - Duran Varlık & Senet İşlemleri',
+    id: 'anadolu-cek-kdv-orta',
+    title: 'Anadolu Ticaret A.Ş. - Çek Cirosu, POS ve KDV Uygulamaları',
     difficulty: 'Orta',
-    companyName: 'Güneş Ticaret A.Ş.',
-    establishedDate: '15.10.2026',
-    initialCapital: 150000,
-    description: 'Demirbaş alımı, banka kredisi çekimi, senetli alacak ve borç hareketlerini içeren orta seviye senaryo.',
+    companyName: 'Anadolu Ticaret A.Ş.',
+    establishedDate: '01.11.2026',
+    initialCapital: 200000,
+    description:
+      'Genel Muhasebe vize/final sınavlarında en çok sorulan KDV\'li alış/satış (191/391), çek keşidesi (103), müşteri çekinin satıcıya ciro edilmesi (101), kredi kartlı satış (108) ve ay sonu KDV mahsubu senaryosu.',
     learningObjectives: [
-      'Duran varlık alımlarının (255 Demirbaşlar) kaydedilmesi',
-      'Kısa vadeli banka kredisi kullanımının (300) muhasebeleştirilmesi',
-      'Müşteriden bono/senet alınması (121 Alacak Senetleri)',
-      'Satıcıya borç senedi keşide edilmesi (321 Borç Senetleri)',
-      'Bankadan elde edilen mevduat faiz gelirinin (642) kaydedilmesi',
+      'Mal alışında 191 İndirilecek KDV (Borç) ve satışta 391 Hesaplanan KDV (Alacak) ayrımı',
+      'Kendi çekimizi verdiğimizde 103 Verilen Çekler (-) hesabının alacaklandırılması',
+      'Müşteriden alınan çekin ciro edilmesinde 103 değil, 101 Alınan Çekler hesabının alacaklandırılması',
+      'Kredi kartı (POS) ile yapılan satışların 108 Diğer Hazır Değerler hesabında izlenmesi',
+      'Çek tahsilatında banka komisyon kesintisinin (653 Komisyon Giderleri) muhasebeleştirilmesi',
+      'Ay sonunda 391 Hesaplanan KDV ile 191 İndirilecek KDV\'nin mahsup edilmesi',
     ],
     transactions: [
       {
-        id: 'tx-g1',
+        id: 'tx-ck1',
         order: 1,
-        date: '15.10.2026',
-        title: 'Kuruluş Sermayesinin Bankaya Yatırılması',
-        description: 'İşletme 150.000 TL sermaye ile kurulmuş, sermayenin tamamı işletmenin banka mevduat hesabına yatırılmıştır.',
-        amount: 150000,
+        date: '01.11.2026',
+        title: 'Bileşik Sermaye ile Kuruluş (Kasa + Banka)',
+        description:
+          'Anadolu Ticaret A.Ş. 200.000 TL sermaye ile kurulmuştur. Ortaklar sermayenin 80.000 TL\'sini nakit olarak kasaya, 120.000 TL\'sini ise şirketin banka hesabına yatırmıştır.',
+        amount: 200000,
         expectedEntry: {
-          educationalNotes: 'Bankadaki mevduat arttığı için 102 Bankalar borçlandırılır; sermaye tahsis edildiği için 500 Sermaye alacaklandırılır.',
+          educationalNotes:
+            'Hem kasaya hem bankaya para girdiği için 100 Kasa ve 102 Bankalar borçlandırılır; toplam sermaye için 500 Sermaye alacaklandırılır.',
           lines: [
-            { accountCode: '102', debit: 150000, credit: 0 },
-            { accountCode: '500', debit: 0, credit: 150000 },
-          ]
+            { accountCode: '100', debit: 80000, credit: 0 },
+            { accountCode: '102', debit: 120000, credit: 0 },
+            { accountCode: '500', debit: 0, credit: 200000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Banka hesabı ve sermaye unsurları.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Kasaya 80.000 TL, bankaya 120.000 TL girdi; karşılığında 200.000 TL sermaye oluştu.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '102 Bankalar (Aktif), 500 Sermaye (Özkaynak/Pasif).'
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              '100 Kasa (Aktif), 102 Bankalar (Aktif) ve 500 Sermaye (Pasif/Öz Kaynak).',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Bankada artış (BORÇ), sermayede artış (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              'Kasa ve Banka varlıkları arttığı için BORÇ; Sermaye kaynağı arttığı için ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '102 Bankalar (B: 150.000) / 500 Sermaye (A: 150.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '100 Kasa (B: 80.000), 102 Bankalar (B: 120.000) / 500 Sermaye (A: 200.000)',
+          },
+        ],
       },
       {
-        id: 'tx-g2',
+        id: 'tx-ck2',
         order: 2,
-        date: '16.10.2026',
-        title: 'Büro Mobilyası ve Bilgisayar (Demirbaş) Alımı',
-        description: 'Ofis faaliyetlerinde kullanılmak üzere 20.000 TL tutarında masa ve bilgisayar (demirbaş) satın alınmış, bedeli bankadan ödenmiştir.',
-        amount: 20000,
+        date: '04.11.2026',
+        title: '%20 KDV\'li Mal Alışı ve Çek Keşide Edilmesi',
+        description:
+          'İşletme, 50.000 TL + %20 KDV (10.000 TL KDV, toplam 60.000 TL) tutarında ticari mal satın almıştır. Toplam 60.000 TL karşılığında satıcıya kendi çek defterinden çek düzenleyip (keşide edip) vermiştir.',
+        amount: 50000,
         expectedEntry: {
-          educationalNotes: 'Duran varlık alımı 255 Demirbaşlar hesabında borçlandırılır; bankadan ödendiği için 102 Bankalar alacaklandırılır.',
+          educationalNotes:
+            'Mal bedeli (50.000 TL) 153 Ticari Mallar hesabına, ödenen KDV (10.000 TL) 191 İndirilecek KDV hesabına BORÇ yazılır. Karşılığında kendi çekimizi verdiğimiz için 103 Verilen Çekler ve Ödeme Emirleri (-) hesabı 60.000 TL ALACAKLANDIRILIR.',
           lines: [
-            { accountCode: '255', debit: 20000, credit: 0 },
-            { accountCode: '102', debit: 0, credit: 20000 },
-          ]
+            { accountCode: '153', debit: 50000, credit: 0 },
+            { accountCode: '191', debit: 10000, credit: 0 },
+            { accountCode: '103', debit: 0, credit: 60000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Satılmak için değil kullanılmak için alınan duran varlık ve banka hesabı.'
+            title: '1. Aşama: KDV ve Toplam Tutarı Ayırma',
+            content:
+              'Malın KDV hariç bedeli 50.000 TL, %20 KDV\'si 10.000 TL\'dir. Satıcıya verilen çekin toplam tutarı 60.000 TL\'dir.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '255 Demirbaşlar (Duran Varlık/Aktif), 102 Bankalar (Dönen Varlık/Aktif).'
+            title: '2. Aşama: Alış KDV\'si Hangi Hesaba Yazılır?',
+            content:
+              'Mal alırken ödediğimiz KDV "191 İndirilecek KDV" hesabında izlenir ve mal bedeli (153) ile birlikte BORÇ yazılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Demirbaş arttı (BORÇ), banka azaldı (ALACAK).'
+            title: '3. Aşama: Verilen Çek Hangi Hesaba Yazılır?',
+            content:
+              'Kendi çekimizi düzenleyip verdiğimiz için "103 Verilen Çekler ve Ödeme Emirleri (-)" hesabı 60.000 TL ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '255 Demirbaşlar (B: 20.000) / 102 Bankalar (A: 20.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '153 Ticari Mallar (B: 50.000), 191 İndirilecek KDV (B: 10.000) / 103 Verilen Çekler (-) (A: 60.000)',
+          },
+        ],
       },
       {
-        id: 'tx-g3',
+        id: 'tx-ck3',
         order: 3,
-        date: '18.10.2026',
-        title: 'Kısa Vadeli Banka Kredisi Temini',
-        description: 'İşletme, ticari faaliyetlerini finanse etmek üzere bir bankadan 40.000 TL tutarında 6 ay vadeli nakit kredi çekmiş ve bu tutar banka hesabına aktarılmıştır.',
-        amount: 40000,
+        date: '08.11.2026',
+        title: '%20 KDV\'li Mal Satışı (Müşteri Çeki + Kredi Kartı POS)',
+        description:
+          'İşletme, müşteriye 80.000 TL + %20 KDV (16.000 TL KDV, toplam 96.000 TL) tutarında mal satmıştır. Müşteri toplam borcun 56.000 TL\'si için çek vermiş, kalan 40.000 TL\'yi ise kredi kartı (POS cihazı) ile ödemiştir.',
+        amount: 80000,
         expectedEntry: {
-          educationalNotes: 'Bankadaki para arttığı için 102 Bankalar borçlandırılır; kısa vadeli kredi borcu arttığı için 300 Banka Kredileri alacaklandırılır.',
+          educationalNotes:
+            'Müşteriden alınan çek (56.000 TL) 101 Alınan Çekler hesabına, kredi kartı POS slibi (40.000 TL) 108 Diğer Hazır Değerler hesabına BORÇ yazılır. KDV hariç satış hasılatı (80.000 TL) 600 Yurtiçi Satışlar hesabına, müşteriden alınan KDV (16.000 TL) 391 Hesaplanan KDV hesabına ALACAK yazılır.',
           lines: [
-            { accountCode: '102', debit: 40000, credit: 0 },
-            { accountCode: '300', debit: 0, credit: 40000 },
-          ]
+            { accountCode: '101', debit: 56000, credit: 0 },
+            { accountCode: '108', debit: 40000, credit: 0 },
+            { accountCode: '600', debit: 0, credit: 80000 },
+            { accountCode: '391', debit: 0, credit: 16000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Banka hesabındaki para ve bankaya olan kısa vadeli kredi borcu.'
+            title: '1. Aşama: Tahsilat Araçlarını Belirleme',
+            content:
+              'Müşteriden alınan 56.000 TL çek için "101 Alınan Çekler", kredi kartı (POS) ile çekilen 40.000 TL için "108 Diğer Hazır Değerler" kullanılır.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '102 Bankalar (Aktif), 300 Banka Kredileri (Pasif/Kısa Vadeli Yabancı Kaynak).'
+            title: '2. Aşama: Satış ve Satış KDV\'si Hesapları',
+            content:
+              'Satış geliri (80.000 TL) için "600 Yurtiçi Satışlar", satış üzerinden hesaplanan %20 KDV (16.000 TL) için "391 Hesaplanan KDV" kullanılır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Bankadaki para arttı (BORÇ), kredi borcumuz arttı (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              '101 ve 108 varlıklarımız arttığı için BORÇ (56.000 + 40.000 = 96.000); 600 satış geliri ve 391 KDV borcu ALACAK (80.000 + 16.000 = 96.000) yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '102 Bankalar (B: 40.000) / 300 Banka Kredileri (A: 40.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '101 Alınan Çekler (B: 56.000), 108 Diğer Hazır Değerler (B: 40.000) / 600 Yurtiçi Satışlar (A: 80.000), 391 Hesaplanan KDV (A: 16.000)',
+          },
+        ],
       },
       {
-        id: 'tx-g4',
+        id: 'tx-ck4',
         order: 4,
-        date: '20.10.2026',
-        title: 'Senet Karşılığı Ticari Mal Satışı',
-        description: 'İşletme, 25.000 TL tutarında ticari mal satmış; bedeli karşılığında müşteriden 60 gün vadeli senet (bono) almıştır.',
-        amount: 25000,
+        date: '12.11.2026',
+        title: 'Müşteri Çekinin Ciro Edilerek Mal Alınması (Sınav Sorusu!)',
+        description:
+          'İşletme, 30.000 TL tutarında (KDV hariç/ihmal edilmiş) yeni ticari mal satın almış; bedelini ödemek için kendi çekini yazmak yerine, daha önce müşteriden aldığı çeklerden 30.000 TL\'lik kısmını satıcıya CİRO etmiştir (devretmiştir).',
+        amount: 30000,
         expectedEntry: {
-          educationalNotes: 'Müşteriden senet alındığı için 121 Alacak Senetleri borçlandırılır; satış hasılatı gerçekleştiği için 600 Yurtiçi Satışlar alacaklandırılır.',
+          educationalNotes:
+            'Klasik Sınav Vurgusu: Müşteriden daha önce alınan bir çek başkasına CİRO edildiğinde kendi çekimiz olmadığı için ASLA 103 kullanılmaz! Çek cüzdanımızdan müşteri çeki çıktığı için "101 Alınan Çekler" hesabı ALACAKLANDIRILIR.',
           lines: [
-            { accountCode: '121', debit: 25000, credit: 0 },
-            { accountCode: '600', debit: 0, credit: 25000 },
-          ]
+            { accountCode: '153', debit: 30000, credit: 0 },
+            { accountCode: '101', debit: 0, credit: 30000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Müşteriden alınan senetli alacak ve satış geliri.'
+            title: '1. Aşama: "Çek Ciro Etmek" Ne Demektir?',
+            content:
+              'Ciro etmek, daha önce müşteriden alıp kasamızda (101 hesabında) tuttuğumuz çeki imzalayarak başka bir satıcıya vermektir.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '121 Alacak Senetleri (Aktif), 600 Yurtiçi Satışlar (Gelir).'
+            title: '2. Aşama: Sınav Tuzağı — 101 mi, 103 mü?',
+            content:
+              'Kendi çek defterimizden çek yazmadık! Cüzdanımızdaki müşteri çekini verdik. Bu yüzden "101 Alınan Çekler" hesabı azalır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Senetli alacak arttı (BORÇ), satış hasılatı doğdu (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              'Mal aldığımız için 153 Ticari Mallar BORÇ; elimizdeki müşteri çeki çıktığı için 101 Alınan Çekler ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '121 Alacak Senetleri (B: 25.000) / 600 Yurtiçi Satışlar (A: 25.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '153 Ticari Mallar (Borç: 30.000 TL) / 101 Alınan Çekler (Alacak: 30.000 TL)',
+          },
+        ],
       },
       {
-        id: 'tx-g5',
+        id: 'tx-ck5',
         order: 5,
-        date: '22.10.2026',
-        title: 'Senet Düzenlenerek Ticari Mal Alışı',
-        description: 'İşletme, satıcılardan 18.000 TL tutarında ticari mal satın almış; karşılığında satıcıya kendi düzenlediği bir borç senedi (bono) vermiştir.',
-        amount: 18000,
+        date: '16.11.2026',
+        title: 'Müşteri Çekinin Bankadan Komisyon Kesintili Tahsili',
+        description:
+          'İşletme, elinde kalan 26.000 TL tutarındaki müşteri çekini bankaya ibraz ederek tahsil etmiştir. Banka 1.000 TL tahsil komisyonu kestikten sonra kalan 25.000 TL\'yi işletmenin vadesiz mevduat hesabına yatırmıştır.',
+        amount: 26000,
         expectedEntry: {
-          educationalNotes: 'Mal stoku arttığı için 153 Ticari Mallar borçlandırılır; senetli borç doğduğu için 321 Borç Senetleri alacaklandırılır.',
+          educationalNotes:
+            'Bankaya net giren 25.000 TL için 102 Bankalar, kesilen 1.000 TL masraf için 653 Komisyon Giderleri (-) BORÇ yazılır; tahsil edilen 26.000 TL\'lik müşteri çeki 101 Alınan Çekler hesabından ALACAK yazılarak çıkarılır.',
           lines: [
-            { accountCode: '153', debit: 18000, credit: 0 },
-            { accountCode: '321', debit: 0, credit: 18000 },
-          ]
+            { accountCode: '102', debit: 25000, credit: 0 },
+            { accountCode: '653', debit: 1000, credit: 0 },
+            { accountCode: '101', debit: 0, credit: 26000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Ticari mal stoku ve işletmenin imzalayıp verdiği borç senedi.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              '26.000 TL\'lik müşteri çeki tahsil edildi (101 azaldı), bankanın kestiği 1.000 TL komisyon gideri oluştu ve banka hesabımıza net 25.000 TL geçti.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '153 Ticari Mallar (Aktif), 321 Borç Senetleri (Pasif/Kaynak).'
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              '102 Bankalar (Aktif), 653 Komisyon Giderleri (-) (Gider) ve 101 Alınan Çekler (Aktif).',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Ticari mal varlığı arttı (BORÇ), senetli borç arttı (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              'Bankaya giren para (102: 25.000) ve komisyon gideri (653: 1.000) BORÇ; elimizden çıkan müşteri çeki (101: 26.000) ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '153 Ticari Mallar (B: 18.000) / 321 Borç Senetleri (A: 18.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '102 Bankalar (B: 25.000), 653 Komisyon Giderleri (B: 1.000) / 101 Alınan Çekler (A: 26.000)',
+          },
+        ],
       },
       {
-        id: 'tx-g6',
+        id: 'tx-ck6',
         order: 6,
-        date: '25.10.2026',
-        title: 'Bankadan Mevduat Faiz Geliri Elde Edilmesi',
-        description: 'İşletmenin bankadaki mevduat hesabına 3.000 TL brüt faiz tahakkuk etmiş ve bu tutar doğrudan banka hesabına ilave edilmiştir.',
-        amount: 3000,
+        date: '22.11.2026',
+        title: 'Keşide Ettiğimiz Çekin (103) Bankadan Ödenmesi',
+        description:
+          '2. işlemde mal alırken satıcıya keşide edip verdiğimiz 60.000 TL tutarındaki çekin vadesi gelmiş ve işletmenin banka mevduat hesabından ödenmiştir.',
+        amount: 60000,
         expectedEntry: {
-          educationalNotes: 'Bankadaki paramız arttığı için 102 Bankalar borçlandırılır; gelir doğduğu için 642 Faiz Gelirleri alacaklandırılır.',
+          educationalNotes:
+            'Kendi verdiğimiz çek ödendiğinde 103 Verilen Çekler ve Ödeme Emirleri (-) hesabı BORÇLANDIRILARAK kapatılır; ödeme banka hesabımızdan yapıldığı için 102 Bankalar alacaklandırılır.',
           lines: [
-            { accountCode: '102', debit: 3000, credit: 0 },
-            { accountCode: '642', debit: 0, credit: 3000 },
-          ]
+            { accountCode: '103', debit: 60000, credit: 0 },
+            { accountCode: '102', debit: 0, credit: 60000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Banka hesabı ve faiz geliri.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              '2. işlemde verdiğimiz 60.000 TL\'lik çek bankadaki hesabımızdan ödendi.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '102 Bankalar (Aktif), 642 Faiz Gelirleri (Gelir Tablosu Gelir).'
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              '103 Verilen Çekler ve Ödeme Emirleri (-) ile 102 Bankalar.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Bankada artış (BORÇ), gelir hesapları kural gereği hasılat doğduğunda (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              'Verilen çek kapandığı için 103 BORÇ (60.000 TL); bankadaki paramız azaldığı için 102 Bankalar ALACAK (60.000 TL) yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '102 Bankalar (B: 3.000) / 642 Faiz Gelirleri (A: 3.000)'
-          }
-        ]
-      }
-    ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '103 Verilen Çekler ve Ödeme Emirleri (-) (B: 60.000) / 102 Bankalar (A: 60.000)',
+          },
+        ],
+      },
+      {
+        id: 'tx-ck7',
+        order: 7,
+        date: '30.11.2026',
+        title: 'Ay Sonu KDV Mahsup (Tahakkuk) Kaydı',
+        description:
+          'Ay sonunda KDV hesapları karşılaştırılmıştır: Dönem içinde müşterilerden tahsil edilen 391 Hesaplanan KDV toplamı 16.000 TL, mal alırken ödenen 191 İndirilecek KDV toplamı 10.000 TL\'dir. Aradaki 6.000 TL\'lik ödenecek KDV farkı tahakkuk ettirilmiştir.',
+        amount: 16000,
+        expectedEntry: {
+          educationalNotes:
+            'Ay sonu KDV mahsubunda: 391 Hesaplanan KDV (16.000 TL) BORÇ yazılarak, 191 İndirilecek KDV (10.000 TL) ALACAK yazılarak kapatılır. 391 > 191 olduğu için aradaki 6.000 TL fark devlete ödenecek vergi borcu olarak 360 Ödenecek Vergi ve Fonlar hesabına ALACAK yazılır.',
+          lines: [
+            { accountCode: '391', debit: 16000, credit: 0 },
+            { accountCode: '191', debit: 0, credit: 10000 },
+            { accountCode: '360', debit: 0, credit: 6000 },
+          ],
+        },
+        hints: [
+          {
+            level: 1,
+            title: '1. Aşama: KDV Mahsubu Mantığı Nedir?',
+            content:
+              'Satışlarda topladığımız KDV\'den (391: 16.000 TL), alışlarda ödediğimiz KDV\'yi (191: 10.000 TL) düşeriz. Kalan 6.000 TL\'yi devlete öderiz.',
+          },
+          {
+            level: 2,
+            title: '2. Aşama: 391 ve 191 Nasıl Kapatılır?',
+            content:
+              'Normalde Alacak çalışan 391 Hesaplanan KDV kapatmak için BORÇ (16.000 TL); normalde Borç çalışan 191 İndirilecek KDV kapatmak için ALACAK (10.000 TL) yazılır.',
+          },
+          {
+            level: 3,
+            title: '3. Aşama: Aradaki 6.000 TL Fark Nereye Yazılır?',
+            content:
+              'Tahsil ettiğimiz KDV daha fazla olduğu için devlete 6.000 TL vergi borcumuz doğmuştur: "360 Ödenecek Vergi ve Fonlar" hesabına ALACAK yazılır.',
+          },
+          {
+            level: 4,
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '391 Hesaplanan KDV (B: 16.000) / 191 İndirilecek KDV (A: 10.000), 360 Ödenecek Vergi ve Fonlar (A: 6.000)',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'marmara-endustri-ileri',
-    title: 'Marmara Endüstri A.Ş. - Karma (Bileşik) Maddeler',
+    title: 'Marmara Endüstri A.Ş. - Senetler, Satış Maliyeti (621) ve Amortisman',
     difficulty: 'İleri',
     companyName: 'Marmara Endüstri A.Ş.',
-    establishedDate: '01.11.2026',
-    initialCapital: 200000,
-    description: 'Birden fazla borç ve alacak satırı içeren bileşik yevmiye maddeleri, taşıt alımı ve karma ödemeli işlemleri kapsayan ileri seviye senaryo.',
+    establishedDate: '01.12.2026',
+    initialCapital: 250000,
+    description:
+      'Senetli alış-satış (121/321), duran varlık alımı (254 Taşıtlar), satılan ticari malların maliyet kaydı (621 STMM), müşteri satış iadesi (610) ve dönem sonu amortisman (257) işlemlerini kapsayan ileri seviye sınav provası.',
     learningObjectives: [
-      'Bileşik (karma) yevmiye maddesi oluşturma yeteneği',
-      'Kuruluşta hem nakit hem banka mevduatının birlikte kaydedilmesi',
-      'Taşıt alımında kısmi nakit, kısmi vadeli ödeme kaydı',
-      'Satışta kısmi peşin, kısmi senetli tahsilat modeli',
+      'Taşıt alımında kısmi banka, kısmi senetli (321 Borç Senetleri) bileşik kayıt',
+      'Senet karşılığı satışta 121 Alacak Senetleri hesabının kullanımı',
+      'Satılan malın stoktan çıkış maliyetinin 621 Satılan Ticari Mallar Maliyeti (-) ve 153 Ticari Mallar ile kaydedilmesi',
+      'Müşteri mal iadesinde 600 yerine 610 Satıştan İadeler (-) hesabının borçlandırılması',
+      'Dönem sonunda duran varlıklar için 257 Birikmiş Amortismanlar (-) ayrılması',
     ],
     transactions: [
       {
         id: 'tx-m1',
         order: 1,
-        date: '01.11.2026',
-        title: 'Bileşik Sermaye Kuruluşu (Kasa + Banka)',
-        description: 'İşletme 200.000 TL sermaye ile kurulmuştur. Ortaklar sermayenin 80.000 TL\'sini nakit olarak kasaya, 120.000 TL\'sini ise şirketin banka mevduat hesabına yatırmıştır.',
-        amount: 200000,
+        date: '01.12.2026',
+        title: 'Bileşik Sermaye Kuruluşu (Kasa + Banka + Ticari Mal)',
+        description:
+          'Marmara Endüstri A.Ş. toplam 250.000 TL sermaye ile kurulmuştur. Ortaklar 50.000 TL nakit para, 120.000 TL banka mevduatı ve 80.000 TL değerinde ticari mal koyarak taahhütlerini yerine getirmiştir.',
+        amount: 250000,
         expectedEntry: {
-          educationalNotes: 'Kasaya ve bankaya aynı anda para girdiği için iki aktif hesap birden borçlandırılır; toplam sermaye için 500 Sermaye alacaklandırılır.',
+          educationalNotes:
+            'İşletmeye konulan nakit (100), banka mevduatı (102) ve ticari mal (153) varlıkları borçlandırılır; toplam kuruluş sermayesi için 500 Sermaye alacaklandırılır.',
           lines: [
-            { accountCode: '100', debit: 80000, credit: 0 },
+            { accountCode: '100', debit: 50000, credit: 0 },
             { accountCode: '102', debit: 120000, credit: 0 },
-            { accountCode: '500', debit: 0, credit: 200000 },
-          ]
+            { accountCode: '153', debit: 80000, credit: 0 },
+            { accountCode: '500', debit: 0, credit: 250000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Kasa, Banka ve Sermaye (üç farklı hesap etkilenmektedir).'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Kasa (50.000), Banka (120.000) ve Ticari Mallar (80.000) olmak üzere üç varlık arttı; karşılığında 250.000 TL Sermaye oluştu.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '100 Kasa (Aktif), 102 Bankalar (Aktif), 500 Sermaye (Özkaynak/Pasif).'
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              '100 Kasa, 102 Bankalar, 153 Ticari Mallar (üçü de Aktif) ve 500 Sermaye (Pasif).',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Kasada ve bankada artış (ikisi de BORÇ), sermayede artış (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              'Artan tüm varlıklar (100, 102, 153) BORÇ; artan sermaye (500) ALACAK yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '100 Kasa (B: 80.000) ve 102 Bankalar (B: 120.000) / 500 Sermaye (A: 200.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '100 Kasa (B: 50.000), 102 Bankalar (B: 120.000), 153 Ticari Mallar (B: 80.000) / 500 Sermaye (A: 250.000)',
+          },
+        ],
       },
       {
         id: 'tx-m2',
         order: 2,
-        date: '03.11.2026',
-        title: 'Hizmet Taşıtı Alımı (Kısmi Banka, Kısmi Satıcı)',
-        description: 'İşletme faaliyetlerinde kullanılmak üzere 60.000 TL değerinde bir taşıt satın alınmıştır. Bedelinin 30.000 TL\'si bankadan havale ile ödenmiş, kalan 30.000 TL için satıcıya borçlanılmıştır.',
+        date: '05.12.2026',
+        title: 'Dağıtım Taşıtı Alımı (Kısmi Banka, Kısmi Borç Senedi)',
+        description:
+          'İşletme, sevkiyatlarda kullanmak üzere 60.000 TL değerinde bir ticari araç satın almıştır. Bedelin 20.000 TL\'si bankadan havale edilmiş, kalan 40.000 TL için satıcıya senet (bono) imzalanıp verilmiştir.',
         amount: 60000,
         expectedEntry: {
-          educationalNotes: 'Taşıt duran varlığı 254 Taşıtlar hesabında borçlandırılır; bankadaki azalış 102 Bankalar ve satıcıya borç 320 Satıcılar hesaplarında alacaklandırılır.',
+          educationalNotes:
+            'Alınan araç duran varlık olduğu için 254 Taşıtlar borçlandırılır; bankadan çıkan 20.000 TL için 102 Bankalar ve verilen senet için 321 Borç Senetleri alacaklandırılır.',
           lines: [
             { accountCode: '254', debit: 60000, credit: 0 },
-            { accountCode: '102', debit: 0, credit: 30000 },
-            { accountCode: '320', debit: 0, credit: 30000 },
-          ]
+            { accountCode: '102', debit: 0, credit: 20000 },
+            { accountCode: '321', debit: 0, credit: 40000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Taşıt varlığı, banka mevduatı ve satıcıya olan senetsiz borç.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              '60.000 TL değerinde taşıt alındı, bankadan 20.000 TL çıktı ve 40.000 TL senetli borç doğdu.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '254 Taşıtlar (Duran Varlık/Aktif), 102 Bankalar (Aktif), 320 Satıcılar (Pasif).'
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              '254 Taşıtlar (Duran Varlık), 102 Bankalar (Dönen Varlık), 321 Borç Senetleri (Pasif).',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Taşıt arttı (BORÇ), banka azaldı (ALACAK), satıcı borcu arttı (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              'Taşıt arttığı için 254 BORÇ (60.000); banka azaldığı için 102 ALACAK (20.000) ve senet borcu arttığı için 321 ALACAK (40.000).',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '254 Taşıtlar (B: 60.000) / 102 Bankalar (A: 30.000), 320 Satıcılar (A: 30.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '254 Taşıtlar (B: 60.000) / 102 Bankalar (A: 20.000), 321 Borç Senetleri (A: 40.000)',
+          },
+        ],
       },
       {
         id: 'tx-m3',
         order: 3,
-        date: '06.11.2026',
-        title: 'Ticari Mal Satışı (Kısmi Nakit, Kısmi Senetli)',
-        description: 'İşletme, 50.000 TL tutarında mal satmıştır. Müşteri 20.000 TL\'sini nakit ödemiş, kalan 30.000 TL için 90 gün vadeli senet (bono) vermiştir.',
-        amount: 50000,
+        date: '10.12.2026',
+        title: 'Senet Karşılığı Ticari Mal Satışı (Hasılat Kaydı)',
+        description:
+          'İşletme, müşteriye 70.000 TL tutarında ticari mal satmış ve karşılığında müşteriden 60 gün vadeli alacak senedi (bono) teslim almıştır.',
+        amount: 70000,
         expectedEntry: {
-          educationalNotes: 'Nakit giriş için 100 Kasa, senet için 121 Alacak Senetleri borçlandırılır; toplam satış için 600 Yurtiçi Satışlar alacaklandırılır.',
+          educationalNotes:
+            'Müşteriden senet alındığı için 121 Alacak Senetleri borçlandırılır; satış hasılatı doğduğu için 600 Yurtiçi Satışlar alacaklandırılır.',
           lines: [
-            { accountCode: '100', debit: 20000, credit: 0 },
-            { accountCode: '121', debit: 30000, credit: 0 },
-            { accountCode: '600', debit: 0, credit: 50000 },
-          ]
+            { accountCode: '121', debit: 70000, credit: 0 },
+            { accountCode: '600', debit: 0, credit: 70000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Nakit para (Kasa), müşteri senedi (Alacak Senetleri) ve satış hasılatı.'
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content:
+              'Senetli alacağımız arttı ve 70.000 TL satış geliri doğdu.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '100 Kasa (Aktif), 121 Alacak Senetleri (Aktif), 600 Yurtiçi Satışlar (Gelir).'
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              '121 Alacak Senetleri (Aktif) ve 600 Yurtiçi Satışlar (Gelir).',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Kasaya para girdi (BORÇ), senetli alacak arttı (BORÇ), satış hasılatı doğdu (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              '121 Alacak Senetleri BORÇ (70.000 TL); 600 Yurtiçi Satışlar ALACAK (70.000 TL).',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '100 Kasa (B: 20.000) ve 121 Alacak Senetleri (B: 30.000) / 600 Yurtiçi Satışlar (A: 50.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '121 Alacak Senetleri (B: 70.000) / 600 Yurtiçi Satışlar (A: 70.000)',
+          },
+        ],
       },
       {
         id: 'tx-m4',
         order: 4,
-        date: '08.11.2026',
-        title: 'Satıcıya Olan Senetsiz Borcun Senede Bağlanması',
-        description: 'İşletme, satıcılara olan 30.000 TL\'lik senetsiz borcunun 15.000 TL\'lik kısmı için satıcıya 60 gün vadeli borç senedi düzenleyip vermiştir.',
-        amount: 15000,
+        date: '10.12.2026',
+        title: 'Satılan Ticari Malların Maliyet Kaydı (621 STMM)',
+        description:
+          'Bir önceki işlemde 70.000 TL\'ye satılan ticari malların işletmeye olan alış (depo çıkış) maliyetinin 45.000 TL olduğu tespit edilmiş ve stoktan düşülmüştür.',
+        amount: 45000,
         expectedEntry: {
-          educationalNotes: 'Senetsiz borç azaldığı için 320 Satıcılar borçlandırılır; senetli borç arttığı için 321 Borç Senetleri alacaklandırılır (Pasif içi değişim).',
+          educationalNotes:
+            'Devamlı envanter / maliyet kaydında: Satılan malın alış maliyeti kadar "621 Satılan Ticari Mallar Maliyeti (-)" hesabı BORÇLANDIRILIR; depodan mal çıktığı için "153 Ticari Mallar" hesabı ALACAKLANDIRILIR.',
           lines: [
-            { accountCode: '320', debit: 15000, credit: 0 },
-            { accountCode: '321', debit: 0, credit: 15000 },
-          ]
+            { accountCode: '621', debit: 45000, credit: 0 },
+            { accountCode: '153', debit: 0, credit: 45000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Satıcıya olan veresiye borç ve imzalanan borç senedi (iki pasif kaynak).'
+            title: '1. Aşama: Maliyet Kaydı Neden Yapılır?',
+            content:
+              'Mal sattığımızda depodaki malımız (153) azalır ve satılan malın alış bedeli kadar bir maliyet gideri (621) oluşur.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '320 Satıcılar (Pasif), 321 Borç Senetleri (Pasif).'
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              '"621 Satılan Ticari Mallar Maliyeti (-)" (Maliyet/Gider) ve "153 Ticari Mallar" (Varlık/Stok).',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Senetsiz borç azaldı (BORÇ), senetli borç arttı (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              'Maliyet/gider hesabı olan 621 daima BORÇ (45.000 TL); depodan çıkan malı gösteren 153 Ticari Mallar ALACAK (45.000 TL) yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '320 Satıcılar (B: 15.000) / 321 Borç Senetleri (A: 15.000)'
-          }
-        ]
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '621 Satılan Ticari Mallar Maliyeti (-) (B: 45.000) / 153 Ticari Mallar (A: 45.000)',
+          },
+        ],
       },
       {
         id: 'tx-m5',
         order: 5,
-        date: '10.11.2026',
-        title: 'Banka Aracılığıyla Genel İdare ve İletişim Gideri Ödemesi',
-        description: 'İşletmenin aylık internet, telefon ve kırtasiye idari giderleri karşılığı olan 6.000 TL işletmenin banka mevduat hesabından havale ile ödenmiştir.',
-        amount: 6000,
+        date: '15.12.2026',
+        title: 'Müşterinin Sattığımız Malın Bir Kısmını İade Etmesi (610)',
+        description:
+          'Müşteri, daha önce satın aldığı mallardan 10.000 TL\'lik kısmını standartlara uymadığı gerekçesiyle işletmeye iade etmiştir. İade tutarı müşterinin senetli borcundan düşülmüştür.',
+        amount: 10000,
         expectedEntry: {
-          educationalNotes: 'Dönem içi gider gerçekleştiği için 770 Genel Yönetim Giderleri borçlandırılır; bankadaki para çıktığı için 102 Bankalar alacaklandırılır.',
+          educationalNotes:
+            'Sınav Kuralı: Satılan mal müşteri tarafından iade edildiğinde 600 Yurtiçi Satışlar hesabı doğrudan borçlandırılmaz! Bunun yerine "610 Satıştan İadeler (-)" hesabı BORÇ yazılır, müşterinin senetli alacağı azaldığı için "121 Alacak Senetleri" ALACAK yazılır.',
           lines: [
-            { accountCode: '770', debit: 6000, credit: 0 },
-            { accountCode: '102', debit: 0, credit: 6000 },
-          ]
+            { accountCode: '610', debit: 10000, credit: 0 },
+            { accountCode: '121', debit: 0, credit: 10000 },
+          ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Etkilenen Unsurlar',
-            content: 'Genel yönetim gideri ve banka mevduatı.'
+            title: '1. Aşama: Satış İadesinde Hangi Hesap Kullanılır?',
+            content:
+              'Müşteri mal iade ettiğinde 600 hesabına dokunulmaz; brüt satışı düzeltmek için "610 Satıştan İadeler (-)" hesabı kullanılır.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hesap Karakterleri',
-            content: '770 Genel Yönetim Giderleri (Gider), 102 Bankalar (Aktif).'
+            title: '2. Aşama: Karşı Hesap Nedir?',
+            content:
+              'İade bedeli müşterinin senetli borcundan düşüldüğü için "121 Alacak Senetleri" azalır.',
           },
           {
             level: 3,
-            title: '3. Aşama: Artış/Azalış Yönü',
-            content: 'Gider ortaya çıktı (BORÇ), banka mevduatı azaldı (ALACAK).'
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              '610 Satıştan İadeler (-) gelir azaltıcı (gider karakterli) olduğu için BORÇ (10.000 TL); 121 Alacak Senetleri azaldığı için ALACAK (10.000 TL) yazılır.',
           },
           {
             level: 4,
-            title: '4. Aşama: Nihai Kayıt',
-            content: '770 Genel Yönetim Giderleri (B: 6.000) / 102 Bankalar (A: 6.000)'
-          }
-        ]
-      }
-    ]
-  }
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '610 Satıştan İadeler (-) (B: 10.000) / 121 Alacak Senetleri (A: 10.000)',
+          },
+        ],
+      },
+      {
+        id: 'tx-m6',
+        order: 6,
+        date: '31.12.2026',
+        title: 'Dönem Sonu Taşıt Amortisman (Yıpranma Payı) Kaydı',
+        description:
+          'Dönem sonunda işletmenin yönetim ve sevkiyat faaliyetlerinde kullanılan 60.000 TL değerindeki taşıt için %20 oranında (12.000 TL) yıllık amortisman (yıpranma payı) ayrılmıştır.',
+        amount: 12000,
+        expectedEntry: {
+          educationalNotes:
+            'Amortisman gideri için 770 Genel Yönetim Giderleri BORÇ yazılır; duran varlığın değer azalışını izleyen düzenleyici hesap "257 Birikmiş Amortismanlar (-)" ise ALACAK yazılır.',
+          lines: [
+            { accountCode: '770', debit: 12000, credit: 0 },
+            { accountCode: '257', debit: 0, credit: 12000 },
+          ],
+        },
+        hints: [
+          {
+            level: 1,
+            title: '1. Aşama: Amortisman Nedir?',
+            content:
+              'Taşıt, bina, demirbaş gibi duran varlıkların yıl sonunda eskime payının gider yazılmasıdır.',
+          },
+          {
+            level: 2,
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content:
+              'Gider tarafı için "770 Genel Yönetim Giderleri", biriken yıpranma payı için "257 Birikmiş Amortismanlar (-)" kullanılır (254 Taşıtlar hesabından doğrudan düşülmez!).',
+          },
+          {
+            level: 3,
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content:
+              '770 Genel Yönetim Giderleri BORÇ (12.000 TL); aktifi düzenleyen pasif hesap olan 257 Birikmiş Amortismanlar (-) ALACAK (12.000 TL) yazılır.',
+          },
+          {
+            level: 4,
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content:
+              '770 Genel Yönetim Giderleri (B: 12.000) / 257 Birikmiş Amortismanlar (-) (A: 12.000)',
+          },
+        ],
+      },
+    ],
+  },
 ];

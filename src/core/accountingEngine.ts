@@ -166,7 +166,7 @@ export function deriveBalanceSheet(ledgerAccounts: LedgerAccount[], date: string
     const accDef = ACCOUNTS_MAP[acc.accountCode];
     const accClass = accDef ? accDef.accountClass : (parseInt(acc.accountCode[0]) as AccountClass);
 
-    // Gelir hesapları (6 grubu gelir karakterli)
+    // Gelir tablosu hesapları (6 grubu gelir ve gider/maliyet karakterli)
     if (accClass === 6) {
       if (accDef?.nature === 'GELIR') {
         totalRevenue += (acc.totalCredit - acc.totalDebit);
@@ -174,7 +174,7 @@ export function deriveBalanceSheet(ledgerAccounts: LedgerAccount[], date: string
         totalExpense += (acc.totalDebit - acc.totalCredit);
       }
     } else if (accClass === 7) {
-      // 7 grubu gider hesapları (örn: 770)
+      // 7 grubu gider hesapları (örn: 760, 770, 780)
       totalExpense += (acc.totalDebit - acc.totalCredit);
     }
   });
@@ -182,6 +182,8 @@ export function deriveBalanceSheet(ledgerAccounts: LedgerAccount[], date: string
   const netIncome = totalRevenue - totalExpense;
 
   ledgerAccounts.forEach((acc) => {
+    if (acc.balance === 0 || acc.balanceDirection === 'DENK') return;
+
     const accDef = ACCOUNTS_MAP[acc.accountCode];
     const accClass = accDef ? accDef.accountClass : (parseInt(acc.accountCode[0]) as AccountClass);
 
@@ -189,23 +191,19 @@ export function deriveBalanceSheet(ledgerAccounts: LedgerAccount[], date: string
     if (accClass >= 1 && accClass <= 5) {
       let netAmount = 0;
 
-      // Aktif karakterli hesap veya düzenleyici pasif
-      if (acc.balanceDirection === 'BORC') {
-        netAmount = acc.balance;
-      } else if (acc.balanceDirection === 'ALACAK') {
-        netAmount = acc.balance;
+      if (accClass === 1 || accClass === 2) {
+        // Aktif tarafı (1 ve 2 grubu):
+        // Normal aktif hesaplar BORÇ bakiyesi verir (+), ters bakiye (ALACAK) verirse (-) olur.
+        // Aktifi düzenleyen pasif hesaplar (103, 257) ALACAK bakiyesi verir ve bilançoda (-) olarak düşülür.
+        netAmount = acc.balanceDirection === 'BORC' ? acc.balance : -acc.balance;
+      } else {
+        // Pasif tarafı (3, 4 ve 5 grubu):
+        // Normal pasif hesaplar ALACAK bakiyesi verir (+), ters bakiye (BORÇ) verirse (-) olur.
+        // Pasifi düzenleyen aktif hesaplar (591) BORÇ bakiyesi verir ve bilançoda (-) olarak düşülür.
+        netAmount = acc.balanceDirection === 'ALACAK' ? acc.balance : -acc.balance;
       }
 
-      // Aktifi düzenleyen pasif hesaplar eksi (-) olarak aktife girer (örn: 103, 257)
-      if (accDef?.nature === 'DUZENLEYICI_AKTIF') {
-        netAmount = -acc.balance;
-      }
-      // Pasifi düzenleyen aktif hesaplar eksi (-) olarak pasife girer (örn: 591)
-      if (accDef?.nature === 'DUZENLEYICI_PASIF') {
-        netAmount = -acc.balance;
-      }
-
-      if (netAmount !== 0) {
+      if (Math.abs(netAmount) > 0.001) {
         const item: BalanceSheetItem = {
           code: acc.accountCode,
           name: acc.accountName,

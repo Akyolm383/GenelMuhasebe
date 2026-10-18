@@ -7,8 +7,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 1,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'İşletmenin elinde bulunan nakit Türk Lirası ve yabancı para mevcudunu izler.',
-    ruleExplanation: 'Aktif hesap: Kasaya para girişi olduğunda BORÇ, kasadan para çıkışı olduğunda ALACAK kaydedilir. Asla alacak bakiyesi vermez.'
+    description: 'İşletmenin kasasında bulunan nakit parayı (kağıt ve madeni para) izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Kasaya nakit para girdiğinde BORÇ (sol), kasadan para çıktığında ALACAK (sağ) yazılır. Kasada olmayan para harcanamayacağı için asla alacak bakiyesi vermez.'
   },
   '101': {
     code: '101',
@@ -16,8 +16,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 1,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'İşletmenin mal/hizmet satışı karşılığında veya alacak tahsilatında aldığı müşteri çeklerini izler.',
-    ruleExplanation: 'Aktif hesap: Müşteriden çek alındığında BORÇ, çek tahsil edildiğinde veya ciro edildiğinde ALACAK kaydedilir.'
+    description: 'Müşterilerden mal satışı veya alacak tahsilatı karşılığında teslim alınan çekleri izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Müşteriden çek alındığında BORÇ yazılır; çek bankadan tahsil edildiğinde veya bir satıcıya ciro edildiğinde ALACAK yazılır.'
   },
   '102': {
     code: '102',
@@ -25,8 +25,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 1,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'İşletmenin bankalardaki vadesiz ve vadeli mevduat hesaplarını izler.',
-    ruleExplanation: 'Aktif hesap: Bankadaki mevduat arttığında (para yatırıldığında/havale geldiğinde) BORÇ, hesaptan para çekildiğinde veya transfer yapıldığında ALACAK kaydedilir.'
+    description: 'İşletmenin bankalardaki vadesiz ve vadeli mevduat hesaplarında bulunan parasını izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Banka hesabına para yatırıldığında veya havale geldiğinde BORÇ, hesaptan para çekildiğinde veya ödeme yapıldığında ALACAK yazılır.'
   },
   '103': {
     code: '103',
@@ -34,8 +34,17 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 1,
     nature: 'DUZENLEYICI_AKTIF',
     normalBalance: 'ALACAK',
-    description: 'İşletmenin üçüncü kişilere verdiği çekleri izler. Aktifi düzenleyen pasif karakterli hesaptır.',
-    ruleExplanation: 'Aktif düzenleyici (Pasif karakterli): Çek keşide edildiğinde (verildiğinde) ALACAK, bankadan ödendiğinde BORÇ kaydedilir.'
+    description: 'İşletmenin kendi banka çek defterinden satıcılara düzenleyip (keşide edip) verdiği çekleri izler. Sonunda (-) işareti bulunan Aktifi Düzenleyen Pasif karakterli hesaptır.',
+    ruleExplanation: 'Sınav Kuralı (Aktifi Düzenleyen Pasif Hesap): Kodu 1 ile başlamasına rağmen sonunda (-) işareti olduğu için pasif gibi çalışır! Kendi çekimizi imzalayıp verdiğimizde (keşide ettiğimizde) ALACAK, çek bankamızdan ödendiğinde BORÇ yazılır.'
+  },
+  '108': {
+    code: '108',
+    name: 'Diğer Hazır Değerler',
+    accountClass: 1,
+    nature: 'AKTIF',
+    normalBalance: 'BORC',
+    description: 'Kredi kartı slipleri (POS cihazı ile yapılan satış alacakları), vadesi gelmiş kuponlar ve pulları izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Müşteriye kredi kartı (POS) ile satış yapıldığında BORÇ, banka POS tutarını hesabımıza geçirdiğinde ALACAK yazılır.'
   },
   '120': {
     code: '120',
@@ -43,8 +52,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 1,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'Müşterilere senetsiz (veresiye) mal veya hizmet satışından doğan ticari alacakları izler.',
-    ruleExplanation: 'Aktif hesap: Müşteriye veresiye mal satıldığında (alacağımız arttığında) BORÇ, müşteri borcunu ödediğinde ALACAK kaydedilir.'
+    description: 'Müşterilere veresiye (açık hesap / senetsiz) mal veya hizmet satışından doğan alacakları izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Müşteriye veresiye mal satıldığında (alacağımız arttığında) BORÇ, müşteri borcunu ödediğinde ALACAK yazılır.'
   },
   '121': {
     code: '121',
@@ -52,8 +61,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 1,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'Ticari faaliyet sonucu müşterilerden alınan senetli (bono/poliçe) alacakları izler.',
-    ruleExplanation: 'Aktif hesap: Senet alındığında BORÇ, senet vadesinde tahsil edildiğinde ALACAK kaydedilir.'
+    description: 'Müşterilerden mal satışı veya alacak karşılığında alınan senetleri (bono/poliçe) izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Müşteriden senet alındığında BORÇ, senet tahsil edildiğinde veya başkasına ciro edildiğinde ALACAK yazılır.'
   },
   '153': {
     code: '153',
@@ -61,8 +70,26 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 1,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'Üzerinde herhangi bir değişiklik yapılmadan satılmak amacıyla alınan malları izler.',
-    ruleExplanation: 'Aktif hesap: Ticari mal satın alındığında (stok arttığında) BORÇ, mal satıldığında veya iade edildiğinde ALACAK kaydedilir.'
+    description: 'Üzerinde değişiklik yapılmadan satılmak amacıyla satın alınan malları (stokları) izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Mal satın alındığında (veya alış için nakliye ödenmesinde) BORÇ, mal iade edildiğinde veya satılan malın maliyeti düşüldüğünde ALACAK yazılır.'
+  },
+  '190': {
+    code: '190',
+    name: 'Devreden KDV',
+    accountClass: 1,
+    nature: 'AKTIF',
+    normalBalance: 'BORC',
+    description: 'Ay sonunda İndirilecek KDV (191) toplamı, Hesaplanan KDV (391) toplamından büyük olduğunda sonraki aya devreden KDV alacağını izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Ay sonu KDV mahsubunda 191 > 391 ise aradaki fark sonraki ayda indirilmek üzere 190 Devreden KDV hesabına BORÇ yazılır.'
+  },
+  '191': {
+    code: '191',
+    name: 'İndirilecek KDV',
+    accountClass: 1,
+    nature: 'AKTIF',
+    normalBalance: 'BORC',
+    description: 'İşletmenin mal veya hizmet satın alırken ya da gider yaparken satıcıya ödediği Katma Değer Vergisini izler.',
+    ruleExplanation: 'Varlık (Aktif) hesabıdır: Mal/hizmet alışında veya gider faturasında KDV ödendiğinde BORÇ yazılır; ay sonunda KDV mahsubu yapılırken ALACAK yazılarak kapatılır.'
   },
   '254': {
     code: '254',
@@ -70,8 +97,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 2,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'İşletme faaliyetlerinde kullanılan otomobil, kamyonet vb. tüm motorlu taşıtları izler.',
-    ruleExplanation: 'Duran varlık (Aktif): Taşıt satın alındığında BORÇ, taşıt satıldığında veya hurdaya ayrıldığında ALACAK kaydedilir.'
+    description: 'İşletme faaliyetlerinde kullanılan otomobil, kamyonet, servis aracı gibi tüm taşıtları izler.',
+    ruleExplanation: 'Duran Varlık (Aktif) hesabıdır: Taşıt satın alındığında BORÇ, taşıt satıldığında ALACAK yazılır.'
   },
   '255': {
     code: '255',
@@ -79,8 +106,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 2,
     nature: 'AKTIF',
     normalBalance: 'BORC',
-    description: 'İşletme faaliyetlerinin yürütülmesinde kullanılan masa, bilgisayar, raf vb. büro malzemelerini izler.',
-    ruleExplanation: 'Duran varlık (Aktif): Demirbaş satın alındığında BORÇ, elden çıkarıldığında ALACAK kaydedilir.'
+    description: 'Ofiste ve mağazada kullanılan masa, koltuk, bilgisayar, yazıcı, klima gibi uzun ömürlü eşyaları izler.',
+    ruleExplanation: 'Duran Varlık (Aktif) hesabıdır: Demirbaş satın alındığında BORÇ, satıldığında veya hurdaya ayrıldığında ALACAK yazılır.'
   },
   '257': {
     code: '257',
@@ -88,8 +115,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 2,
     nature: 'DUZENLEYICI_AKTIF',
     normalBalance: 'ALACAK',
-    description: 'Maddi duran varlıkların kullanım süresi boyunca ayrılan yıpranma paylarını izler.',
-    ruleExplanation: 'Aktif düzenleyici: Dönem sonunda amortisman ayrıldığında ALACAK kaydedilir.'
+    description: 'Taşıt ve demirbaş gibi duran varlıkların yıllar içindeki eskime/yıpranma paylarını izler.',
+    ruleExplanation: 'Aktifi Düzenleyen Pasif Hesap (-): Dönem sonunda amortisman (yıpranma payı) ayrıldığında ALACAK yazılır ve bilançoda Duran Varlıklardan eksi (-) olarak düşülür.'
   },
   '300': {
     code: '300',
@@ -97,8 +124,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 3,
     nature: 'PASIF',
     normalBalance: 'ALACAK',
-    description: 'Bankalardan çekilen 1 yıldan kısa vadeli nakit kredileri izler.',
-    ruleExplanation: 'Pasif hesap (Borç): Bankadan kredi çekildiğinde ALACAK, kredi anapara taksitleri ödendiğinde BORÇ kaydedilir.'
+    description: 'Bankalardan çekilen 1 yıldan kısa vadeli ticari kredileri izler.',
+    ruleExplanation: 'Borç/Kaynak (Pasif) hesabıdır: Bankadan kredi çekildiğinde borcumuz arttığı için ALACAK, kredi anaparası ödendiğinde BORÇ yazılır.'
   },
   '320': {
     code: '320',
@@ -106,8 +133,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 3,
     nature: 'PASIF',
     normalBalance: 'ALACAK',
-    description: 'Mal ve hizmet alımlarından doğan senetsiz (veresiye) ticari borçları izler.',
-    ruleExplanation: 'Pasif hesap (Kaynak/Borç): Satıcıdan veresiye mal alındığında (borcumuz arttığında) ALACAK, satıcıya borç ödendiğinde BORÇ kaydedilir.'
+    description: 'Toptancı veya tedarikçilerden veresiye (senetsiz / açık hesap) mal ve hizmet alımından doğan borçları izler.',
+    ruleExplanation: 'Borç/Kaynak (Pasif) hesabıdır: Veresiye mal alındığında (borcumuz arttığında) ALACAK, satıcıya ödeme yapıldığında (borcumuz azaldığında) BORÇ yazılır.'
   },
   '321': {
     code: '321',
@@ -115,8 +142,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 3,
     nature: 'PASIF',
     normalBalance: 'ALACAK',
-    description: 'Ticari işlemler sonucu işletmenin imzalayıp verdiği senetli borçları izler.',
-    ruleExplanation: 'Pasif hesap: Satıcıya senet imzalanıp verildiğinde ALACAK, senet bankadan veya kasadan ödendiğinde BORÇ kaydedilir.'
+    description: 'İşletmenin mal alımı veya borç ödemesi karşılığında kendi imzalayıp verdiği senetli (bono) borçları izler.',
+    ruleExplanation: 'Borç/Kaynak (Pasif) hesabıdır: Kendi borç senedimizi imzalayıp verdiğimizde ALACAK, senet vadesinde ödendiğinde BORÇ yazılır.'
   },
   '360': {
     code: '360',
@@ -124,8 +151,17 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 3,
     nature: 'PASIF',
     normalBalance: 'ALACAK',
-    description: 'İşletmenin sorumlu veya mükellef sıfatıyla devlete ödeyeceği vergi borçlarını izler.',
-    ruleExplanation: 'Pasif hesap: Vergi borcu tahakkuk ettiğinde ALACAK, vergi dairesine ödendiğinde BORÇ kaydedilir.'
+    description: 'Ay sonunda çıkacak KDV borcu, gelir/kurumlar vergisi ve stopaj gibi devlete ödenecek vergileri izler.',
+    ruleExplanation: 'Borç/Kaynak (Pasif) hesabıdır: Ödenecek vergi doğduğunda (tahakkuk ettiğinde) ALACAK, vergi dairesine ödendiğinde BORÇ yazılır.'
+  },
+  '391': {
+    code: '391',
+    name: 'Hesaplanan KDV',
+    accountClass: 3,
+    nature: 'PASIF',
+    normalBalance: 'ALACAK',
+    description: 'Mal veya hizmet satışı yapıldığında fatura üzerinden müşteriden tahsil edilen Katma Değer Vergisini izler.',
+    ruleExplanation: 'Borç/Kaynak (Pasif) hesabıdır: Satış yapıldığında müşteriden alınan KDV devlete olan emanet borç olduğu için ALACAK yazılır; ay sonunda KDV mahsubunda BORÇ yazılarak kapatılır.'
   },
   '400': {
     code: '400',
@@ -133,8 +169,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 4,
     nature: 'PASIF',
     normalBalance: 'ALACAK',
-    description: 'Bankalardan temin edilen 1 yıldan uzun vadeli kredileri izler.',
-    ruleExplanation: 'Uzun vadeli pasif: Kredi alındığında ALACAK, vadesi bir yılın altına düştüğünde 303 hesaba aktarılır veya ödendiğinde BORÇ kaydedilir.'
+    description: 'Bankalardan temin edilen 1 yıldan uzun vadeli yatırım ve işletme kredilerini izler.',
+    ruleExplanation: 'Uzun Vadeli Kaynak (Pasif): Kredi çekildiğinde ALACAK, ödendiğinde BORÇ yazılır.'
   },
   '500': {
     code: '500',
@@ -142,8 +178,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 5,
     nature: 'PASIF',
     normalBalance: 'ALACAK',
-    description: 'İşletme sahipleri veya ortakları tarafından tahsis edilen tescil edilmiş sermaye tutarını izler.',
-    ruleExplanation: 'Öz kaynak hesabı (Pasif): İşletme kurulurken veya sermaye artırıldığında ALACAK kaydedilir. Sermaye azaltılmadıkça borçlandırılmaz.'
+    description: 'İşletme sahiplerinin veya ortaklarının şirketi kurarken koydukları ana sermayeyi izler.',
+    ruleExplanation: 'Öz Kaynak (Pasif) hesabıdır: Şirket kurulurken veya sermaye artırıldığında ALACAK yazılır.'
   },
   '590': {
     code: '590',
@@ -151,8 +187,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 5,
     nature: 'PASIF',
     normalBalance: 'ALACAK',
-    description: 'İşletmenin faaliyet dönemi sonucunda elde ettiği net kâr tutarını izler.',
-    ruleExplanation: 'Öz kaynak hesabı: Gelir tablosu hesapları kapatılıp dönem kârı çıktığında ALACAK kaydedilir.'
+    description: 'İşletmenin dönem sonunda gelirlerinin giderlerinden fazla olmasıyla elde ettiği net kârı izler.',
+    ruleExplanation: 'Öz Kaynak (Pasif) hesabıdır: Gelirler > Giderler olduğunda kâr özkaynağı artırdığı için bilançoda Pasif (Öz Kaynaklar) tarafında yer alır.'
   },
   '591': {
     code: '591',
@@ -160,8 +196,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 5,
     nature: 'DUZENLEYICI_PASIF',
     normalBalance: 'BORC',
-    description: 'İşletmenin faaliyet dönemi sonucunda ortaya çıkan net zarar tutarını izler.',
-    ruleExplanation: 'Pasif düzenleyici (Aktif karakterli): Dönem zararla kapandığında BORÇ kaydedilir, bilançonun özkaynaklarında eksi olarak yer alır.'
+    description: 'İşletmenin dönem sonunda giderlerinin gelirlerinden fazla olmasıyla oluşan net zararı izler.',
+    ruleExplanation: 'Pasifi Düzenleyen Hesap (-): Dönem zararla kapandığında BORÇ yazılır ve bilançonun Öz Kaynaklar grubunda eksi (-) olarak yer alır.'
   },
   '600': {
     code: '600',
@@ -169,8 +205,17 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 6,
     nature: 'GELIR',
     normalBalance: 'ALACAK',
-    description: 'Yurt içindeki kişi ve kuruluşlara satılan mal ve hizmet tutarlarını izler.',
-    ruleExplanation: 'Gelir hesabı: Mal veya hizmet satışı gerçekleştiğinde hasılat tutarı kadar daima ALACAK kaydedilir. Dönem sonunda kapatılmadıkça borçlandırılmaz.'
+    description: 'Yurt içindeki müşterilere yapılan mal ve hizmet satışlarından elde edilen brüt satış gelirini (hasılatı) izler.',
+    ruleExplanation: 'Gelir hesabıdır: Mal veya hizmet satışı yapıldığında satış tutarı (KDV hariç matrah) daima ALACAK yazılır.'
+  },
+  '610': {
+    code: '610',
+    name: 'Satıştan İadeler (-)',
+    accountClass: 6,
+    nature: 'GIDER',
+    normalBalance: 'BORC',
+    description: 'Müşteriye satılan malların müşteri tarafından beğenilmeyip veya kusurlu çıkıp işletmeye iade edilen kısmını izler.',
+    ruleExplanation: 'Geliri Düzenleyen (Gider karakterli) hesap: Müşteri sattığımız malı iade ettiğinde 600 hesabı doğrudan borçlandırılmaz; onun yerine 610 Satıştan İadeler (-) hesabı BORÇ yazılır.'
   },
   '621': {
     code: '621',
@@ -178,8 +223,8 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 6,
     nature: 'GIDER',
     normalBalance: 'BORC',
-    description: 'Satılan ticari malların işletmeye olan alış maliyetini izler.',
-    ruleExplanation: 'Gider/Maliyet hesabı: Mal satışı yapıldığında satılan malın maliyeti kadar BORÇ kaydedilir (karşılığında 153 alacaklandırılır).'
+    description: 'Müşteriye satılan ticari malların işletmeye olan alış (geliş) maliyetini izler.',
+    ruleExplanation: 'Maliyet/Gider hesabıdır: Satılan malın alış maliyeti kadar 621 hesabı BORÇ yazılır, karşılığında depodan mal çıktığı için 153 Ticari Mallar ALACAK yazılır.'
   },
   '642': {
     code: '642',
@@ -187,8 +232,26 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 6,
     nature: 'GELIR',
     normalBalance: 'ALACAK',
-    description: 'Mevduat faizleri ve diğer faiz getirilerini izler.',
-    ruleExplanation: 'Gelir hesabı: Faiz tahakkuk ettiğinde veya tahsil edildiğinde ALACAK kaydedilir.'
+    description: 'Bankadaki vadeli mevduattan veya alacaklardan elde edilen faiz gelirlerini izler.',
+    ruleExplanation: 'Gelir hesabıdır: Faiz geliri kazanıldığında daima ALACAK yazılır.'
+  },
+  '653': {
+    code: '653',
+    name: 'Komisyon Giderleri (-)',
+    accountClass: 6,
+    nature: 'GIDER',
+    normalBalance: 'BORC',
+    description: 'Bankaların çek/senet tahsilatı, havale/EFT işlemleri veya aracılık hizmetleri için kestiği komisyon ücretlerini izler.',
+    ruleExplanation: 'Gider hesabıdır: Banka komisyon veya masraf kestiğinde daima BORÇ yazılır.'
+  },
+  '760': {
+    code: '760',
+    name: 'Pazarlama, Satış ve Dağıtım Giderleri',
+    accountClass: 7,
+    nature: 'GIDER',
+    normalBalance: 'BORC',
+    description: 'Satılan malların müşteriye nakliyesi (kargo), reklam ilanları ve satış mağazası giderlerini izler.',
+    ruleExplanation: 'Gider hesabıdır: Reklam, pazarlama veya satış kargo gideri yapıldığında daima BORÇ yazılır.'
   },
   '770': {
     code: '770',
@@ -196,8 +259,17 @@ export const ACCOUNTS_MAP: Record<string, Account> = {
     accountClass: 7,
     nature: 'GIDER',
     normalBalance: 'BORC',
-    description: 'İşletmenin yönetim, kira, elektrik, muhasebe, kırtasiye vb. genel idare giderlerini izler.',
-    ruleExplanation: 'Gider hesabı: Gider gerçekleştiğinde daima BORÇ kaydedilir. Dönem sonunda 771 yansıtma hesabı ile 632 Genel Yönetim Giderlerine aktarılarak kapatılır.'
+    description: 'İşletmenin ofis kirası, elektrik, su, internet, muhasebe, kırtasiye ve yönetim personeli gibi idari giderlerini izler.',
+    ruleExplanation: 'Gider hesabıdır: Kira, fatura veya ofis gideri doğduğunda daima BORÇ yazılır.'
+  },
+  '780': {
+    code: '780',
+    name: 'Finansman Giderleri',
+    accountClass: 7,
+    nature: 'GIDER',
+    normalBalance: 'BORC',
+    description: 'Bankadan kullanılan kredilerin faizlerini ve borçlanma masraflarını izler.',
+    ruleExplanation: 'Gider hesabıdır: Kredi faizi ödendiğinde veya tahakkuk ettiğinde daima BORÇ yazılır.'
   }
 };
 

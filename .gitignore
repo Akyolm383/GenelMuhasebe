@@ -14,9 +14,11 @@ dist
 .env.*
 !.env.example
 
-# Local test scratch
+# Local test scratch & Stitch temporary exports
 test_*.mjs
 test_*.ts
+.stitch/
+resources/
 
 # Editor directories and files
 .vscode/*

@@ -3,12 +3,12 @@ import { useAccountingStore } from '../store/useAccountingStore';
 import { X, ChevronRight, Lightbulb, CheckCircle2 } from 'lucide-react';
 
 export const HintModal: React.FC = () => {
-  const { 
-    showHintModal, 
-    setShowHintModal, 
-    getActiveTransaction, 
-    hintLevels, 
-    requestNextHint 
+  const {
+    showHintModal,
+    setShowHintModal,
+    getActiveTransaction,
+    hintLevels,
+    requestNextHint,
   } = useAccountingStore();
 
   if (!showHintModal) return null;
@@ -18,20 +18,20 @@ export const HintModal: React.FC = () => {
   const hints = activeTx.hints;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-2xl max-w-lg w-full border border-zinc-200 dark:border-zinc-800 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-surface-contrast/65 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-surface dark:bg-[#1C1B19] rounded-[2rem] shadow-2xl max-w-lg w-full border border-border-subtle dark:border-zinc-800 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Başlığı */}
-        <div className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white px-5 py-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
+        <div className="bg-surface-contrast text-surface px-6 py-4 flex items-center justify-between border-b border-border-subtle/20">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900/40 rounded-lg">
-              <Lightbulb className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <div className="p-2 bg-primary-container/25 border border-primary-container/40 rounded-full">
+              <Lightbulb className="w-4 h-4 text-primary-fixed" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-zinc-900 dark:text-white">
+              <h3 className="font-card-title font-bold text-sm sm:text-base text-surface">
                 Aşamalı Sokratik İpucu
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                İşlem #{activeTx.order}: {activeTx.title}
+              <p className="text-[11px] font-ledger-readout text-text-muted">
+                Vaka Madde #{activeTx.order}: {activeTx.title}
               </p>
             </div>
           </div>
@@ -39,24 +39,24 @@ export const HintModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowHintModal(false)}
-            className="p-1.5 text-zinc-400 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors cursor-pointer"
+            className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* İpucu Aşamaları İlerleme Çubuğu */}
-        <div className="bg-zinc-50/70 dark:bg-zinc-900/80 px-5 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-xs text-zinc-700 dark:text-zinc-300">
-          <div className="flex items-center gap-1.5 font-semibold">
-            <span>Aşama {currentLevel} / 4</span>
-          </div>
+        <div className="bg-surface-muted/60 dark:bg-zinc-900 px-6 py-2.5 border-b border-border-subtle dark:border-zinc-800 flex items-center justify-between text-xs font-ledger-readout text-text-secondary dark:text-zinc-300 tabular-nums">
+          <span className="font-bold">Aşama {currentLevel} / 4</span>
 
           <div className="flex items-center gap-1.5">
             {[1, 2, 3, 4].map((lvl) => (
               <div
                 key={lvl}
                 className={`w-6 h-1.5 rounded-full transition-all ${
-                  lvl <= currentLevel ? 'bg-black dark:bg-white' : 'bg-zinc-200 dark:bg-zinc-800'
+                  lvl <= currentLevel
+                    ? 'bg-primary-container'
+                    : 'bg-border-subtle dark:bg-zinc-800'
                 }`}
               />
             ))}
@@ -64,21 +64,27 @@ export const HintModal: React.FC = () => {
         </div>
 
         {/* İpucu İçerikleri */}
-        <div className="p-5 space-y-3.5 max-h-[60vh] overflow-y-auto">
+        <div className="p-6 space-y-3.5 max-h-[60vh] overflow-y-auto">
           {hints.slice(0, currentLevel).map((hint, idx) => (
-            <div 
+            <div
               key={hint.level}
-              className={`p-3.5 rounded-xl border transition-all ${
-                idx === currentLevel - 1 
-                  ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-300 dark:border-amber-900/50 ring-1 ring-amber-400/30 dark:ring-amber-500/20' 
-                  : 'bg-zinc-50/70 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800'
+              className={`p-4 rounded-2xl border transition-all ${
+                idx === currentLevel - 1
+                  ? 'bg-accent-surface/60 dark:bg-[#2A1813]/60 border-primary/30'
+                  : 'bg-surface-muted/40 dark:bg-zinc-900/50 border-border-subtle dark:border-zinc-800'
               }`}
             >
-              <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-zinc-900 dark:text-zinc-200">
-                <CheckCircle2 className={`w-4 h-4 ${idx === currentLevel - 1 ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-400 dark:text-zinc-500'}`} />
+              <div className="flex items-center gap-2 mb-1.5 text-xs font-card-title font-bold text-text-primary dark:text-white">
+                <CheckCircle2
+                  className={`w-4 h-4 ${
+                    idx === currentLevel - 1
+                      ? 'text-primary'
+                      : 'text-secondary'
+                  }`}
+                />
                 <span>{hint.title}</span>
               </div>
-              <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed pl-6">
+              <p className="text-xs sm:text-sm font-body-editorial text-text-secondary dark:text-zinc-300 leading-relaxed pl-6">
                 {hint.content}
               </p>
             </div>
@@ -86,11 +92,11 @@ export const HintModal: React.FC = () => {
         </div>
 
         {/* Modal Alt Çubuğu */}
-        <div className="px-5 py-3.5 bg-zinc-50/80 dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-3">
+        <div className="px-6 py-4 bg-surface-muted/50 dark:bg-zinc-900 border-t border-border-subtle dark:border-zinc-800 flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => setShowHintModal(false)}
-            className="px-4 py-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-200/60 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
+            className="px-4 py-2 text-xs font-ledger-readout font-semibold text-text-secondary dark:text-zinc-400 hover:text-text-primary rounded-full transition-colors cursor-pointer"
           >
             Kapat ve Kendim Dene
           </button>
@@ -99,13 +105,13 @@ export const HintModal: React.FC = () => {
             <button
               type="button"
               onClick={() => requestNextHint(activeTx.id)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-black hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-container hover:bg-primary text-on-primary-container text-xs font-ledger-readout font-bold rounded-full shadow-xs transition-colors cursor-pointer"
             >
               <span>Sonraki Aşamayı Aç</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/80 px-3 py-1.5 rounded-lg border border-emerald-200/80 dark:border-emerald-900/50">
+            <span className="text-xs font-ledger-readout font-bold text-secondary bg-secondary-fixed/40 px-3 py-1.5 rounded-full border border-secondary/30">
               Tüm İpuçları Açıldı
             </span>
           )}

@@ -6,23 +6,24 @@
 
 ---
 
-## ✨ Özellikler
+## Özellikler
 
-- **Yevmiye Defteri (Journal):** Gerçek muhasebe yevmiye maddesi formatında borç/alacak kaydı, hesap arama ve doğrulama.
-- **Büyük Defter (T-Hesapları / Ledger):** Yevmiye kayıtlarından otomatik türetilen canlı T cetvelleri ve hesap bakiyeleri.
+- **Yevmiye Defteri (Journal):** Gerçek muhasebe yevmiye maddesi formatında Borç (Sol) / Alacak (Sağ) kaydı, akıllı hesap arama ve adım adım pedagojik doğrulama (`101 Alınan Çekler` vs `103 Verilen Çekler (-)` ciro/keşide farkı analizi dahil).
+- **Büyük Defter (T-Cetveli — Kendin Doldur & Otomatik Mod):** Yevmiye kayıtlarını T-Cetvellerine elle aktarma (`Kendin Doldur` pratik modu), bakiye doğrulama ve tek tıkla otomatik tablo karşılaştırması.
 - **Mizan Cetveli (Trial Balance):** Borç/Alacak toplamları ve kalan bakiyelerle canlı denklik kontrolü.
-- **Bilanço (Balance Sheet):** Aktif ve Pasif sınıflarına göre otomatik dengelenen bilanço tablosu.
-- **Nedensel Senaryo Üretici (Causal State-Machine):** Sanal kasa/banka bakiye kontrolü ile sıfırdan sonsuz pedagojik muhasebe senaryosu türetme.
-- **4 Kademeli Sokratik İpuçları:** Sorunun cevabını direkt vermeden öğrenciyi yönlendiren aşamalı rehberlik.
-- **OLED Dark Mode & Mobil Uyum:** Gece çalışmalarına uygun saf siyah OLED tema ve tüm ekran boyutlarına tam uyum.
+- **Bilanço (Balance Sheet — Kendin Doldur & Otomatik Mod):** Aktif (Varlıklar) ve Pasif (Kaynaklar) sınıflarına göre elle bilanço yerleştirme pratiği, `(-)` düzenleyici aktif hesap (`103`, `257`) işaret kontrolü ve denge doğrulaması.
+- **Üniversite Genel Muhasebe I Müfredat Senaryoları & Konu Odaklı Üretici:** Kuruluş, KDV (`191`/`391`), Çek Alımı & Cirosu (`101`), Çek Keşidesi (`103`), Kredi Kartı POS (`108`), Satılan Ticari Mallar Maliyeti (`621`), Satıştan İade (`610`) ve Amortisman (`257`) senaryoları ile konu seçmeli soru üretici.
+- **Görev Bitince Otomatik Sıfırlama & Karne:** Tamamlanan görevlerin özet karnesini sunar ve senaryoyu tekrar çözülebilmesi için otomatik sıfırlar.
+- **4 Kademeli Sokratik İpuçları:** Sorunun cevabını doğrudan vermeden öğrenciyi düşündüren aşamalı rehberlik.
+- **Warm Architectural Paper & Tactile Financial Atelier Tasarım Sistemi:** Kağıt dokulu sıcak taş (`#F5F3EE`) açık tema, kalibre edilmiş koyu tema (`#0C0D0E`) ve tüm ekran boyutlarına tam uyum.
 
 ---
 
-## 🛠️ Teknolojiler
+## Teknolojiler
 
 - **React 19** & **TypeScript**
 - **Vite 8**
-- **Tailwind CSS v4**
+- **Tailwind CSS v4** & **Framer Motion**
 - **Zustand** (Kalıcı durum yönetimi)
 - **Lucide Icons** & **Canvas Confetti**
 

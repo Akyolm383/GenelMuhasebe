@@ -1,30 +1,27 @@
 import React from 'react';
-import { 
-  Building2, 
-  Sparkles, 
-  GraduationCap, 
-  CheckCircle2, 
-  ArrowRight, 
-  ShieldCheck, 
-  Calendar,
-  Wallet,
-  Wand2 
+import {
+  ArrowRight,
+  Check,
+  ChevronRight,
+  Dices,
 } from 'lucide-react';
 import type { CompanyScenario } from '../../types/scenario';
 import type { AppMode } from '../../store/useAccountingStore';
-import { formatCurrency } from '../../core/accountingEngine';
 
-interface ScenarioSelectionSectionProps {
-  scenarios: CompanyScenario[];
-  selectedScenarioId: string;
-  onSelectScenarioId: (id: string) => void;
-  selectedMode: AppMode;
-  onSelectMode: (mode: AppMode) => void;
-  onOpenGenerator: () => void;
-  onStart: () => void;
+export interface ScenarioSelectionSectionProps {
+  readonly scenarios: CompanyScenario[];
+  readonly selectedScenarioId: string;
+  readonly onSelectScenarioId: (id: string) => void;
+  readonly selectedMode: AppMode;
+  readonly onSelectMode: (mode: AppMode) => void;
+  readonly onOpenGenerator: () => void;
+  readonly onOpenAccountsGuide: () => void;
+  readonly onStart: () => void;
 }
 
-export const ScenarioSelectionSection: React.FC<ScenarioSelectionSectionProps> = ({
+export const ScenarioSelectionSection: React.FC<
+  ScenarioSelectionSectionProps
+> = ({
   scenarios,
   selectedScenarioId,
   onSelectScenarioId,
@@ -33,236 +30,275 @@ export const ScenarioSelectionSection: React.FC<ScenarioSelectionSectionProps> =
   onOpenGenerator,
   onStart,
 }) => {
-  const selectedScenario = scenarios.find((s) => s.id === selectedScenarioId) || scenarios[0];
+  const selectedScenario =
+    scenarios.find((s) => s.id === selectedScenarioId) || scenarios[0];
+
+  const getDifficultyBadgeStyle = (difficulty: string) => {
+    if (difficulty === 'Kolay') {
+      return {
+        label: 'Seviye: Temel',
+        badgeClass:
+          'bg-secondary-fixed/50 dark:bg-[#113828] text-secondary dark:text-secondary-fixed',
+        metaText: 'Kasa, Banka & Çek (101/103)',
+        metaClass: 'text-secondary dark:text-secondary-fixed font-semibold',
+      };
+    }
+    if (difficulty === 'Orta') {
+      return {
+        label: 'Seviye: Orta (Vize)',
+        badgeClass:
+          'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300',
+        metaText: 'Çek Cirosu, POS & %20 KDV',
+        metaClass: 'text-primary dark:text-[#FFB4A4] font-semibold',
+      };
+    }
+    return {
+      label: 'Seviye: İleri (Final)',
+      badgeClass:
+        'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300',
+      metaText: 'Senet, STMM (621) & Amortisman',
+      metaClass: 'text-text-primary dark:text-zinc-100 font-semibold',
+    };
+  };
 
   return (
-    <section id="scenario-selection" className="py-16 md:py-24 border-t border-zinc-200 dark:border-zinc-800 bg-[#fafafa] dark:bg-black transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
-        
-        {/* Başlık */}
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>Simülasyon Başlatıcı</span>
-          </div>
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-zinc-950 dark:text-white tracking-tight">
-            Çalışmanızı Başlatın
+    <section id="dosyalar" className="space-y-8 scroll-mt-28">
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border-subtle dark:border-zinc-800 pb-6">
+        <div>
+          <span className="text-[0.8125rem] font-ledger-readout text-primary dark:text-[#FFB4A4] uppercase tracking-widest font-semibold block mb-1">
+            BÖLÜM 04 // ÇALIŞMA SORULARI &amp; UYGULAMA SENARYOLARI
+          </span>
+          <h2 className="text-[1.75rem] sm:text-[2.25rem] font-section-header font-bold text-text-primary dark:text-[#F5F3EE] tracking-[-0.02em] leading-[1.12]">
+            Ders Konularına Göre Uygulama Soruları
           </h2>
-          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
-            Hazır bir işletme senaryosu seçin veya parametreleri belirleyerek anında kendi görevinizi türetin.
+        </div>
+
+        <div className="flex items-center gap-3.5 max-w-md">
+          <img
+            src="/images/atelier-dossier-stamp.png"
+            alt="Genel Muhasebe Uygulama Soruları"
+            className="w-14 h-14 rounded-2xl object-cover border border-border-subtle dark:border-zinc-800 shadow-xs shrink-0"
+          />
+          <p className="text-text-secondary dark:text-zinc-400 text-[0.9375rem] font-body-editorial leading-snug">
+            Temel çek işlemlerinden KDV mahsubuna ve dönem sonu amortisman
+            kayıtlarına kadar istediğin soruyu seçip çözmeye başla.
           </p>
         </div>
+      </div>
 
-        {/* 1. Aşama: Senaryo Seçimi Grid */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs flex items-center justify-center font-bold">1</span>
-              <span>İşletme Senaryosunu Seçin</span>
-            </h3>
-            
-            <button
-              type="button"
-              onClick={onOpenGenerator}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-black hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black shadow-xs transition-all cursor-pointer"
-            >
-              <Wand2 className="w-3.5 h-3.5" />
-              <span>Rastgele Görev Üret</span>
-            </button>
-          </div>
+      {/* Physical Folder Dossier Cards (3 Scenarios + 1 Generator Card) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 tabular-nums">
+        {scenarios.map((scenario, idx) => {
+          const isSelected = scenario.id === selectedScenarioId;
+          const diffMeta = getDifficultyBadgeStyle(scenario.difficulty);
+          const dossierNumber = String(idx + 1).padStart(2, '0');
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {scenarios.map((s) => {
-              const isSelected = s.id === selectedScenarioId;
-              const diffLower = s.difficulty.toLowerCase();
-              const badgeColors = 
-                diffLower === 'kolay'
-                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/60'
-                  : diffLower === 'orta'
-                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200 dark:border-amber-900/60'
-                  : 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 border-zinc-200 dark:border-zinc-700';
-
-              return (
-                <div
-                  key={s.id}
-                  onClick={() => onSelectScenarioId(s.id)}
-                  className={`relative rounded-3xl p-6 border-2 cursor-pointer transition-all ${
-                    isSelected
-                      ? 'border-black dark:border-white bg-white dark:bg-zinc-900 shadow-md ring-2 ring-black/10 dark:ring-white/20'
-                      : 'border-zinc-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-950/80 hover:border-zinc-400 dark:hover:border-zinc-700 hover:shadow-xs'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-3 pr-7">
-                    <span className={`text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${badgeColors}`}>
-                      {s.difficulty} Seviye
-                    </span>
-                    <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 font-mono">
-                      {s.transactions.length} İşlem
-                    </span>
-                  </div>
-
-                  <h4 className="font-bold text-base text-zinc-900 dark:text-white mb-1.5">
-                    {s.companyName}
-                  </h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-5 leading-relaxed">
-                    {s.description}
-                  </p>
-
-                  <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                    <span className="flex items-center gap-1.5">
-                      <Wallet className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
-                      {formatCurrency(s.initialCapital)}
-                    </span>
-                    <span className="flex items-center gap-1 font-mono text-[11px]">
-                      <Calendar className="w-3.5 h-3.5 text-zinc-400" />
-                      {s.establishedDate}
-                    </span>
-                  </div>
-
-                  {isSelected && (
-                    <div className="absolute top-4 right-4 text-black dark:text-white">
-                      <CheckCircle2 className="w-5 h-5 fill-zinc-100 dark:fill-zinc-800" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            {/* Özel Senaryo Üretme Kartı */}
+          return (
             <div
-              onClick={onOpenGenerator}
-              className="rounded-3xl p-6 border-2 border-dashed border-zinc-300 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/60 hover:bg-zinc-100 dark:hover:bg-zinc-900/60 hover:border-zinc-500 dark:hover:border-zinc-600 cursor-pointer transition-all flex flex-col justify-between group min-h-[180px]"
-            >
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-black dark:bg-zinc-800 text-white dark:text-zinc-200 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Wand2 className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-white flex items-center gap-1.5">
-                  <span>Kendi Görevini Türet</span>
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                </h4>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  İşlem sayısını ve zorluğu belirleyin, durum makinesi algoritması size özel benzersiz bir şirket simülasyonu oluştursun.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between text-xs font-semibold text-black dark:text-zinc-300">
-                <span>Parametreleri Ayarla</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 2. Aşama: Çalışma Modu Seçimi */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs flex items-center justify-center font-bold">2</span>
-              <span>Çalışma Modunuzu Belirleyin</span>
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Öğrenme Modu */}
-            <div
-              onClick={() => onSelectMode('ogrenme')}
-              className={`rounded-3xl p-6 border-2 cursor-pointer transition-all flex gap-4 ${
-                selectedMode === 'ogrenme'
-                  ? 'border-black dark:border-white bg-white dark:bg-zinc-900 shadow-md ring-2 ring-black/10 dark:ring-white/20'
-                  : 'border-zinc-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-950/80 hover:border-zinc-400 dark:hover:border-zinc-700 hover:shadow-xs'
+              key={scenario.id}
+              onClick={() => onSelectScenarioId(scenario.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectScenarioId(scenario.id);
+                }
+              }}
+              className={`bg-surface dark:bg-[#1C1B19] rounded-[2rem] p-6 transition-all space-y-4 relative flex flex-col justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container ${
+                isSelected
+                  ? 'border-2 border-primary-container shadow-lg ring-4 ring-primary-container/10'
+                  : 'border border-border-subtle dark:border-zinc-800 shadow-xs hover:shadow-md hover:border-text-secondary/50'
               }`}
             >
-              <div className="w-11 h-11 rounded-2xl bg-black dark:bg-zinc-800 text-white dark:text-zinc-200 flex items-center justify-center shrink-0">
-                <GraduationCap className="w-5 h-5" />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-white">
-                    Öğrenme Modu (Rehberli)
-                  </h4>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
-                    Önerilen
+              {isSelected && (
+                <div className="absolute -top-3 right-6 bg-primary-container text-on-primary-container text-[0.6875rem] font-ledger-readout font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                  SEÇİLİ SORU SETİ
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-start gap-2">
+                  <span
+                    className={`px-2.5 py-1 rounded text-[0.6875rem] font-ledger-readout font-bold ${
+                      isSelected
+                        ? 'bg-accent-surface dark:bg-[#3A1D16] text-primary dark:text-[#FFB4A4]'
+                        : 'bg-surface-muted dark:bg-zinc-800 text-text-secondary dark:text-zinc-300'
+                    }`}
+                  >
+                    SORU SETİ #{dossierNumber}
+                  </span>
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-[0.6875rem] font-ledger-readout font-bold ${diffMeta.badgeClass}`}
+                  >
+                    {diffMeta.label}
                   </span>
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  İlk kez öğrenenler için idealdir. Takıldığınızda 4 aşamalı ipucu alabilir, her işlem için anlık kural açıklamalarını görebilirsiniz.
-                </p>
-              </div>
-            </div>
 
-            {/* Sınav Modu */}
-            <div
-              onClick={() => onSelectMode('calisma')}
-              className={`rounded-3xl p-6 border-2 cursor-pointer transition-all flex gap-4 ${
-                selectedMode === 'calisma'
-                  ? 'border-black dark:border-white bg-white dark:bg-zinc-900 shadow-md ring-2 ring-black/10 dark:ring-white/20'
-                  : 'border-zinc-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-950/80 hover:border-zinc-400 dark:hover:border-zinc-700 hover:shadow-xs'
-              }`}
-            >
-              <div className="w-11 h-11 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-white">
-                    Sınav / Çalışma Modu
+                <div>
+                  <h4 className="text-[1.15rem] font-hero-display font-bold text-text-primary dark:text-[#F5F3EE] mb-1.5 leading-snug">
+                    {scenario.companyName}
                   </h4>
+                  <p className="text-[0.8125rem] text-text-secondary dark:text-zinc-400 font-body-editorial line-clamp-4 leading-relaxed">
+                    {scenario.description}
+                  </p>
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  İpucu ve anlık düzeltme yok. Kayıtlarınızı kendi bilginizle tamamlayıp sonunda kapsamlı bir karne ve denetim raporu alırsınız.
-                </p>
+              </div>
+
+              <div className="space-y-4 pt-2">
+                <div className="pt-4 border-t border-border-subtle dark:border-zinc-800 text-[0.75rem] font-ledger-readout text-text-muted dark:text-zinc-400 space-y-1.5">
+                  <div className="flex justify-between">
+                    <span>İşlem Sayısı:</span>
+                    <span className="font-mono text-text-primary dark:text-zinc-100 font-semibold">
+                      {scenario.transactions.length} Yevmiye Sorusu
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Ders Konusu:</span>
+                    <span className={diffMeta.metaClass}>
+                      {diffMeta.metaText}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectScenarioId(scenario.id);
+                    if (isSelected) {
+                      onStart();
+                    }
+                  }}
+                  className={`w-full py-2.5 rounded-xl text-[0.8125rem] font-ledger-readout font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    isSelected
+                      ? 'bg-primary-container hover:bg-primary text-on-primary-container shadow-xs'
+                      : 'bg-surface-muted dark:bg-zinc-800 hover:bg-surface-contrast hover:text-surface dark:hover:bg-[#F5F3EE] dark:hover:text-[#18181B] text-text-primary dark:text-zinc-100'
+                  }`}
+                >
+                  <span>
+                    {isSelected ? 'Bu Soruyu Çözmeye Başla' : 'Soruyu Seç'}
+                  </span>
+                  {isSelected ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4" />
+                  )}
+                </button>
               </div>
             </div>
-          </div>
-        </div>
+          );
+        })}
 
-        {/* Seçilen Senaryo Özeti & Başlat Butonu */}
-        <div className="bg-black dark:bg-zinc-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl dark:border dark:border-zinc-800 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-2">
-              <span className="text-xs font-semibold tracking-wider text-zinc-400 uppercase font-mono">
-                Hazır mısınız?
+        {/* Dossier #04: Konu Odaklı Soru Üretici */}
+        <div className="bg-surface-muted/60 dark:bg-zinc-900/60 rounded-[2rem] p-6 border-2 border-dashed border-border-subtle dark:border-zinc-700 hover:border-text-secondary dark:hover:border-zinc-500 transition-all space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="flex justify-between items-start gap-2">
+              <span className="px-2.5 py-1 rounded bg-surface dark:bg-zinc-800 text-text-primary dark:text-zinc-100 text-[0.6875rem] font-ledger-readout font-bold">
+                SORU ÜRETİCİ
               </span>
-              <h3 className="text-xl sm:text-2xl font-bold text-white">
-                {selectedScenario.companyName} ile Simülasyonu Başlat
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-300 dark:text-zinc-400 max-w-2xl">
-                Seçtiğiniz senaryoda {selectedScenario.transactions.length} ticari işlem sizi bekliyor. Tüm kayıtlarınızı yapıp T-hesaplarını ve Bilançonuzu eş zamanlı oluşturacaksınız.
-              </p>
+              <span className="px-2.5 py-0.5 rounded-full bg-primary-fixed dark:bg-[#3A1D16] text-primary dark:text-[#FFB4A4] text-[0.6875rem] font-ledger-readout font-bold">
+                Sınırsız Pratik
+              </span>
+            </div>
+            <h4 className="text-[1.15rem] font-hero-display font-bold text-text-primary dark:text-[#F5F3EE] mb-1 leading-snug">
+              Kendi Çalışma Sorunu Üret
+            </h4>
+            <p className="text-[0.8125rem] text-text-secondary dark:text-zinc-400 font-body-editorial leading-relaxed">
+              İster sadece <strong>Çek &amp; Ciro (101/103)</strong>, ister{' '}
+              <strong>KDV İşlemleri (191/391)</strong> ya da genel karma sorular
+              seçerek her seferinde yeni rakamlarla pratik yap.
+            </p>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <div className="pt-4 border-t border-border-subtle dark:border-zinc-800 text-[0.75rem] font-ledger-readout text-text-muted dark:text-zinc-400 space-y-1.5">
+              <div className="flex justify-between">
+                <span>Konu Seçimi:</span>
+                <span className="font-mono text-text-primary dark:text-zinc-100 font-semibold">
+                  Çek / KDV / Karma
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Tekrar Çözüm:</span>
+                <span className="text-semantic-balance dark:text-secondary-fixed font-semibold">
+                  Sınırsız Yeni Soru
+                </span>
+              </div>
             </div>
 
             <button
               type="button"
-              onClick={onStart}
-              className="inline-flex items-center justify-center gap-2.5 px-7 py-4 bg-white text-black hover:bg-zinc-200 font-black text-sm sm:text-base rounded-2xl shadow-lg transition-all hover:scale-[1.02] cursor-pointer shrink-0"
+              onClick={onOpenGenerator}
+              className="w-full py-2.5 rounded-xl bg-surface dark:bg-zinc-800 border border-border-subtle dark:border-zinc-700 hover:bg-surface-contrast hover:text-surface dark:hover:bg-[#F5F3EE] dark:hover:text-[#18181B] text-text-primary dark:text-zinc-100 text-[0.8125rem] font-ledger-readout font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
             >
-              <span>Simülasyona Başla</span>
-              <ArrowRight className="w-5 h-5" />
+              <Dices className="w-4 h-4" />
+              <span>Özel Soru Seti Oluştur</span>
             </button>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-zinc-800 text-xs">
-            <div>
-              <span className="text-zinc-400 block">Kuruluş Tarihi</span>
-              <span className="font-bold font-mono text-zinc-200">{selectedScenario.establishedDate}</span>
-            </div>
-            <div>
-              <span className="text-zinc-400 block">Başlangıç Sermayesi</span>
-              <span className="font-bold text-zinc-200">{formatCurrency(selectedScenario.initialCapital)}</span>
-            </div>
-            <div>
-              <span className="text-zinc-400 block">Zorluk Seviyesi</span>
-              <span className="font-bold capitalize text-zinc-200">{selectedScenario.difficulty}</span>
-            </div>
-            <div>
-              <span className="text-zinc-400 block">Seçilen Mod</span>
-              <span className="font-bold text-zinc-200">
-                {selectedMode === 'ogrenme' ? 'Öğrenme (Rehberli)' : 'Sınav (Kendi Başına)'}
-              </span>
-            </div>
+      {/* Bottom Tactile Command Dock */}
+      <div className="bg-surface dark:bg-[#1C1B19] rounded-3xl p-5 sm:p-6 border border-border-subtle dark:border-zinc-800 shadow-md flex flex-col lg:flex-row justify-between items-center gap-5">
+        {/* Mode Switcher */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+          <span className="font-ledger-readout text-text-muted dark:text-zinc-400 text-[0.8125rem]">
+            Çalışma Modu:
+          </span>
+          <div className="inline-flex flex-wrap justify-center p-1 bg-surface-muted dark:bg-zinc-900 rounded-full border border-border-subtle dark:border-zinc-800">
+            <button
+              type="button"
+              onClick={() => onSelectMode('ogrenme')}
+              className={`px-4 py-1.5 rounded-full text-[0.78rem] sm:text-[0.8125rem] font-ledger-readout transition-all flex items-center gap-1.5 cursor-pointer ${
+                selectedMode === 'ogrenme'
+                  ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-semibold shadow-xs'
+                  : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary dark:hover:text-zinc-200'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  selectedMode === 'ogrenme'
+                    ? 'bg-secondary'
+                    : 'bg-text-muted/40'
+                }`}
+              />
+              <span>Öğrenme Modu (İpuçları ve Anlık Rehber Açık)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSelectMode('calisma')}
+              className={`px-4 py-1.5 rounded-full text-[0.78rem] sm:text-[0.8125rem] font-ledger-readout transition-all flex items-center gap-1.5 cursor-pointer ${
+                selectedMode === 'calisma'
+                  ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-semibold shadow-xs'
+                  : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary dark:hover:text-zinc-200'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  selectedMode === 'calisma'
+                    ? 'bg-primary-container'
+                    : 'bg-text-muted/40'
+                }`}
+              />
+              <span>Sınav Modu (Kendini Test Et)</span>
+            </button>
           </div>
         </div>
 
+        {/* Primary Dossier Action CTA */}
+        <div className="flex items-center gap-4 w-full sm:w-auto justify-center">
+          <button
+            type="button"
+            onClick={onStart}
+            className="w-full sm:w-auto px-7 sm:px-8 py-3.5 rounded-full bg-surface-contrast dark:bg-primary-container text-surface hover:opacity-95 active:scale-[0.98] font-ledger-readout font-semibold text-[0.8125rem] transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-container"
+          >
+            <span>Seçili Soruyu Çöz: {selectedScenario.companyName}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </section>
   );

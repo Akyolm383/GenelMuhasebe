@@ -2,53 +2,111 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --font-hero-display: "Outfit", sans-serif;
+  --font-section-header: "Outfit", sans-serif;
+  --font-card-title: "Outfit", sans-serif;
+  --font-headline: "Outfit", sans-serif;
+  --font-body-editorial: "Plus Jakarta Sans", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-ledger-readout: "JetBrains Mono", monospace;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-background: #F5F3EE;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #EAE7DF;
+  --color-surface-contrast: #18181B;
+  --color-surface-container-low: #FFF0EE;
+  --color-surface-container: #FFE9E5;
+  --color-surface-container-high: #FBE3DE;
+
+  --color-text-primary: #18181B;
+  --color-text-secondary: #57534E;
+  --color-text-muted: #8C877E;
+
+  --color-primary: #A6331B;
+  --color-primary-container: #C84B31;
+  --color-on-primary: #FFFFFF;
+  --color-on-primary-container: #FFFBFF;
+  --color-accent-surface: #FBECE8;
+  --color-primary-fixed: #FFDAD3;
+
+  --color-secondary: #1B6B4D;
+  --color-semantic-balance: #1F6E50;
+  --color-secondary-fixed: #A6F3CD;
+  --color-secondary-fixed-dim: #8AD6B1;
+
+  --color-semantic-warning: #B93829;
+  --color-error-container: #FFDAD6;
+  --color-border-subtle: #E2DFD7;
+}
+
 @layer base {
   body {
-    @apply bg-[#fafafa] text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased font-sans selection:bg-zinc-200 selection:text-black dark:selection:bg-zinc-800 dark:selection:text-white;
+    background-color: #F5F3EE;
+    color: #18181B;
+    font-family: var(--font-body-editorial);
     min-height: 100vh;
+  }
+
+  .dark body {
+    background-color: #121211;
+    color: #F5F3EE;
   }
 }
 
-/* Muhasebe Defteri ve Tablo Özel Çizgileri (Monochrome Neutral & OLED Dark) */
+/* Warm Architectural Paper Dot-Matrix Texture */
+.paper-texture {
+  background-color: #F5F3EE;
+  background-image: radial-gradient(rgba(24, 24, 27, 0.055) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .paper-texture {
+  background-color: #121211;
+  background-image: radial-gradient(rgba(245, 243, 238, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Enforce Tabular Numerals for all Financial Readouts */
+.font-ledger-readout,
+.font-mono,
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ledger Hairlines */
 .ledger-t-left {
-  border-right: 1.5px solid #e4e4e7;
+  border-right: 1.5px solid #E2DFD7;
 }
 .dark .ledger-t-left {
-  border-right: 1.5px solid #27272a;
+  border-right: 1.5px solid #2A2926;
 }
 
 .ledger-t-header {
-  border-bottom: 1.5px solid #e4e4e7;
+  border-bottom: 2px solid #18181B;
 }
 .dark .ledger-t-header {
-  border-bottom: 1.5px solid #27272a;
+  border-bottom: 2px solid #E2DFD7;
 }
 
 .double-underline {
-  border-bottom: 3px double #d4d4d8;
-}
-.dark .double-underline {
-  border-bottom: 3px double #52525b;
+  border-bottom: 3px double #C84B31;
 }
 
-/* ========================================================
-   Özel Kaydırma Çubuğu (Custom Sleek Scrollbar - Light & OLED Dark)
-   ======================================================== */
-
-/* Firefox için modern scrollbar desteği */
+/* Custom Sleek Scrollbar */
 html {
   scrollbar-width: thin;
-  scrollbar-color: #d4d4d8 transparent;
+  scrollbar-color: #D4CFC4 transparent;
 }
 html.dark,
 .dark {
-  scrollbar-color: #27272a #000000;
+  scrollbar-color: #2E2D2A #121211;
 }
 
-/* WebKit ve Chromium (Chrome, Edge, Safari, Opera, Brave) */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -56,46 +114,10 @@ html.dark,
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #d4d4d8; /* zinc-300 */
+  background-color: #D4CFC4;
   border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #a1a1aa; /* zinc-400 */
+  background-color: #B8B1A4;
 }
-
-::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-/* OLED Dark Mode: Saf siyah zemin, nötr zinc kaydırıcı */
-html.dark::-webkit-scrollbar-track,
-.dark ::-webkit-scrollbar-track {
-  background: #000000;
-}
-
-html.dark::-webkit-scrollbar-thumb,
-.dark ::-webkit-scrollbar-thumb {
-  background-color: #27272a; /* zinc-800 */
-  border: 2px solid #000000; /* Floating pill effect on OLED black */
-  background-clip: padding-box;
-}
-
-html.dark::-webkit-scrollbar-thumb:hover,
-.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: #3f3f46; /* zinc-700 */
-}
-
-html.dark::-webkit-scrollbar-thumb:active,
-.dark ::-webkit-scrollbar-thumb:active {
-  background-color: #52525b; /* zinc-600 */
-}
-
-html.dark::-webkit-scrollbar-corner,
-.dark ::-webkit-scrollbar-corner {
-  background: #000000;
-}
-

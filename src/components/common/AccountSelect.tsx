@@ -19,30 +19,33 @@ interface DropdownPosition {
 export const AccountSelect: React.FC<AccountSelectProps> = ({
   value,
   onChange,
-  placeholder = 'Hesap seçiniz veya arayınız...',
+  placeholder = 'TDHP Hesap kodu veya adı seçiniz...',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [position, setPosition] = useState<DropdownPosition>({ top: 0, left: 0, width: 340, openUpward: false });
-  
+  const [position, setPosition] = useState<DropdownPosition>({
+    top: 0,
+    left: 0,
+    width: 360,
+    openUpward: false,
+  });
+
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const selectedAccount = value ? getAccountByCode(value) : undefined;
 
-  // Pozisyonu hesapla (ekran dışına taşmaması ve yukarı/aşağı akıllı açılması için)
   const updatePosition = () => {
     if (!triggerRef.current) return;
     const rect = triggerRef.current.getBoundingClientRect();
-    const dropdownHeight = 300; // Yaklaşık maksimum yükseklik
+    const dropdownHeight = 320;
     const spaceBelow = window.innerHeight - rect.bottom;
     const spaceAbove = rect.top;
 
     const openUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
-    const width = Math.max(rect.width, 360);
+    const width = Math.max(rect.width, 380);
 
-    // Sağ kenardan taşmayı önle
     let left = rect.left;
     if (left + width > window.innerWidth - 16) {
       left = Math.max(16, window.innerWidth - width - 16);
@@ -61,7 +64,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
       updatePosition();
       const timer = setTimeout(() => {
         inputRef.current?.focus();
-      }, 50);
+      }, 40);
 
       const handleScrollOrResize = () => {
         updatePosition();
@@ -82,8 +85,10 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
       if (
-        triggerRef.current && !triggerRef.current.contains(target) &&
-        dropdownRef.current && !dropdownRef.current.contains(target)
+        triggerRef.current &&
+        !triggerRef.current.contains(target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target)
       ) {
         setIsOpen(false);
       }
@@ -106,19 +111,33 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
     setSearchTerm('');
   };
 
-  const getNatureBadgeColor = (nature: string) => {
+  const getNatureBadgeStyle = (nature: string) => {
     switch (nature) {
       case 'AKTIF':
-        return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950/70 dark:text-blue-300 dark:border-blue-900/60';
+        return 'bg-secondary-container/40 text-on-secondary-container border-secondary/30 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60';
       case 'PASIF':
-        return 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-900/60';
+        return 'bg-accent-surface text-primary border-primary/30 dark:bg-[#3A1D16] dark:text-[#FFB4A4] dark:border-primary/40';
       case 'GELIR':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-900/60';
+        return 'bg-secondary-fixed/50 text-secondary border-secondary/30 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60';
       case 'GIDER':
-        return 'bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-900/60';
+        return 'bg-error-container/60 text-semantic-warning border-semantic-warning/30 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800/60';
       default:
-        return 'bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800';
+        return 'bg-surface-muted text-text-secondary border-border-subtle dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
     }
+  };
+
+  const getNatureLabel = (nature: string, accountClass?: number) => {
+    if (nature === 'AKTIF') {
+      return accountClass === 2 ? 'Aktif • Duran Varlık' : 'Aktif • Dönen Varlık';
+    }
+    if (nature === 'PASIF') {
+      if (accountClass === 5) return 'Pasif • Öz Kaynak';
+      if (accountClass === 4) return 'Pasif • U.V. Yabancı Kaynak';
+      return 'Pasif • K.V. Yabancı Kaynak';
+    }
+    if (nature === 'GELIR') return 'Gelir Tablosu • Gelir';
+    if (nature === 'GIDER') return 'Maliyet / Gider Hesabı';
+    return nature;
   };
 
   return (
@@ -127,28 +146,38 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
         ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full text-left px-3 py-2 bg-white dark:bg-zinc-900 border rounded-lg shadow-xs flex items-center justify-between text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white cursor-pointer ${
-          isOpen 
-            ? 'border-black dark:border-white ring-1 ring-black/15 dark:ring-white/20' 
-            : 'border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700'
+        className={`w-full text-left px-3 py-2 bg-surface dark:bg-zinc-900 border rounded-xl flex items-center justify-between text-sm transition-all focus:outline-none cursor-pointer ${
+          isOpen
+            ? 'border-primary ring-2 ring-primary/15 dark:border-[#FFB4A4]'
+            : 'border-border-subtle dark:border-zinc-800 hover:border-text-muted dark:hover:border-zinc-700'
         }`}
       >
-        <div className="flex items-center gap-2 truncate">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
           {selectedAccount ? (
             <>
-              <span className="font-mono font-bold text-black dark:text-white bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-xs shrink-0">
+              <span className="font-ledger-readout font-bold text-text-primary dark:text-white text-sm shrink-0">
                 {selectedAccount.code}
               </span>
-              <span className="font-medium text-zinc-800 dark:text-zinc-200 truncate">{selectedAccount.name}</span>
+              <span className="font-semibold text-text-primary dark:text-zinc-100 uppercase tracking-tight truncate">
+                {selectedAccount.name}
+              </span>
+              <span
+                className={`text-[11px] font-ledger-readout px-2 py-0.5 rounded border shrink-0 ${getNatureBadgeStyle(
+                  selectedAccount.nature
+                )}`}
+              >
+                {getNatureLabel(selectedAccount.nature, selectedAccount.accountClass)}
+              </span>
             </>
           ) : (
-            <span className="text-zinc-400 dark:text-zinc-500">{placeholder}</span>
+            <span className="text-text-muted dark:text-zinc-500 font-body-editorial text-xs sm:text-sm">
+              {placeholder}
+            </span>
           )}
         </div>
-        <ChevronDown className="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0 ml-1" />
+        <ChevronDown className="w-4 h-4 text-text-muted dark:text-zinc-500 shrink-0 ml-2" />
       </button>
 
-      {/* React Portal ile document.body'ye taşınan açılır menü (overflow-hidden veya table engeline takılmaz) */}
       {isOpen &&
         createPortal(
           <div
@@ -156,29 +185,31 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
             style={{
               position: 'fixed',
               top: position.openUpward ? undefined : `${position.top}px`,
-              bottom: position.openUpward ? `${window.innerHeight - position.top}px` : undefined,
+              bottom: position.openUpward
+                ? `${window.innerHeight - position.top}px`
+                : undefined,
               left: `${position.left}px`,
               width: `${position.width}px`,
               zIndex: 99999,
             }}
-            className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 ring-1 ring-black/5 dark:ring-zinc-800"
+            className="bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden ring-1 ring-black/5 dark:ring-zinc-800"
           >
             {/* Arama Çubuğu */}
-            <div className="p-2.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center gap-2">
-              <Search className="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0" />
+            <div className="p-3 border-b border-border-subtle dark:border-zinc-800 bg-surface-muted/60 dark:bg-zinc-900 flex items-center gap-2">
+              <Search className="w-4 h-4 text-text-muted shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Hesap kodu (örn: 100) veya adı ile filtrele..."
-                className="w-full text-xs bg-transparent border-none focus:outline-none focus:ring-0 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 font-medium"
+                placeholder="Hesap kodu (örn: 153, 191, 320) veya adı ara..."
+                className="w-full text-xs font-ledger-readout bg-transparent border-none focus:outline-none focus:ring-0 text-text-primary dark:text-white placeholder-text-muted"
               />
               {searchTerm && (
                 <button
                   type="button"
                   onClick={() => setSearchTerm('')}
-                  className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-200 px-1"
+                  className="text-[11px] font-ledger-readout text-primary hover:underline px-1 cursor-pointer"
                 >
                   Temizle
                 </button>
@@ -186,7 +217,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
             </div>
 
             {/* Hesap Listesi */}
-            <div className="max-h-64 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800">
+            <div className="max-h-64 overflow-y-auto divide-y divide-border-subtle/60 dark:divide-zinc-800">
               {filteredAccounts.length > 0 ? (
                 filteredAccounts.map((acc) => {
                   const isSelected = acc.code === value;
@@ -194,19 +225,21 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
                     <div
                       key={acc.code}
                       onClick={() => handleSelect(acc.code)}
-                      className={`px-3 py-2.5 cursor-pointer flex items-center justify-between hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-xs ${
-                        isSelected ? 'bg-zinc-100 dark:bg-zinc-900 font-semibold' : ''
+                      className={`px-3.5 py-2.5 cursor-pointer flex items-center justify-between hover:bg-surface-muted/60 dark:hover:bg-zinc-900 transition-colors text-xs ${
+                        isSelected
+                          ? 'bg-accent-surface/50 dark:bg-zinc-900 font-semibold'
+                          : ''
                       }`}
                     >
-                      <div className="flex items-center gap-2.5 pr-2 truncate">
-                        <span className="font-mono font-bold text-zinc-800 dark:text-zinc-200 text-xs w-10 shrink-0">
+                      <div className="flex items-center gap-2.5 pr-2 min-w-0">
+                        <span className="font-ledger-readout font-bold text-text-primary dark:text-zinc-200 text-xs w-9 shrink-0">
                           {acc.code}
                         </span>
-                        <div className="truncate">
-                          <span className="text-zinc-900 dark:text-white text-xs font-medium block truncate">
+                        <div className="min-w-0">
+                          <span className="text-text-primary dark:text-white text-xs font-semibold block truncate">
                             {acc.name}
                           </span>
-                          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block truncate font-normal">
+                          <span className="text-[11px] text-text-muted dark:text-zinc-400 block truncate font-body-editorial">
                             {acc.description}
                           </span>
                         </div>
@@ -214,28 +247,30 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
 
                       <div className="flex items-center gap-1.5 shrink-0 ml-2">
                         <span
-                          className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border tracking-wide ${getNatureBadgeColor(
+                          className={`text-[10px] font-ledger-readout font-bold uppercase px-2 py-0.5 rounded border tracking-wide ${getNatureBadgeStyle(
                             acc.nature
                           )}`}
                         >
                           {acc.nature}
                         </span>
-                        {isSelected && <Check className="w-4 h-4 text-black dark:text-white ml-1 shrink-0" />}
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-primary ml-1 shrink-0" />
+                        )}
                       </div>
                     </div>
                   );
                 })
               ) : (
-                <div className="p-5 text-center text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                  &quot;{searchTerm}&quot; ile eşleşen hesap bulunamadı.
+                <div className="p-5 text-center text-xs font-ledger-readout text-text-muted">
+                  &quot;{searchTerm}&quot; ile eşleşen TDHP hesabı bulunamadı.
                 </div>
               )}
             </div>
 
-            {/* Alt Çubuk: Hızlı Bilgi */}
-            <div className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 text-[10px] text-zinc-500 dark:text-zinc-400 flex items-center justify-between">
+            {/* Alt Çubuk */}
+            <div className="px-3.5 py-2 bg-surface-muted/50 dark:bg-zinc-900 border-t border-border-subtle dark:border-zinc-800 text-[11px] font-ledger-readout text-text-muted flex items-center justify-between">
               <span>{filteredAccounts.length} hesap listeleniyor</span>
-              <span className="font-mono">THP Standart</span>
+              <span>TDHP &amp; VUK Standart</span>
             </div>
           </div>,
           document.body

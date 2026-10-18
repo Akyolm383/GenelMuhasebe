@@ -1,5 +1,9 @@
 import type { CompanyScenario, CommercialTransaction } from '../types/scenario';
-import type { GeneratorConfig, VirtualLedgerState } from '../types/generator';
+import type {
+  GeneratorConfig,
+  GeneratorFocusArea,
+  VirtualLedgerState,
+} from '../types/generator';
 
 // Rastgele işletme unvanları havuzu
 const COMPANY_NAMES = [
@@ -17,12 +21,10 @@ const COMPANY_NAMES = [
   'Gediz Ambalaj ve Ticaret',
 ];
 
-// Rastgele seçim yardımcısı
 function pickRandom<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-// Belirtilen minimum ve maksimum aralığında temiz yuvarlak tutar seçici
 function pickRoundAmount(min: number, max: number, step: number = 5000): number {
   const stepsCount = Math.floor((max - min) / step);
   if (stepsCount <= 0) return min;
@@ -30,7 +32,6 @@ function pickRoundAmount(min: number, max: number, step: number = 5000): number 
   return min + chosenStep * step;
 }
 
-// Sayı formatlayıcı
 function fmt(num: number): string {
   return new Intl.NumberFormat('tr-TR').format(num) + ' TL';
 }
@@ -46,6 +47,7 @@ interface TransactionArchetype {
   id: string;
   title: string;
   minDifficulty: 'Kolay' | 'Orta' | 'İleri';
+  tags: GeneratorFocusArea[];
   isApplicable: (ctx: ArchetypeContext) => boolean;
   generate: (ctx: ArchetypeContext) => {
     transaction: CommercialTransaction;
@@ -53,27 +55,28 @@ interface TransactionArchetype {
   };
 }
 
-// Şablonlar listesi
 const ARCHETYPES: TransactionArchetype[] = [
   // 1. Kasadan Bankaya Para Yatırma
   {
     id: 'deposit_bank',
     title: 'Bankadaki Mevduat Hesabına Para Yatırılması',
     minDifficulty: 'Kolay',
-    isApplicable: ({ state }) => state.cash >= 25000 && state.bank < 60000,
+    tags: ['genel'],
+    isApplicable: ({ state }) => state.cash >= 30000 && state.bank < 80000,
     generate: ({ state, dateStr, order }) => {
-      const maxTransfer = Math.min(state.cash - 10000, 40000);
-      const amount = pickRoundAmount(10000, maxTransfer, 5000);
+      const maxTransfer = Math.min(state.cash - 15000, 45000);
+      const amount = pickRoundAmount(15000, maxTransfer, 5000);
       return {
         transaction: {
           id: `gen-tx-${order}`,
           order,
           date: dateStr,
           title: 'Bankaya Nakit Para Yatırılması',
-          description: `İşletme kasasından ${fmt(amount)} nakit para alınarak bankadaki vadesiz ticari mevduat hesabına yatırılmıştır.`,
+          description: `İşletme kasasından ${fmt(amount)} nakit para alınarak bankadaki vadesiz mevduat hesabına yatırılmıştır.`,
           amount,
           expectedEntry: {
-            educationalNotes: 'Bankadaki mevduat arttığı için 102 Bankalar (Aktif) borçlandırılır; kasadan nakit çıktığı için 100 Kasa (Aktif) alacaklandırılır.',
+            educationalNotes:
+              'Bankadaki paramız arttığı için 102 Bankalar (Varlık/Aktif) borçlandırılır; kasadan nakit çıktığı için 100 Kasa alacaklandırılır.',
             lines: [
               { accountCode: '102', debit: amount, credit: 0 },
               { accountCode: '100', debit: 0, credit: amount },
@@ -82,22 +85,24 @@ const ARCHETYPES: TransactionArchetype[] = [
           hints: [
             {
               level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'İşletmenin iki farklı hazır değeri (Kasa ve Banka) arasında nakit yer değiştirmektedir.',
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'Kasadaki nakit para azaldı, banka hesabımızdaki mevduat arttı.',
             },
             {
               level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: '"100 Kasa" ve "102 Bankalar" hesaplarının her ikisi de Dönen Varlık (Aktif) karakterlidir.',
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                '"100 Kasa" ve "102 Bankalar" hesaplarının her ikisi de Varlık (Aktif) hesabıdır.',
             },
             {
               level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Banka hesabımız arttığı için 102 Bankalar BORÇ (${fmt(amount)}); kasadaki nakit azaldığı için 100 Kasa ALACAK (${fmt(amount)}) kaydedilir.`,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content: `Banka hesabımız arttığı için 102 Bankalar BORÇ (${fmt(amount)}); kasadaki nakit azaldığı için 100 Kasa ALACAK (${fmt(amount)}) yazılır.`,
             },
             {
               level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
+              title: '4. Aşama: Tam Yevmiye Kaydı',
               content: `102 Bankalar (Borç: ${fmt(amount)}) / 100 Kasa (Alacak: ${fmt(amount)})`,
             },
           ],
@@ -110,11 +115,369 @@ const ARCHETYPES: TransactionArchetype[] = [
     },
   },
 
-  // 2. Peşin Ticari Mal Alışı
+  // 2. Çek Keşide Ederek (Kendi Çekimizi Vererek) Mal Alımı (153 / 103)
+  {
+    id: 'purchase_check_issued',
+    title: 'Çek Düzenleyerek (Keşide Ederek) Ticari Mal Alımı',
+    minDifficulty: 'Kolay',
+    tags: ['genel', 'cek_senet', 'mal_ve_maliyet'],
+    isApplicable: ({ state }) => state.bank >= 15000,
+    generate: ({ state, dateStr, order }) => {
+      const maxCheck = Math.min(state.bank, 35000);
+      const amount = pickRoundAmount(10000, Math.max(10000, maxCheck), 5000);
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Çek Keşide Ederek Ticari Mal Alımı',
+          description: `İşletme, satmak üzere ${fmt(amount)} tutarında ticari mal satın almış ve karşılığında kendi çek defterinden ${fmt(amount)}'lik bir çek düzenleyip (keşide edip) satıcıya vermiştir.`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Mal stoğumuz arttığı için 153 Ticari Mallar borçlandırılır. Kendi çekimizi verdiğimiz için "103 Verilen Çekler ve Ödeme Emirleri (-)" hesabı kullanılır ve sonunda (-) olduğu için ALACAKLANDIRILIR.',
+            lines: [
+              { accountCode: '153', debit: amount, credit: 0 },
+              { accountCode: '103', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'Depomuza ticari mal girdi ve karşılığında kendi banka çekimizi imzalayıp (keşide edip) verdik.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: 101 mi, 103 mü?',
+              content:
+                'Müşteriden çek almadık, KENDİ çekimizi verdik! Bu nedenle "103 Verilen Çekler ve Ödeme Emirleri (-)" kullanılır.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: 103 Neden Alacak Yazılır?',
+              content: `103 hesabı sonunda (-) işareti bulunan aktifi düzenleyen pasif karakterli bir hesaptır. Çek verildiğinde ALACAK (${fmt(amount)}) yazılır.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `153 Ticari Mallar (Borç: ${fmt(amount)}) / 103 Verilen Çekler ve Ödeme Emirleri (-) (Alacak: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.inventory += amount;
+          s.checksIssued += amount;
+        },
+      };
+    },
+  },
+
+  // 3. Müşteriden Çek Alarak Mal Satışı (101 / 600)
+  {
+    id: 'sale_check_received',
+    title: 'Müşteriden Çek Alarak Ticari Mal Satışı',
+    minDifficulty: 'Kolay',
+    tags: ['genel', 'cek_senet', 'mal_ve_maliyet'],
+    isApplicable: () => true,
+    generate: ({ dateStr, order }) => {
+      const amount = pickRoundAmount(15000, 45000, 5000);
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Müşteriden Çek Alarak Mal Satışı',
+          description: `İşletme, müşteriye ${fmt(amount)} tutarında ticari mal satmış ve satış bedeli karşılığında müşteriden ${fmt(amount)} tutarında çek teslim almıştır.`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Müşteriden çek alındığında çek cüzdanımızdaki varlık arttığı için 101 Alınan Çekler borçlandırılır; satış geliri doğduğu için 600 Yurtiçi Satışlar alacaklandırılır.',
+            lines: [
+              { accountCode: '101', debit: amount, credit: 0 },
+              { accountCode: '600', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'Müşteriden çek aldık ve mal satışı geliri (hasılatı) elde ettik.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                'Müşteriden alınan çekler için "101 Alınan Çekler" (Aktif), satış geliri için "600 Yurtiçi Satışlar" (Gelir) kullanılır.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content: `Müşteri çeki varlığımız arttığı için 101 BORÇ (${fmt(amount)}); satış hasılatı doğduğu için 600 ALACAK (${fmt(amount)}) yazılır.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `101 Alınan Çekler (Borç: ${fmt(amount)}) / 600 Yurtiçi Satışlar (Alacak: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.checksReceived += amount;
+          s.revenues += amount;
+        },
+      };
+    },
+  },
+
+  // 4. Müşteri Çekinin Satıcıya Ciro Edilmesi (153 veya 320 / 101)
+  {
+    id: 'endorse_customer_check',
+    title: 'Müşteri Çekinin Ciro Edilmesi',
+    minDifficulty: 'Orta',
+    tags: ['genel', 'cek_senet'],
+    isApplicable: ({ state }) => state.checksReceived >= 15000,
+    generate: ({ state, dateStr, order }) => {
+      const amount = state.checksReceived;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Alınan Müşteri Çekinin Satıcıya Ciro Edilmesi',
+          description: `İşletme, ${fmt(amount)} tutarında yeni ticari mal satın almış ve bedelini ödemek için daha önce müşteriden aldığı ${fmt(amount)}'lik çeki satıcıya CİRO etmiştir (devretmiştir).`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Sınav Tuzağı Uyarısı: Müşteriden alınan bir çek başkasına CİRO edildiğinde kendi çekimiz olmadığı için 103 kullanılmaz! Cüzdanımızdaki müşteri çeki çıktığı için "101 Alınan Çekler" hesabı ALACAKLANDIRILIR.',
+            lines: [
+              { accountCode: '153', debit: amount, credit: 0 },
+              { accountCode: '101', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Çek Ciro Etmek Nedir?',
+              content:
+                'Daha önce müşteriden aldığımız (101 hesabındaki) çeki imzalayıp mal aldığımız satıcıya devretmektir.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: 101 mi, 103 mü?',
+              content:
+                'Dikkat! Kendi çekimizi yazmadık, elimizdeki müşteri çekini verdik. Bu yüzden "101 Alınan Çekler" hesabı kullanılır.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content: `Mal aldığımız için 153 Ticari Mallar BORÇ (${fmt(amount)}); elimizdeki müşteri çeki çıktığı için 101 Alınan Çekler ALACAK (${fmt(amount)}) yazılır.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `153 Ticari Mallar (Borç: ${fmt(amount)}) / 101 Alınan Çekler (Alacak: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.inventory += amount;
+          s.checksReceived -= amount;
+        },
+      };
+    },
+  },
+
+  // 5. Verilen Çekin (103) Bankadan Ödenmesi (103 / 102)
+  {
+    id: 'pay_issued_check_bank',
+    title: 'Verilen Çekin Bankadan Ödenmesi',
+    minDifficulty: 'Kolay',
+    tags: ['genel', 'cek_senet'],
+    isApplicable: ({ state }) =>
+      state.checksIssued >= 10000 && state.bank >= state.checksIssued,
+    generate: ({ state, dateStr, order }) => {
+      const amount = state.checksIssued;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Keşide Edilen Çekin Bankadan Ödenmesi',
+          description: `İşletmenin daha önce mal alırken satıcıya keşide edip verdiği ${fmt(amount)} tutarındaki çek, banka mevduat hesabımızdan ödenmiştir.`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Verdiğimiz çek ödendiğinde 103 Verilen Çekler ve Ödeme Emirleri (-) hesabı BORÇLANDIRILARAK kapatılır; bankadaki paramız azaldığı için 102 Bankalar alacaklandırılır.',
+            lines: [
+              { accountCode: '103', debit: amount, credit: 0 },
+              { accountCode: '102', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'Daha önce satıcıya verdiğimiz çek banka hesabımızdan ödendi ve çek borcumuz kapandı.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                '"103 Verilen Çekler ve Ödeme Emirleri (-)" ve "102 Bankalar".',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content: `Çeki verirken 103'ü Alacak yazmıştık; ödendiğinde kapatmak için 103 BORÇ (${fmt(amount)}), bankadan para çıktığı için 102 ALACAK (${fmt(amount)}) yazılır.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `103 Verilen Çekler ve Ödeme Emirleri (-) (Borç: ${fmt(amount)}) / 102 Bankalar (Alacak: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.checksIssued -= amount;
+          s.bank -= amount;
+        },
+      };
+    },
+  },
+
+  // 6. %20 KDV'li Veresiye Mal Alışı (153 + 191 / 320)
+  {
+    id: 'purchase_vat_credit',
+    title: '%20 KDV\'li Veresiye Ticari Mal Alışı',
+    minDifficulty: 'Orta',
+    tags: ['genel', 'kdv_islemleri', 'mal_ve_maliyet'],
+    isApplicable: () => true,
+    generate: ({ dateStr, order }) => {
+      const baseAmount = pickRoundAmount(15000, 35000, 5000);
+      const vatAmount = Math.round(baseAmount * 0.2);
+      const totalAmount = baseAmount + vatAmount;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: '%20 KDV\'li Veresiye Ticari Mal Alımı',
+          description: `İşletme, satıcılardan ${fmt(baseAmount)} + %20 KDV (${fmt(vatAmount)} KDV, genel toplam ${fmt(totalAmount)}) tutarında ticari malı veresiye (açık hesap) satın almıştır.`,
+          amount: baseAmount,
+          expectedEntry: {
+            educationalNotes:
+              'Mal bedeli 153 Ticari Mallar hesabına, alışta ödenen KDV ise 191 İndirilecek KDV hesabına BORÇ yazılır; toplam borç 320 Satıcılar hesabına ALACAK yazılır.',
+            lines: [
+              { accountCode: '153', debit: baseAmount, credit: 0 },
+              { accountCode: '191', debit: vatAmount, credit: 0 },
+              { accountCode: '320', debit: 0, credit: totalAmount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: KDV Hesaplaması',
+              content: `Mal bedeli: ${fmt(baseAmount)}, %20 KDV: ${fmt(vatAmount)}, Satıcıya toplam borç: ${fmt(totalAmount)}.`,
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Alış KDV\'si Hangi Hesapta İzlenir?',
+              content:
+                'Mal alırken yüklenilen KDV "191 İndirilecek KDV" (Aktif) hesabında izlenir.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content: `153 Ticari Mallar (${fmt(baseAmount)}) ve 191 İndirilecek KDV (${fmt(vatAmount)}) BORÇ; 320 Satıcılar (${fmt(totalAmount)}) ALACAK yazılır.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `153 Ticari Mallar (B: ${fmt(baseAmount)}), 191 İndirilecek KDV (B: ${fmt(vatAmount)}) / 320 Satıcılar (A: ${fmt(totalAmount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.inventory += baseAmount;
+          s.vatDeductible += vatAmount;
+          s.payables += totalAmount;
+        },
+      };
+    },
+  },
+
+  // 7. %20 KDV'li Peşin veya Kredi Kartlı Mal Satışı (100 veya 108 / 600 + 391)
+  {
+    id: 'sale_vat_pos',
+    title: '%20 KDV\'li ve Kredi Kartlı (POS) Mal Satışı',
+    minDifficulty: 'Orta',
+    tags: ['genel', 'kdv_islemleri', 'mal_ve_maliyet'],
+    isApplicable: () => true,
+    generate: ({ dateStr, order }) => {
+      const baseAmount = pickRoundAmount(20000, 45000, 5000);
+      const vatAmount = Math.round(baseAmount * 0.2);
+      const totalAmount = baseAmount + vatAmount;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: '%20 KDV\'li Kredi Kartı (POS) ile Mal Satışı',
+          description: `İşletme, müşteriye ${fmt(baseAmount)} + %20 KDV (${fmt(vatAmount)} KDV, toplam ${fmt(totalAmount)}) tutarında mal satmış, müşteri toplam tutarı kredi kartı (POS cihazı) ile ödemiştir.`,
+          amount: baseAmount,
+          expectedEntry: {
+            educationalNotes:
+              'Kredi kartı (POS) slipleri "108 Diğer Hazır Değerler" hesabında BORÇ izlenir; KDV hariç satış tutarı "600 Yurtiçi Satışlar" ve müşteriden alınan KDV "391 Hesaplanan KDV" hesabına ALACAK yazılır.',
+            lines: [
+              { accountCode: '108', debit: totalAmount, credit: 0 },
+              { accountCode: '600', debit: 0, credit: baseAmount },
+              { accountCode: '391', debit: 0, credit: vatAmount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Kredi Kartı (POS) Tahsilatı Nereye Yazılır?',
+              content:
+                'POS cihazından geçen kredi kartı slipleri nakit kasa değildir; "108 Diğer Hazır Değerler" (Aktif) hesabında izlenir.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Satış KDV\'si Hangi Hesaba Yazılır?',
+              content:
+                'Müşteriden tahsil edilen satış KDV\'si "391 Hesaplanan KDV" hesabına ALACAK yazılır.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content: `108 Diğer Hazır Değerler (${fmt(totalAmount)}) BORÇ; 600 Yurtiçi Satışlar (${fmt(baseAmount)}) ve 391 Hesaplanan KDV (${fmt(vatAmount)}) ALACAK yazılır.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `108 Diğer Hazır Değerler (B: ${fmt(totalAmount)}) / 600 Yurtiçi Satışlar (A: ${fmt(baseAmount)}), 391 Hesaplanan KDV (A: ${fmt(vatAmount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.posReceivables += totalAmount;
+          s.revenues += baseAmount;
+          s.vatCalculated += vatAmount;
+        },
+      };
+    },
+  },
+
+  // 8. Peşin Ticari Mal Alışı
   {
     id: 'purchase_cash',
     title: 'Peşin Ticari Mal Alımı',
     minDifficulty: 'Kolay',
+    tags: ['genel', 'mal_ve_maliyet'],
     isApplicable: ({ state }) => state.cash >= 15000,
     generate: ({ state, dateStr, order }) => {
       const maxPurchase = Math.min(state.cash - 5000, 35000);
@@ -128,7 +491,8 @@ const ARCHETYPES: TransactionArchetype[] = [
           description: `İşletme, satışını yapmak üzere ${fmt(amount)} tutarında ticari malı peşin (nakit) olarak satın almıştır.`,
           amount,
           expectedEntry: {
-            educationalNotes: 'Mal stoğumuz arttığı için 153 Ticari Mallar borçlandırılır; nakit ödeme nedeniyle 100 Kasa alacaklandırılır.',
+            educationalNotes:
+              'Mal stoğumuz arttığı için 153 Ticari Mallar borçlandırılır; nakit ödeme nedeniyle 100 Kasa alacaklandırılır.',
             lines: [
               { accountCode: '153', debit: amount, credit: 0 },
               { accountCode: '100', debit: 0, credit: amount },
@@ -137,22 +501,24 @@ const ARCHETYPES: TransactionArchetype[] = [
           hints: [
             {
               level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'İşletmeye yeni ticari mal girmiş, karşılığında kasadan nakit para ödenmiştir.',
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'İşletmeye yeni ticari mal girmiş, karşılığında kasadan nakit para ödenmiştir.',
             },
             {
               level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Satın alınan mallar için "153 Ticari Mallar" (Aktif); nakit ödeme için "100 Kasa" (Aktif) kullanılır.',
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                'Satın alınan mallar için "153 Ticari Mallar" (Aktif); nakit ödeme için "100 Kasa" (Aktif) kullanılır.',
             },
             {
               level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
               content: `Varlık artışı Borç (153: ${fmt(amount)}), varlık azalışı Alacak (100: ${fmt(amount)}) mantığı ile kaydedilir.`,
             },
             {
               level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
+              title: '4. Aşama: Tam Yevmiye Kaydı',
               content: `153 Ticari Mallar (Borç: ${fmt(amount)}) / 100 Kasa (Alacak: ${fmt(amount)})`,
             },
           ],
@@ -165,287 +531,19 @@ const ARCHETYPES: TransactionArchetype[] = [
     },
   },
 
-  // 3. Banka Yoluyla (Havale ile) Ticari Mal Alışı
-  {
-    id: 'purchase_bank',
-    title: 'Banka Aracılığıyla Mal Alımı',
-    minDifficulty: 'Kolay',
-    isApplicable: ({ state }) => state.bank >= 15000,
-    generate: ({ state, dateStr, order }) => {
-      const maxPurchase = Math.min(state.bank - 5000, 35000);
-      const amount = pickRoundAmount(10000, maxPurchase, 5000);
-      return {
-        transaction: {
-          id: `gen-tx-${order}`,
-          order,
-          date: dateStr,
-          title: 'Bankadan Ödenerek Ticari Mal Alımı',
-          description: `İşletme, toptancıdan ${fmt(amount)} tutarında ticari mal almış ve bedelini banka mevduat hesabından havale ile ödemiştir.`,
-          amount,
-          expectedEntry: {
-            educationalNotes: 'Mal stoku arttığı için 153 Ticari Mallar borçlandırılır; bankadaki para eksildiği için 102 Bankalar alacaklandırılır.',
-            lines: [
-              { accountCode: '153', debit: amount, credit: 0 },
-              { accountCode: '102', debit: 0, credit: amount },
-            ],
-          },
-          hints: [
-            {
-              level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'Depodaki ticari mallar artmış, banka hesabındaki para azalmıştır.',
-            },
-            {
-              level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: '"153 Ticari Mallar" ve "102 Bankalar" hesapları aktiftir.',
-            },
-            {
-              level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `153 Ticari Mallar hesabında artış → BORÇ (${fmt(amount)}). 102 Bankalar hesabında azalış → ALACAK (${fmt(amount)}).`,
-            },
-            {
-              level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
-              content: `153 Ticari Mallar (Borç: ${fmt(amount)}) / 102 Bankalar (Alacak: ${fmt(amount)})`,
-            },
-          ],
-        },
-        applyState: (s) => {
-          s.bank -= amount;
-          s.inventory += amount;
-        },
-      };
-    },
-  },
-
-  // 4. Veresiye (Kredili) Mal Alımı
-  {
-    id: 'purchase_credit',
-    title: 'Veresiye (Kredili) Ticari Mal Alımı',
-    minDifficulty: 'Orta',
-    isApplicable: () => true,
-    generate: ({ dateStr, order }) => {
-      const amount = pickRoundAmount(15000, 35000, 5000);
-      return {
-        transaction: {
-          id: `gen-tx-${order}`,
-          order,
-          date: dateStr,
-          title: 'Veresiye Ticari Mal Alımı',
-          description: `İşletme, satıcılardan ${fmt(amount)} tutarında ticari malı veresiye (bedeli sonra ödenmek üzere senetsiz) satın almıştır.`,
-          amount,
-          expectedEntry: {
-            educationalNotes: 'Mal stoku arttığı için 153 Ticari Mallar borçlandırılır; satıcıya olan ticari borç arttığı için 320 Satıcılar alacaklandırılır.',
-            lines: [
-              { accountCode: '153', debit: amount, credit: 0 },
-              { accountCode: '320', debit: 0, credit: amount },
-            ],
-          },
-          hints: [
-            {
-              level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'İşletmenin mal varlığı artmış ve satıcıya olan ticari borcu artmıştır.',
-            },
-            {
-              level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Ticari mallar "153 Ticari Mallar" (Aktif); satıcılara olan borç "320 Satıcılar" (Kısa Vadeli Yabancı Kaynak / Pasif) hesabıdır.',
-            },
-            {
-              level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Aktif hesaplar artınca BORÇ (153), Pasif borç hesapları artınca ALACAK (320) kaydedilir.`,
-            },
-            {
-              level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
-              content: `153 Ticari Mallar (Borç: ${fmt(amount)}) / 320 Satıcılar (Alacak: ${fmt(amount)})`,
-            },
-          ],
-        },
-        applyState: (s) => {
-          s.inventory += amount;
-          s.payables += amount;
-        },
-      };
-    },
-  },
-
-  // 5. Peşin Ticari Mal Satışı (Hasılat)
-  {
-    id: 'sale_cash',
-    title: 'Peşin Ticari Mal Satışı',
-    minDifficulty: 'Kolay',
-    isApplicable: () => true,
-    generate: ({ dateStr, order }) => {
-      const amount = pickRoundAmount(20000, 50000, 5000);
-      return {
-        transaction: {
-          id: `gen-tx-${order}`,
-          order,
-          date: dateStr,
-          title: 'Peşin Mal Satışı Hasılatı',
-          description: `İşletme, müşteriye ${fmt(amount)} tutarında ticari mal satmış ve bedelini nakit (peşin) olarak tahsil etmiştir.`,
-          amount,
-          expectedEntry: {
-            educationalNotes: 'Kasaya nakit girdiği için 100 Kasa borçlandırılır; satış geliri hasılat doğurduğu için 600 Yurtiçi Satışlar alacaklandırılır.',
-            lines: [
-              { accountCode: '100', debit: amount, credit: 0 },
-              { accountCode: '600', debit: 0, credit: amount },
-            ],
-          },
-          hints: [
-            {
-              level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'İşletmenin kasasına nakit girişi olmuş ve satış geliri (hasılat) elde edilmiştir.',
-            },
-            {
-              level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Nakit tahsilat için "100 Kasa" (Aktif); satış hasılatı için "600 Yurtiçi Satışlar" (Gelir Tablosu Hesabı) kullanılır.',
-            },
-            {
-              level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Kasaya para girdiğinde BORÇ (100). Gelir hesapları doğduğunda ve arttığında daima ALACAK (600) yazılır.`,
-            },
-            {
-              level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
-              content: `100 Kasa (Borç: ${fmt(amount)}) / 600 Yurtiçi Satışlar (Alacak: ${fmt(amount)})`,
-            },
-          ],
-        },
-        applyState: (s) => {
-          s.cash += amount;
-          s.revenues += amount;
-        },
-      };
-    },
-  },
-
-  // 6. Veresiye (Kredili) Mal Satışı
-  {
-    id: 'sale_credit',
-    title: 'Veresiye (Kredili) Ticari Mal Satışı',
-    minDifficulty: 'Orta',
-    isApplicable: () => true,
-    generate: ({ dateStr, order }) => {
-      const amount = pickRoundAmount(15000, 40000, 5000);
-      return {
-        transaction: {
-          id: `gen-tx-${order}`,
-          order,
-          date: dateStr,
-          title: 'Veresiye Ticari Mal Satışı',
-          description: `İşletme, müşteriye ${fmt(amount)} tutarında ticari malı veresiye (açık hesap, bedeli sonradan tahsil edilmek üzere) satmıştır.`,
-          amount,
-          expectedEntry: {
-            educationalNotes: 'Müşteriden olan ticari alacak arttığı için 120 Alıcılar borçlandırılır; satış hasılatı için 600 Yurtiçi Satışlar alacaklandırılır.',
-            lines: [
-              { accountCode: '120', debit: amount, credit: 0 },
-              { accountCode: '600', debit: 0, credit: amount },
-            ],
-          },
-          hints: [
-            {
-              level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'Müşteriden senetsiz ticari alacağımız doğmuş ve satış hasılatı gerçekleşmiştir.',
-            },
-            {
-              level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Müşteriden alacak "120 Alıcılar" (Aktif); satış hasılatı "600 Yurtiçi Satışlar" (Gelir) hesabıdır.',
-            },
-            {
-              level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Aktif alacak hesabındaki artış → BORÇ (120: ${fmt(amount)}). Hasılat geliri artışı → ALACAK (600: ${fmt(amount)}).`,
-            },
-            {
-              level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
-              content: `120 Alıcılar (Borç: ${fmt(amount)}) / 600 Yurtiçi Satışlar (Alacak: ${fmt(amount)})`,
-            },
-          ],
-        },
-        applyState: (s) => {
-          s.receivables += amount;
-          s.revenues += amount;
-        },
-      };
-    },
-  },
-
-  // 7. Müşteriden (Alıcılar) Nakit veya Banka Tahsilatı
-  {
-    id: 'collect_receivable',
-    title: 'Müşteriden Alacağın Tahsili',
-    minDifficulty: 'Orta',
-    isApplicable: ({ state }) => state.receivables >= 10000,
-    generate: ({ state, dateStr, order }) => {
-      // Tamamını veya yuvarlak bir kısmını tahsil et
-      const amount = state.receivables >= 20000 ? pickRoundAmount(10000, state.receivables, 5000) : state.receivables;
-      return {
-        transaction: {
-          id: `gen-tx-${order}`,
-          order,
-          date: dateStr,
-          title: 'Alıcılardan Alacağın Nakden Tahsili',
-          description: `İşletme, daha önce veresiye mal sattığı müşterisinden ${fmt(amount)} tutarındaki alacağını nakit olarak tahsil etmiştir.`,
-          amount,
-          expectedEntry: {
-            educationalNotes: 'Kasaya nakit para girdiği için 100 Kasa borçlandırılır; müşteriden olan alacak azaldığı (kapandığı) için 120 Alıcılar alacaklandırılır.',
-            lines: [
-              { accountCode: '100', debit: amount, credit: 0 },
-              { accountCode: '120', debit: 0, credit: amount },
-            ],
-          },
-          hints: [
-            {
-              level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'Kasaya nakit para girmiş, buna karşılık müşteriden olan alacak bakiyesi azalmıştır.',
-            },
-            {
-              level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: '"100 Kasa" ve "120 Alıcılar" hesaplarının ikisi de Dönen Varlık (Aktif) hesabıdır.',
-            },
-            {
-              level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Kasadaki artış BORÇ (100). Alacak varlığındaki azalış ise ALACAK (120) olarak kaydedilir.`,
-            },
-            {
-              level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
-              content: `100 Kasa (Borç: ${fmt(amount)}) / 120 Alıcılar (Alacak: ${fmt(amount)})`,
-            },
-          ],
-        },
-        applyState: (s) => {
-          s.cash += amount;
-          s.receivables -= amount;
-        },
-      };
-    },
-  },
-
-  // 8. Satıcıya Olan Borcun Bankadan Ödenmesi
+  // 9. Satıcıya Olan Borcun Bankadan Ödenmesi
   {
     id: 'pay_supplier_bank',
     title: 'Satıcılara Borcun Bankadan Ödenmesi',
     minDifficulty: 'Orta',
+    tags: ['genel', 'kdv_islemleri'],
     isApplicable: ({ state }) => state.payables >= 10000 && state.bank >= 10000,
     generate: ({ state, dateStr, order }) => {
       const maxPayment = Math.min(state.payables, state.bank);
-      const amount = maxPayment >= 20000 ? pickRoundAmount(10000, maxPayment, 5000) : maxPayment;
+      const amount =
+        maxPayment >= 20000
+          ? pickRoundAmount(10000, maxPayment, 5000)
+          : maxPayment;
       return {
         transaction: {
           id: `gen-tx-${order}`,
@@ -455,7 +553,8 @@ const ARCHETYPES: TransactionArchetype[] = [
           description: `İşletme, satıcılara olan veresiye borcunun ${fmt(amount)} tutarındaki kısmını banka mevduat hesabından havale çıkararak ödemiştir.`,
           amount,
           expectedEntry: {
-            educationalNotes: 'Satıcılara olan borç eksildiği için pasif hesap olan 320 Satıcılar borçlandırılır; bankadaki mevduat azaldığı için 102 Bankalar alacaklandırılır.',
+            educationalNotes:
+              'Satıcılara olan borç eksildiği için pasif hesap olan 320 Satıcılar borçlandırılır; bankadaki mevduat azaldığı için 102 Bankalar alacaklandırılır.',
             lines: [
               { accountCode: '320', debit: amount, credit: 0 },
               { accountCode: '102', debit: 0, credit: amount },
@@ -464,22 +563,24 @@ const ARCHETYPES: TransactionArchetype[] = [
           hints: [
             {
               level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'Satıcıya olan borcumuz kapanmakta ve banka hesabımızdan para çıkmaktadır.',
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'Satıcıya olan borcumuz kapanmakta ve banka hesabımızdan para çıkmaktadır.',
             },
             {
               level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Satıcı borcu "320 Satıcılar" (Pasif); banka parası "102 Bankalar" (Aktif) hesabıdır.',
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                'Satıcı borcu "320 Satıcılar" (Pasif); banka parası "102 Bankalar" (Aktif) hesabıdır.',
             },
             {
               level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
               content: `Pasif hesaplar azaldığında BORÇ kaydedilir (320: ${fmt(amount)}). Aktif hesaplar azaldığında ALACAK kaydedilir (102: ${fmt(amount)}).`,
             },
             {
               level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
+              title: '4. Aşama: Tam Yevmiye Kaydı',
               content: `320 Satıcılar (Borç: ${fmt(amount)}) / 102 Bankalar (Alacak: ${fmt(amount)})`,
             },
           ],
@@ -492,11 +593,12 @@ const ARCHETYPES: TransactionArchetype[] = [
     },
   },
 
-  // 9. Nakit Kira Gideri Ödenmesi
+  // 10. Nakit Kira Gideri Ödenmesi
   {
     id: 'expense_rent',
     title: 'Kira Giderinin Nakit Ödenmesi',
     minDifficulty: 'Kolay',
+    tags: ['genel', 'mal_ve_maliyet'],
     isApplicable: ({ state }) => state.cash >= 10000,
     generate: ({ state, dateStr, order }) => {
       const maxRent = Math.min(state.cash - 5000, 15000);
@@ -507,10 +609,11 @@ const ARCHETYPES: TransactionArchetype[] = [
           order,
           date: dateStr,
           title: 'Kira Giderinin Nakit Ödenmesi',
-          description: `İşletme faaliyetlerinin yürütüldüğü idari ofisin ${fmt(amount)} tutarındaki aylık kira bedeli kasadan nakit olarak ödenmiştir.`,
+          description: `İşletme faaliyetlerinin yürütüldüğü ofisin ${fmt(amount)} tutarındaki aylık kira bedeli kasadan nakit olarak ödenmiştir.`,
           amount,
           expectedEntry: {
-            educationalNotes: 'Giderler ortaya çıktığında daima borçlandırılır (770); kasadan para çıktığı için aktif hesap 100 Kasa alacaklandırılır.',
+            educationalNotes:
+              'Giderler ortaya çıktığında daima borçlandırılır (770); kasadan para çıktığı için aktif hesap 100 Kasa alacaklandırılır.',
             lines: [
               { accountCode: '770', debit: amount, credit: 0 },
               { accountCode: '100', debit: 0, credit: amount },
@@ -519,22 +622,25 @@ const ARCHETYPES: TransactionArchetype[] = [
           hints: [
             {
               level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'İşletme bir yönetim gideri yapmış ve kasasından nakit çıkmıştır.',
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'İşletme bir yönetim gideri yapmış ve kasasından nakit çıkmıştır.',
             },
             {
               level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Kira için "770 Genel Yönetim Giderleri" (Gider); nakit için "100 Kasa" (Aktif) kullanılır.',
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                'Kira için "770 Genel Yönetim Giderleri" (Gider); nakit için "100 Kasa" (Aktif) kullanılır.',
             },
             {
               level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Gider hesapları doğduğunda kural gereği BORÇ (770). Kasadaki nakit azaldığı için ALACAK (100) kaydedilir.`,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content:
+                'Gider hesapları doğduğunda kural gereği BORÇ (770). Kasadaki nakit azaldığı için ALACAK (100) kaydedilir.',
             },
             {
               level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
+              title: '4. Aşama: Tam Yevmiye Kaydı',
               content: `770 Genel Yönetim Giderleri (Borç: ${fmt(amount)}) / 100 Kasa (Alacak: ${fmt(amount)})`,
             },
           ],
@@ -547,121 +653,12 @@ const ARCHETYPES: TransactionArchetype[] = [
     },
   },
 
-  // 10. Bankadan Elektrik/İnternet/Fatura Gideri Ödenmesi
-  {
-    id: 'expense_utility_bank',
-    title: 'İdari Faturaların Bankadan Ödenmesi',
-    minDifficulty: 'Kolay',
-    isApplicable: ({ state }) => state.bank >= 8000,
-    generate: ({ state, dateStr, order }) => {
-      const maxUtil = Math.min(state.bank - 3000, 10000);
-      const amount = pickRoundAmount(3000, Math.max(3000, maxUtil), 1000);
-      return {
-        transaction: {
-          id: `gen-tx-${order}`,
-          order,
-          date: dateStr,
-          title: 'Elektrik ve İletişim Faturalarının Bankadan Ödenmesi',
-          description: `İşletmenin yönetim ofisine ait ${fmt(amount)} tutarındaki elektrik ve internet faturası banka hesabından otomatik ödeme ile karşılanmıştır.`,
-          amount,
-          expectedEntry: {
-            educationalNotes: 'Dönem yönetim gideri tahakkuk ettiği için 770 Genel Yönetim Giderleri borçlandırılır; bankadaki mevduat azaldığı için 102 Bankalar alacaklandırılır.',
-            lines: [
-              { accountCode: '770', debit: amount, credit: 0 },
-              { accountCode: '102', debit: 0, credit: amount },
-            ],
-          },
-          hints: [
-            {
-              level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'İdari faaliyet faturası ödenmiş ve bankadaki paramız azalmıştır.',
-            },
-            {
-              level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Fatura için "770 Genel Yönetim Giderleri" (Gider); banka için "102 Bankalar" (Aktif) kullanılır.',
-            },
-            {
-              level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Gider artışı BORÇ (770: ${fmt(amount)}). Banka mevduatı azalışı ALACAK (102: ${fmt(amount)}).`,
-            },
-            {
-              level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
-              content: `770 Genel Yönetim Giderleri (Borç: ${fmt(amount)}) / 102 Bankalar (Alacak: ${fmt(amount)})`,
-            },
-          ],
-        },
-        applyState: (s) => {
-          s.bank -= amount;
-          s.expenses += amount;
-        },
-      };
-    },
-  },
-
-  // 11. Demirbaş Alımı (İleri Düzey)
-  {
-    id: 'fixture_purchase',
-    title: 'Ofis Demirbaşı Satın Alınması',
-    minDifficulty: 'İleri',
-    isApplicable: ({ state }) => state.bank >= 20000,
-    generate: ({ state, dateStr, order }) => {
-      const maxAmount = Math.min(state.bank - 5000, 30000);
-      const amount = pickRoundAmount(10000, Math.max(10000, maxAmount), 5000);
-      return {
-        transaction: {
-          id: `gen-tx-${order}`,
-          order,
-          date: dateStr,
-          title: 'Ofis Bilgisayar ve Demirbaş Alımı',
-          description: `İşletme, ofis işlerinde kullanılmak üzere ${fmt(amount)} tutarında bilgisayar ve ofis mobilyası almış, bedeli bankadan havale edilmiştir.`,
-          amount,
-          expectedEntry: {
-            educationalNotes: 'Duran varlık niteliğindeki demirbaşlar arttığı için 255 Demirbaşlar borçlandırılır; bankadaki mevduat çıktığı için 102 Bankalar alacaklandırılır.',
-            lines: [
-              { accountCode: '255', debit: amount, credit: 0 },
-              { accountCode: '102', debit: 0, credit: amount },
-            ],
-          },
-          hints: [
-            {
-              level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'İşletme satmak için değil kullanmak üzere demirbaş almış ve bankadan ödeme yapmıştır.',
-            },
-            {
-              level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Demirbaş "255 Demirbaşlar" (Duran Varlık / Aktif); banka "102 Bankalar" (Dönen Varlık / Aktif) hesabıdır.',
-            },
-            {
-              level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Duran varlık artışı BORÇ (255: ${fmt(amount)}). Banka varlığı azalışı ALACAK (102: ${fmt(amount)}).`,
-            },
-            {
-              level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
-              content: `255 Demirbaşlar (Borç: ${fmt(amount)}) / 102 Bankalar (Alacak: ${fmt(amount)})`,
-            },
-          ],
-        },
-        applyState: (s) => {
-          s.fixtures += amount;
-          s.bank -= amount;
-        },
-      };
-    },
-  },
-
-  // 12. Senetli Mal Alışı (İleri Düzey)
+  // 11. Senet Verilerek Mal Alışı
   {
     id: 'note_purchase',
     title: 'Senet Verilerek Ticari Mal Alımı',
     minDifficulty: 'İleri',
+    tags: ['genel', 'cek_senet'],
     isApplicable: () => true,
     generate: ({ dateStr, order }) => {
       const amount = pickRoundAmount(15000, 30000, 5000);
@@ -670,11 +667,12 @@ const ARCHETYPES: TransactionArchetype[] = [
           id: `gen-tx-${order}`,
           order,
           date: dateStr,
-          title: 'Senet Tanzim Edilerek Mal Alımı',
-          description: `İşletme, ${fmt(amount)} tutarında ticari mal almış ve karşılığında 60 gün vadeli kendi borç senedini tanzim edip vermiştir.`,
+          title: 'Senet Düzenlenerek Mal Alımı',
+          description: `İşletme, ${fmt(amount)} tutarında ticari mal almış ve karşılığında 60 gün vadeli kendi borç senedini (bono) imzalayıp vermiştir.`,
           amount,
           expectedEntry: {
-            educationalNotes: 'Mal stoku arttığı için 153 Ticari Mallar borçlandırılır; imzalanıp verilen senet ticari borç senedi doğurduğu için 321 Borç Senetleri alacaklandırılır.',
+            educationalNotes:
+              'Mal stoku arttığı için 153 Ticari Mallar borçlandırılır; imzalanıp verilen senet borç doğurduğu için 321 Borç Senetleri alacaklandırılır.',
             lines: [
               { accountCode: '153', debit: amount, credit: 0 },
               { accountCode: '321', debit: 0, credit: amount },
@@ -683,22 +681,24 @@ const ARCHETYPES: TransactionArchetype[] = [
           hints: [
             {
               level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'Depodaki mal artmış ve senetli ticari borcumuz artmıştır.',
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content: 'Depodaki mal artmış ve senetli borcumuz artmıştır.',
             },
             {
               level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Mallar "153 Ticari Mallar" (Aktif); verilen senet "321 Borç Senetleri" (Pasif) hesabıdır.',
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                'Mallar "153 Ticari Mallar" (Aktif); verilen senet "321 Borç Senetleri" (Pasif) hesabıdır.',
             },
             {
               level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Aktif varlık artışı BORÇ (153). Pasif borç senedi artışı ALACAK (321).`,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content:
+                'Aktif varlık artışı BORÇ (153). Pasif borç senedi artışı ALACAK (321).',
             },
             {
               level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
+              title: '4. Aşama: Tam Yevmiye Kaydı',
               content: `153 Ticari Mallar (Borç: ${fmt(amount)}) / 321 Borç Senetleri (Alacak: ${fmt(amount)})`,
             },
           ],
@@ -711,11 +711,12 @@ const ARCHETYPES: TransactionArchetype[] = [
     },
   },
 
-  // 13. Senetli Mal Satışı (İleri Düzey)
+  // 12. Senet Alınarak Mal Satışı
   {
     id: 'note_sale',
     title: 'Senet Alınarak Ticari Mal Satışı',
     minDifficulty: 'İleri',
+    tags: ['genel', 'cek_senet'],
     isApplicable: () => true,
     generate: ({ dateStr, order }) => {
       const amount = pickRoundAmount(20000, 45000, 5000);
@@ -725,10 +726,11 @@ const ARCHETYPES: TransactionArchetype[] = [
           order,
           date: dateStr,
           title: 'Senet Alınarak Mal Satışı',
-          description: `İşletme, müşteriye ${fmt(amount)} tutarında ticari mal satmış ve karşılığında 90 gün vadeli alacak senedi teslim almıştır.`,
+          description: `İşletme, müşteriye ${fmt(amount)} tutarında ticari mal satmış ve karşılığında 90 gün vadeli alacak senedi (bono) teslim almıştır.`,
           amount,
           expectedEntry: {
-            educationalNotes: 'Müşteriden alınan senet ticari alacak senedini arttırdığı için 121 Alacak Senetleri borçlandırılır; satış hasılatı için 600 Yurtiçi Satışlar alacaklandırılır.',
+            educationalNotes:
+              'Müşteriden alınan senet alacağımızı arttırdığı için 121 Alacak Senetleri borçlandırılır; satış hasılatı için 600 Yurtiçi Satışlar alacaklandırılır.',
             lines: [
               { accountCode: '121', debit: amount, credit: 0 },
               { accountCode: '600', debit: 0, credit: amount },
@@ -737,22 +739,25 @@ const ARCHETYPES: TransactionArchetype[] = [
           hints: [
             {
               level: 1,
-              title: '1. Aşama: Etkilenen Unsurlar',
-              content: 'Elimizdeki senetli alacak artmış ve satış hasılatı gerçekleşmiştir.',
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content:
+                'Elimizdeki senetli alacak artmış ve satış hasılatı gerçekleşmiştir.',
             },
             {
               level: 2,
-              title: '2. Aşama: Hesap Karakterleri',
-              content: 'Alınan senet "121 Alacak Senetleri" (Aktif); satış hasılatı "600 Yurtiçi Satışlar" (Gelir) hesabıdır.',
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content:
+                'Alınan senet "121 Alacak Senetleri" (Aktif); satış hasılatı "600 Yurtiçi Satışlar" (Gelir) hesabıdır.',
             },
             {
               level: 3,
-              title: '3. Aşama: Artış ve Azalış Yönü',
-              content: `Aktif senet varlığı artışı BORÇ (121). Satış geliri artışı ALACAK (600).`,
+              title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+              content:
+                'Aktif senet varlığı artışı BORÇ (121). Satış geliri artışı ALACAK (600).',
             },
             {
               level: 4,
-              title: '4. Aşama: Nihai Yevmiye Maddesi',
+              title: '4. Aşama: Tam Yevmiye Kaydı',
               content: `121 Alacak Senetleri (Borç: ${fmt(amount)}) / 600 Yurtiçi Satışlar (Alacak: ${fmt(amount)})`,
             },
           ],
@@ -766,147 +771,149 @@ const ARCHETYPES: TransactionArchetype[] = [
   },
 ];
 
-// Ana Senaryo Üretim Motoru
 export function generateScenario(config: GeneratorConfig): CompanyScenario {
   const companyName = config.companyName?.trim() || pickRandom(COMPANY_NAMES);
   const difficulty = config.difficulty;
-  const targetCount = Math.max(3, Math.min(10, config.transactionCount || 5));
+  const focusArea: GeneratorFocusArea = config.focusArea || 'genel';
+  const targetCount = Math.max(4, Math.min(10, config.transactionCount || 6));
 
-  // 1. Sanal Defter Durumunu Başlat
   const state: VirtualLedgerState = {
     cash: 0,
+    checksReceived: 0,
     bank: 0,
+    checksIssued: 0,
+    posReceivables: 0,
     receivables: 0,
     notesReceivable: 0,
     inventory: 0,
+    vatDeductible: 0,
     fixtures: 0,
     bankLoans: 0,
     payables: 0,
     notesPayable: 0,
+    vatCalculated: 0,
     capital: 0,
     revenues: 0,
     expenses: 0,
   };
 
-  // 2. Kuruluş Sermayesini Belirle
-  const initialCapital = pickRoundAmount(100000, 200000, 25000);
+  const initialCapital = pickRoundAmount(120000, 220000, 20000);
+  const cashPart = Math.round(initialCapital * 0.5);
+  const bankPart = initialCapital - cashPart;
   const establishedDate = '01.11.2026';
 
-  // Kuruluş İşlemini Oluştur (1. İşlem her zaman kuruluştur)
   const tx1: CommercialTransaction = {
     id: 'gen-tx-1',
     order: 1,
     date: '01.11.2026',
-    title: 'İşletmenin Nakit Sermaye ile Kuruluşu',
-    description: `${companyName}, sahibi tarafından ${fmt(initialCapital)} nakit sermaye tahsis edilerek kurulmuştur. Nakit para kasaya konulmuştur.`,
+    title: 'İşletmenin Kuruluşu (Kasa ve Banka Sermayesi)',
+    description: `${companyName}, toplam ${fmt(initialCapital)} sermaye ile kurulmuştur. Tutarın ${fmt(cashPart)}'lik kısmı nakit olarak kasaya, ${fmt(bankPart)}'lik kısmı ise banka hesabına yatırılmıştır.`,
     amount: initialCapital,
     expectedEntry: {
-      educationalNotes: 'Kasaya nakit girişi olduğu için 100 Kasa (Aktif) borçlandırılır; işletmeye kaynak sağlandığı için 500 Sermaye (Özkaynak) alacaklandırılır.',
+      educationalNotes:
+        'Kuruluşta kasaya ve bankaya para girdiği için 100 Kasa ve 102 Bankalar borçlandırılır; toplam sermaye için 500 Sermaye alacaklandırılır.',
       lines: [
-        { accountCode: '100', debit: initialCapital, credit: 0 },
+        { accountCode: '100', debit: cashPart, credit: 0 },
+        { accountCode: '102', debit: bankPart, credit: 0 },
         { accountCode: '500', debit: 0, credit: initialCapital },
       ],
     },
     hints: [
       {
         level: 1,
-        title: '1. Aşama: Etkilenen Unsurlar',
-        content: 'İşletmenin kasasındaki nakit para ile şirketin özkaynağı (sermaye) artmaktadır.',
+        title: '1. Aşama: İşlemde Neler Değişti?',
+        content: `Kasaya ${fmt(cashPart)}, bankaya ${fmt(bankPart)} girdi ve ${fmt(initialCapital)} sermaye oluştu.`,
       },
       {
         level: 2,
-        title: '2. Aşama: Hesap Karakterleri',
-        content: 'Nakit para "100 Kasa" (Aktif); taahhüt edilen özkaynak "500 Sermaye" (Pasif / Özkaynak) hesabında izlenir.',
+        title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+        content:
+          '"100 Kasa" (Aktif), "102 Bankalar" (Aktif) ve "500 Sermaye" (Öz Kaynak/Pasif).',
       },
       {
         level: 3,
-        title: '3. Aşama: Artış ve Azalış Yönü',
-        content: `Kasadaki nakit artışı BORÇ (100: ${fmt(initialCapital)}). Özkaynaktaki artış ALACAK (500: ${fmt(initialCapital)}).`,
+        title: '3. Aşama: Hangisi Borç, Hangisi Alacak?',
+        content:
+          'Artan varlıklar (100 ve 102) BORÇ; artan sermaye kaynağı (500) ALACAK yazılır.',
       },
       {
         level: 4,
-        title: '4. Aşama: Nihai Yevmiye Maddesi',
-        content: `100 Kasa (Borç: ${fmt(initialCapital)}) / 500 Sermaye (Alacak: ${fmt(initialCapital)})`,
+        title: '4. Aşama: Tam Yevmiye Kaydı',
+        content: `100 Kasa (B: ${fmt(cashPart)}), 102 Bankalar (B: ${fmt(bankPart)}) / 500 Sermaye (A: ${fmt(initialCapital)})`,
       },
     ],
   };
 
-  // Sanal duruma kuruluşu uygula
-  state.cash = initialCapital;
-  state.capital = initialCapital;
+  state.cash += cashPart;
+  state.bank += bankPart;
+  state.capital += initialCapital;
 
   const transactions: CommercialTransaction[] = [tx1];
-  let currentDateDay = 3;
-  let lastUsedArchetypeId = '';
+  const recentIds: string[] = [];
 
-  // Zorluk seviyesi kısıtı filtresi
-  const difficultyRank: Record<'Kolay' | 'Orta' | 'İleri', number> = {
-    Kolay: 1,
-    Orta: 2,
-    İleri: 3,
-  };
-  const currentRank = difficultyRank[difficulty];
+  const allowedLevels = new Set<'Kolay' | 'Orta' | 'İleri'>(['Kolay']);
+  if (difficulty === 'Orta' || difficulty === 'İleri') allowedLevels.add('Orta');
+  if (difficulty === 'İleri') allowedLevels.add('İleri');
 
-  // Kalan (targetCount - 1) adet işlemi sırayla üret
-  for (let order = 2; order <= targetCount; order++) {
-    const dateStr = `${currentDateDay < 10 ? '0' : ''}${currentDateDay}.11.2026`;
-    currentDateDay += Math.floor(Math.random() * 2) + 2; // 2 veya 3 gün ileri git
+  for (let i = 2; i <= targetCount; i++) {
+    const day = Math.min(28, 1 + (i - 1) * 3);
+    const dateStr = `${day.toString().padStart(2, '0')}.11.2026`;
 
     const ctx: ArchetypeContext = {
       state,
       dateStr,
-      order,
+      order: i,
       difficulty,
     };
 
-    // Mevcut sanal duruma ve zorluğa uygun şablonları filtrele
-    const eligibleArchetypes = ARCHETYPES.filter((arch) => {
-      // Zorluk kontrolü
-      if (difficultyRank[arch.minDifficulty] > currentRank) return false;
-      // Peş peşe aynı işlemi üretmeyi engelle
-      if (arch.id === lastUsedArchetypeId) return false;
-      // Sanal durum şartı kontrolü (kasa/banka yetiyor mu, borç/alacak var mı?)
-      return arch.isApplicable(ctx);
-    });
+    let candidates = ARCHETYPES.filter(
+      (a) =>
+        (allowedLevels.has(a.minDifficulty) || a.tags.includes(focusArea)) &&
+        a.isApplicable(ctx)
+    );
 
-    // Eğer filtre sonucu boşsa (nadir durum), zorunlu olarak peşin mal satışı veya bankaya yatırma gibi güvenli bir işlem seç
-    let chosenArchetype = eligibleArchetypes.length > 0 ? pickRandom(eligibleArchetypes) : ARCHETYPES[4]; // Peşin satış her zaman güvenlidir
+    if (focusArea !== 'genel') {
+      const focused = candidates.filter((a) => a.tags.includes(focusArea));
+      if (focused.length > 0) {
+        candidates = focused;
+      }
+    }
 
-    const generated = chosenArchetype.generate(ctx);
-    generated.applyState(state);
-    transactions.push(generated.transaction);
-    lastUsedArchetypeId = chosenArchetype.id;
+    const nonRecent = candidates.filter((a) => !recentIds.includes(a.id));
+    if (nonRecent.length > 0) {
+      candidates = nonRecent;
+    }
+
+    const chosen =
+      candidates.length > 0 ? pickRandom(candidates) : ARCHETYPES[2];
+    const result = chosen.generate(ctx);
+    result.applyState(state);
+    transactions.push(result.transaction);
+
+    recentIds.push(chosen.id);
+    if (recentIds.length > 2) recentIds.shift();
   }
 
-  // Otomatik Öğrenme Kazanımları Çıkar
-  const touchedAccounts = new Set<string>();
-  transactions.forEach((tx) => {
-    tx.expectedEntry.lines.forEach((l) => touchedAccounts.add(l.accountCode));
-  });
-
-  const learningObjectives: string[] = [
-    'Kuruluş sermayesinin varlık ve özkaynak hesaplarına doğru kaydedilmesi',
-  ];
-  if (touchedAccounts.has('153')) learningObjectives.push('153 Ticari Mallar hesabının borç ve alacak işleyişi');
-  if (touchedAccounts.has('102')) learningObjectives.push('Banka ve Kasa arasındaki likit varlık transferleri');
-  if (touchedAccounts.has('320')) learningObjectives.push('Veresiye mal alımında 320 Satıcılar borç ilişkisi');
-  if (touchedAccounts.has('120')) learningObjectives.push('Kredili satışlarda 120 Alıcılar alacak takibi');
-  if (touchedAccounts.has('600')) learningObjectives.push('600 Yurtiçi Satışlar hesabının gelir tablosu mantığı');
-  if (touchedAccounts.has('770')) learningObjectives.push('770 Genel Yönetim Giderleri hesabının daima borçlanma kuralı');
-  if (touchedAccounts.has('255')) learningObjectives.push('255 Demirbaşlar ile duran varlık muhasebesi');
-  if (touchedAccounts.has('321') || touchedAccounts.has('121')) learningObjectives.push('Kambiyo senetlerinin (Borç/Alacak Senetleri) muhasebeleştirilmesi');
-
-  const id = `generated-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+  const focusLabelMap: Record<GeneratorFocusArea, string> = {
+    genel: 'Karma Müfredat',
+    cek_senet: 'Çek & Senet Odaklı',
+    kdv_islemleri: 'KDV & Mahsup Odaklı',
+    mal_ve_maliyet: 'Alış-Satış & Gider Odaklı',
+  };
 
   return {
-    id,
-    title: `${companyName} (${difficulty} Seviye Simülasyon)`,
+    id: 'custom-' + Math.random().toString(36).substring(2, 9),
+    title: `${companyName} (${focusLabelMap[focusArea]} • ${difficulty})`,
     difficulty,
     companyName,
     establishedDate,
     initialCapital,
-    description: `Algoritma tarafından özel olarak türetilmiş, ${targetCount} işlemden oluşan dinamik ${difficulty.toLowerCase()} seviye muhasebe simülasyonu.`,
-    learningObjectives,
+    description: `${companyName} için Genel Muhasebe müfredatına uygun olarak üretilmiş ${transactions.length} işlemlik (${focusLabelMap[focusArea]}) çalışma senaryosu.`,
+    learningObjectives: [
+      'Varlık ve kaynak hesaplarının Borç/Alacak yönlerini doğru belirleme',
+      'Çek (101/103), KDV (191/391) ve cari hesap (120/320) kurallarını uygulama',
+      'Yevmiye kayıtlarından T-Cetveli ve Bilanço denkliğine ulaşma',
+    ],
     transactions,
   };
 }

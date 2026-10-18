@@ -1,3 +1,5 @@
+import type { JournalLine } from './accounting';
+
 export type DiagnosticType = 
   | 'UNBALANCED_ENTRY'        // Borç != Alacak
   | 'EMPTY_ENTRY'             // Hiç satır yok
@@ -36,6 +38,7 @@ export interface ScenarioAuditResult {
   balanceErrorsCount: number;
   accountSelectionErrorsCount: number;
   directionErrorsCount: number;
+  submittedEntries?: Record<string, JournalLine[]>;
   transactionResults: {
     transactionId: string;
     order: number;

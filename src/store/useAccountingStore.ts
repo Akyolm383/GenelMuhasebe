@@ -11,6 +11,31 @@ export type AppMode = 'ogrenme' | 'calisma';
 export type ActiveTab = 'yevmiye' | 'defterikebir' | 'mizan' | 'bilanco';
 export type AppScreen = 'welcome' | 'workspace' | 'summary';
 export type AppTheme = 'light' | 'dark';
+export type PracticeViewMode = 'auto' | 'practice';
+
+export interface PracticeLedgerEntry {
+  debitTotal: string;
+  creditTotal: string;
+  balance: string;
+  direction: 'BORC' | 'ALACAK' | 'DENK';
+}
+
+export interface CustomBalanceItem {
+  id: string;
+  code: string;
+  group: 'DONEN' | 'DURAN' | 'KVYK' | 'UVYK' | 'OZKAYNAK';
+  amount: number;
+}
+
+const getInitialPracticeAssets = (): CustomBalanceItem[] => [
+  { id: 'a1', code: '100', group: 'DONEN', amount: 0 },
+  { id: 'a2', code: '', group: 'DONEN', amount: 0 },
+];
+
+const getInitialPracticeLiabilities = (): CustomBalanceItem[] => [
+  { id: 'l1', code: '500', group: 'OZKAYNAK', amount: 0 },
+  { id: 'l2', code: '', group: 'KVYK', amount: 0 },
+];
 
 interface AccountingStore {
   // Ekran ve Tema
@@ -29,6 +54,13 @@ interface AccountingStore {
   showAuditModal: boolean;
   showHintModal: boolean;
 
+  // İnteraktif T-Cetveli ve Bilanço "Kendin Doldur" (Practice) Durumu
+  ledgerViewMode: PracticeViewMode;
+  balanceViewMode: PracticeViewMode;
+  practiceLedgerData: Record<string, PracticeLedgerEntry>;
+  practiceAssetItems: CustomBalanceItem[];
+  practiceLiabilityItems: CustomBalanceItem[];
+
   // Getters / Selectors
   getAllScenarios: () => CompanyScenario[];
   getCurrentScenario: () => CompanyScenario;
@@ -46,8 +78,25 @@ interface AccountingStore {
   startScenario: (scenarioId: string, mode: AppMode) => void;
   startCustomScenario: (scenario: CompanyScenario, mode: AppMode) => void;
   finishScenarioAndShowSummary: () => void;
+  restoreSubmittedEntriesAndReturn: () => void;
+  resetCurrentScenario: () => void;
   returnToWorkspace: () => void;
   returnToWelcome: () => void;
+
+  // İnteraktif T-Cetveli & Bilanço Aksiyonları
+  setLedgerViewMode: (mode: PracticeViewMode) => void;
+  setBalanceViewMode: (mode: PracticeViewMode) => void;
+  setPracticeLedgerData: (
+    updater:
+      | Record<string, PracticeLedgerEntry>
+      | ((prev: Record<string, PracticeLedgerEntry>) => Record<string, PracticeLedgerEntry>)
+  ) => void;
+  setPracticeAssetItems: (
+    updater: CustomBalanceItem[] | ((prev: CustomBalanceItem[]) => CustomBalanceItem[])
+  ) => void;
+  setPracticeLiabilityItems: (
+    updater: CustomBalanceItem[] | ((prev: CustomBalanceItem[]) => CustomBalanceItem[])
+  ) => void;
 
   // Genel Aksiyonlar
   setMode: (mode: AppMode) => void;
@@ -93,6 +142,12 @@ export const useAccountingStore = create<AccountingStore>()(
       showAuditModal: false,
       showHintModal: false,
 
+      ledgerViewMode: 'auto',
+      balanceViewMode: 'auto',
+      practiceLedgerData: {},
+      practiceAssetItems: getInitialPracticeAssets(),
+      practiceLiabilityItems: getInitialPracticeLiabilities(),
+
       getAllScenarios: () => {
         const { customScenarios } = get();
         return [...SCENARIOS, ...Object.values(customScenarios)];
@@ -113,7 +168,6 @@ export const useAccountingStore = create<AccountingStore>()(
         const tx = get().getActiveTransaction();
         const entries = get().userEntries[tx.id];
         if (entries && entries.length > 0) return entries;
-        // Varsayılan iki boş satır (Biri borç biri alacak için hazır başlangıç)
         return [createInitialLine(), createInitialLine()];
       },
 
@@ -199,20 +253,92 @@ export const useAccountingStore = create<AccountingStore>()(
           currentScreen: 'workspace',
           showAuditModal: false,
           showHintModal: false,
+          practiceLedgerData: {},
+          practiceAssetItems: getInitialPracticeAssets(),
+          practiceLiabilityItems: getInitialPracticeLiabilities(),
         }));
       },
       finishScenarioAndShowSummary: () => {
         const scenario = get().getCurrentScenario();
-        const { userEntries } = get();
+        const { userEntries, hintLevels } = get();
         const result = auditScenario(userEntries, scenario);
+
+        // Görev tamamlandığında (finishlenince) bu senaryoya ait kayıtları sıfırla ki
+        // kullanıcı görevi tekrar baştan çözebilsin ("sürekli yapılı" kalmasın).
+        // Tamamlanan turun kayıtları result.submittedEntries içinde saklanır.
+        const remainingEntries = { ...userEntries };
+        const remainingHints = { ...hintLevels };
+        scenario.transactions.forEach((tx) => {
+          delete remainingEntries[tx.id];
+          delete remainingHints[tx.id];
+        });
+
         set({
           auditResult: result,
+          userEntries: remainingEntries,
+          hintLevels: remainingHints,
+          activeTransactionIndex: 0,
+          activeTab: 'yevmiye',
+          practiceLedgerData: {},
+          practiceAssetItems: getInitialPracticeAssets(),
+          practiceLiabilityItems: getInitialPracticeLiabilities(),
           currentScreen: 'summary',
           showAuditModal: false,
         });
       },
+      restoreSubmittedEntriesAndReturn: () => {
+        const { auditResult, userEntries } = get();
+        if (auditResult?.submittedEntries) {
+          set({
+            userEntries: {
+              ...userEntries,
+              ...auditResult.submittedEntries,
+            },
+            currentScreen: 'workspace',
+          });
+        } else {
+          set({ currentScreen: 'workspace' });
+        }
+      },
+      resetCurrentScenario: () => {
+        const scenario = get().getCurrentScenario();
+        const { userEntries, hintLevels } = get();
+        const remainingEntries = { ...userEntries };
+        const remainingHints = { ...hintLevels };
+        scenario.transactions.forEach((tx) => {
+          delete remainingEntries[tx.id];
+          delete remainingHints[tx.id];
+        });
+        set({
+          userEntries: remainingEntries,
+          hintLevels: remainingHints,
+          activeTransactionIndex: 0,
+          practiceLedgerData: {},
+          practiceAssetItems: getInitialPracticeAssets(),
+          practiceLiabilityItems: getInitialPracticeLiabilities(),
+        });
+      },
       returnToWorkspace: () => set({ currentScreen: 'workspace' }),
       returnToWelcome: () => set({ currentScreen: 'welcome' }),
+
+      // İnteraktif T-Cetveli & Bilanço Aksiyonları
+      setLedgerViewMode: (mode) => set({ ledgerViewMode: mode }),
+      setBalanceViewMode: (mode) => set({ balanceViewMode: mode }),
+      setPracticeLedgerData: (updater) =>
+        set((state) => ({
+          practiceLedgerData:
+            typeof updater === 'function' ? updater(state.practiceLedgerData) : updater,
+        })),
+      setPracticeAssetItems: (updater) =>
+        set((state) => ({
+          practiceAssetItems:
+            typeof updater === 'function' ? updater(state.practiceAssetItems) : updater,
+        })),
+      setPracticeLiabilityItems: (updater) =>
+        set((state) => ({
+          practiceLiabilityItems:
+            typeof updater === 'function' ? updater(state.practiceLiabilityItems) : updater,
+        })),
 
       // Eylemler
       setMode: (mode) => set({ mode }),
@@ -221,6 +347,9 @@ export const useAccountingStore = create<AccountingStore>()(
         activeTransactionIndex: 0,
         hintLevels: {},
         auditResult: null,
+        practiceLedgerData: {},
+        practiceAssetItems: getInitialPracticeAssets(),
+        practiceLiabilityItems: getInitialPracticeLiabilities(),
       }),
       setActiveTransactionIndex: (index) => set({ activeTransactionIndex: index }),
       setActiveTab: (tab) => set({ activeTab: tab }),
@@ -289,6 +418,9 @@ export const useAccountingStore = create<AccountingStore>()(
           hintLevels: {},
           auditResult: null,
           activeTransactionIndex: 0,
+          practiceLedgerData: {},
+          practiceAssetItems: getInitialPracticeAssets(),
+          practiceLiabilityItems: getInitialPracticeLiabilities(),
         });
       },
 
@@ -333,6 +465,11 @@ export const useAccountingStore = create<AccountingStore>()(
         hintLevels: state.hintLevels,
         currentScreen: state.currentScreen,
         auditResult: state.auditResult,
+        ledgerViewMode: state.ledgerViewMode,
+        balanceViewMode: state.balanceViewMode,
+        practiceLedgerData: state.practiceLedgerData,
+        practiceAssetItems: state.practiceAssetItems,
+        practiceLiabilityItems: state.practiceLiabilityItems,
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.theme === 'dark' && typeof document !== 'undefined') {
