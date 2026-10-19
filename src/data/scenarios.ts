@@ -1612,7 +1612,7 @@ export const SCENARIOS: CompanyScenario[] = [
           educationalNotes:
             'Kasaya giren nakit için 100 Kasa BORÇ (10.000 TL); alınan senet için 121 Alacak Senetleri BORÇ (50.000 TL); satış geliri için 600 Yurtiçi Satışlar ALACAK (50.000 TL); KDV için 391 Hesaplanan KDV ALACAK (10.000 TL) yazılır.',
           lines: [
-            { accountCode: '100', debit: 100000 > 10000 ? 10000 : 10000, credit: 0 },
+            { accountCode: '100', debit: 10000, credit: 0 },
             { accountCode: '121', debit: 50000, credit: 0 },
             { accountCode: '600', debit: 0, credit: 50000 },
             { accountCode: '391', debit: 0, credit: 10000 },

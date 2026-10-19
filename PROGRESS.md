@@ -62,9 +62,11 @@
     10. *Zirve İnşaat & Taahhüt* (İleri, 7 İşlem) — Duran Varlık Satışı & Kâr/Zarar (679/689)
     11. *Doruk Sanayi A.Ş.* (İleri, 8 İşlem) — Dönem Sonu 690 Devir & Net Kâr (590)
   - `src/types/generator.ts`, `src/core/scenarioGenerator.ts`, `src/components/ScenarioGeneratorModal.tsx` — Dinamik soru oluşturucuya 10 farklı müfredat alanı (Kredi/Faiz, Döviz, Şüpheli Alacak, Bordro, Varlık Satışı, 690 Kapanış vb.) ve algoritmik şablonlar entegre edildi.
-  - `src/components/landing/ScenarioSelectionSection.tsx` — 11 senaryo için dinamik filtre sekmeleri (`Tüm Sorular (11)`, `Temel Seviye (3)`, `Orta (Vize) Seviye (4)`, `İleri (Final) Seviye (4)`) ve konuya özel rozetler eklendi.
-- **Otomatik Tarayıcı Testi (`1440px` Masaüstü & `375px` Mobil):**
-  - Tüm ekranlar (`WelcomeScreen`, `WorkspaceScreen`, `LedgerView Practice`, `BalanceSheetView Practice`, `SummaryScreen`) `1440px` ve `375px` çözünürlüklerde `hasOverflow: false` (`0` yatay taşma) ve `0` konsol/sayfa hatasıyla doğrulandı.
+  - `src/components/landing/ScenarioSelectionSection.tsx` — 11 senaryo için dinamik filtre sekmeleri (`Tüm Sorular (11)`, `Temel Seviye (3)`, `Orta (Vize) Seviye (4)`, `İleri (Final) Seviye (4)`), tek satır kart rozetleri ve alt "Çalışma Modu" komuta barının yatay segmente düzende (`Öğrenme Modu (İpuçlu Rehber)` / `Sınav Modu (Kendini Test Et)`) kırılmadan hizalanması sağlandı.
+  - `src/components/landing/LandingNavbar.tsx` — Üst yüzen kapsül navigasyon barında tüm öğelerin (`GM / ATÖLYE`, başlık, 4 bölüm sekmesi, çalışma modu rozeti, ikonlar ve `Çözmeye Başla` butonu) kapsül sınırları içinde taşmadan (`navbarOverflow: false`) hizalanması sağlandı.
+  - `SCENARIO_GUIDE.md` & `README.md` — Projeye yeni senaryo eklemek isteyenler için kapsamlı mimari ve pedagojik senaryo üretim rehberi oluşturuldu.
+- **Otomatik Tarayıcı Testi (`1440px`, `1280px`, `1024px` Masaüstü/Laptop & `375px` Mobil):**
+  - Tüm ekranlar (`WelcomeScreen`, `LandingNavbar`, `ScenarioSelectionSection` alt çalışma modu barı, `WorkspaceScreen`, `LedgerView Practice`, `BalanceSheetView Practice`, `SummaryScreen`) `1440px`, `1280px`, `1024px` ve `375px` çözünürlüklerde `navbarOverflow: false`, `modeBtnsSameRow: true` ve `0` lint/build/konsol hatasıyla doğrulandı.
 
 ---
 

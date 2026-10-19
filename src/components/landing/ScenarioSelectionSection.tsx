@@ -215,9 +215,9 @@ export const ScenarioSelectionSection: React.FC<
               )}
 
               <div className="space-y-4">
-                <div className="flex justify-between items-start gap-2">
+                <div className="flex justify-between items-center gap-1.5">
                   <span
-                    className={`px-2.5 py-1 rounded text-[0.6875rem] font-ledger-readout font-bold ${
+                    className={`px-2 py-0.5 rounded text-[0.65rem] font-ledger-readout font-bold whitespace-nowrap shrink-0 ${
                       isSelected
                         ? 'bg-accent-surface dark:bg-[#3A1D16] text-primary dark:text-[#FFB4A4]'
                         : 'bg-surface-muted dark:bg-zinc-800 text-text-secondary dark:text-zinc-300'
@@ -226,7 +226,7 @@ export const ScenarioSelectionSection: React.FC<
                     SORU SETİ #{dossierNumber}
                   </span>
                   <span
-                    className={`px-2.5 py-0.5 rounded-full text-[0.6875rem] font-ledger-readout font-bold ${diffMeta.badgeClass}`}
+                    className={`px-2.5 py-0.5 rounded-full text-[0.65rem] font-ledger-readout font-bold whitespace-nowrap shrink-0 ${diffMeta.badgeClass}`}
                   >
                     {diffMeta.label}
                   </span>
@@ -267,7 +267,7 @@ export const ScenarioSelectionSection: React.FC<
                       onStart();
                     }
                   }}
-                  className={`w-full py-2.5 rounded-xl text-[0.8125rem] font-ledger-readout font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`w-full py-2.5 rounded-xl text-[0.8125rem] font-ledger-readout font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                     isSelected
                       ? 'bg-primary-container hover:bg-primary text-on-primary-container shadow-xs'
                       : 'bg-surface-muted dark:bg-zinc-800 hover:bg-surface-contrast hover:text-surface dark:hover:bg-[#F5F3EE] dark:hover:text-[#18181B] text-text-primary dark:text-zinc-100'
@@ -277,9 +277,9 @@ export const ScenarioSelectionSection: React.FC<
                     {isSelected ? 'Bu Soruyu Çözmeye Başla' : 'Soruyu Seç'}
                   </span>
                   {isSelected ? (
-                    <Check className="w-4 h-4" />
+                    <Check className="w-4 h-4 shrink-0" />
                   ) : (
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-4 h-4 shrink-0" />
                   )}
                 </button>
               </div>
@@ -290,11 +290,11 @@ export const ScenarioSelectionSection: React.FC<
         {/* Dossier #04: Konu Odaklı Soru Üretici */}
         <div className="bg-surface-muted/60 dark:bg-zinc-900/60 rounded-[2rem] p-6 border-2 border-dashed border-border-subtle dark:border-zinc-700 hover:border-text-secondary dark:hover:border-zinc-500 transition-all space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="flex justify-between items-start gap-2">
-              <span className="px-2.5 py-1 rounded bg-surface dark:bg-zinc-800 text-text-primary dark:text-zinc-100 text-[0.6875rem] font-ledger-readout font-bold">
+            <div className="flex justify-between items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-surface dark:bg-zinc-800 text-text-primary dark:text-zinc-100 text-[0.65rem] font-ledger-readout font-bold whitespace-nowrap shrink-0">
                 SORU ÜRETİCİ
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-primary-fixed dark:bg-[#3A1D16] text-primary dark:text-[#FFB4A4] text-[0.6875rem] font-ledger-readout font-bold">
+              <span className="px-2.5 py-0.5 rounded-full bg-primary-fixed dark:bg-[#3A1D16] text-primary dark:text-[#FFB4A4] text-[0.65rem] font-ledger-readout font-bold whitespace-nowrap shrink-0">
                 Sınırsız Pratik
               </span>
             </div>
@@ -313,7 +313,7 @@ export const ScenarioSelectionSection: React.FC<
               <div className="flex justify-between">
                 <span>Konu Seçimi:</span>
                 <span className="font-mono text-text-primary dark:text-zinc-100 font-semibold">
-                  Çek / KDV / Karma
+                  10 Farklı Ders Konusu
                 </span>
               </div>
               <div className="flex justify-between">
@@ -327,9 +327,9 @@ export const ScenarioSelectionSection: React.FC<
             <button
               type="button"
               onClick={onOpenGenerator}
-              className="w-full py-2.5 rounded-xl bg-surface dark:bg-zinc-800 border border-border-subtle dark:border-zinc-700 hover:bg-surface-contrast hover:text-surface dark:hover:bg-[#F5F3EE] dark:hover:text-[#18181B] text-text-primary dark:text-zinc-100 text-[0.8125rem] font-ledger-readout font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
+              className="w-full py-2.5 rounded-xl bg-surface dark:bg-zinc-800 border border-border-subtle dark:border-zinc-700 hover:bg-surface-contrast hover:text-surface dark:hover:bg-[#F5F3EE] dark:hover:text-[#18181B] text-text-primary dark:text-zinc-100 text-[0.8125rem] font-ledger-readout font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
             >
-              <Dices className="w-4 h-4" />
+              <Dices className="w-4 h-4 shrink-0" />
               <span>Özel Soru Seti Oluştur</span>
             </button>
           </div>
@@ -337,62 +337,71 @@ export const ScenarioSelectionSection: React.FC<
       </div>
 
       {/* Bottom Tactile Command Dock */}
-      <div className="bg-surface dark:bg-[#1C1B19] rounded-3xl p-5 sm:p-6 border border-border-subtle dark:border-zinc-800 shadow-md flex flex-col lg:flex-row justify-between items-center gap-5">
+      <div className="bg-surface dark:bg-[#1C1B19] rounded-3xl p-4 sm:p-5 lg:px-6 border border-border-subtle dark:border-zinc-800 shadow-md flex flex-col lg:flex-row justify-between items-center gap-4">
         {/* Mode Switcher */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-          <span className="font-ledger-readout text-text-muted dark:text-zinc-400 text-[0.8125rem]">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto justify-center lg:justify-start">
+          <span className="font-ledger-readout text-text-muted dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider whitespace-nowrap shrink-0">
             Çalışma Modu:
           </span>
-          <div className="inline-flex flex-wrap justify-center p-1 bg-surface-muted dark:bg-zinc-900 rounded-full border border-border-subtle dark:border-zinc-800">
+          <div className="inline-flex flex-col sm:flex-row items-stretch sm:items-center p-1 bg-surface-muted dark:bg-zinc-900 rounded-2xl sm:rounded-full border border-border-subtle dark:border-zinc-800 w-full sm:w-auto shrink-0">
             <button
               type="button"
               onClick={() => onSelectMode('ogrenme')}
-              className={`px-4 py-1.5 rounded-full text-[0.78rem] sm:text-[0.8125rem] font-ledger-readout transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-full text-xs font-ledger-readout transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
                 selectedMode === 'ogrenme'
                   ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-semibold shadow-xs'
                   : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary dark:hover:text-zinc-200'
               }`}
             >
               <span
-                className={`w-2 h-2 rounded-full ${
+                className={`w-2 h-2 rounded-full shrink-0 ${
                   selectedMode === 'ogrenme'
                     ? 'bg-secondary'
                     : 'bg-text-muted/40'
                 }`}
               />
-              <span>Öğrenme Modu (İpuçları ve Anlık Rehber Açık)</span>
+              <span>
+                Öğrenme Modu{' '}
+                <span className="opacity-75 font-normal">(İpuçlu Rehber)</span>
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => onSelectMode('calisma')}
-              className={`px-4 py-1.5 rounded-full text-[0.78rem] sm:text-[0.8125rem] font-ledger-readout transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-full text-xs font-ledger-readout transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
                 selectedMode === 'calisma'
                   ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-semibold shadow-xs'
                   : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary dark:hover:text-zinc-200'
               }`}
             >
               <span
-                className={`w-2 h-2 rounded-full ${
+                className={`w-2 h-2 rounded-full shrink-0 ${
                   selectedMode === 'calisma'
                     ? 'bg-primary-container'
                     : 'bg-text-muted/40'
                 }`}
               />
-              <span>Sınav Modu (Kendini Test Et)</span>
+              <span>
+                Sınav Modu{' '}
+                <span className="opacity-75 font-normal">(Kendini Test Et)</span>
+              </span>
             </button>
           </div>
         </div>
 
         {/* Primary Dossier Action CTA */}
-        <div className="flex items-center gap-4 w-full sm:w-auto justify-center">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-center min-w-0 sm:shrink-0">
           <button
             type="button"
             onClick={onStart}
-            className="w-full sm:w-auto px-7 sm:px-8 py-3.5 rounded-full bg-surface-contrast dark:bg-primary-container text-surface hover:opacity-95 active:scale-[0.98] font-ledger-readout font-semibold text-[0.8125rem] transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-container"
+            className="w-full sm:w-auto max-w-full px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-surface-contrast dark:bg-primary-container text-surface hover:opacity-95 active:scale-[0.98] font-ledger-readout font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer whitespace-nowrap min-w-0 sm:shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-container"
           >
-            <span>Seçili Soruyu Çöz: {selectedScenario.companyName}</span>
-            <ArrowRight className="w-4 h-4" />
+            <span className="truncate">
+              Seçili Soruyu Çöz:{' '}
+              {selectedScenario.companyName.replace(/\s*\(.*?\)\s*/g, '')}
+            </span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
       </div>
