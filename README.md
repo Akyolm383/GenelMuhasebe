@@ -41,3 +41,13 @@ npm run dev
 # Production derlemesi alın
 npm run build
 ```
+
+---
+
+## 📚 Yeni Senaryo Ekleme Rehberi
+
+Projeye üniversite Genel Muhasebe müfredatına uygun yeni çalışma senaryoları veya Dinamik Soru Üretici şablonları eklemek ister misiniz?
+Detaylı veri anatomisi, 4 kademeli Sokratik ipucu metodolojisi, kod şablonları ve matematiksel denklik doğrulama testleri için kapsamlı rehberimizi inceleyin:
+
+👉 [**Senaryo Geliştirme Rehberi (SCENARIO_GUIDE.md)**](./SCENARIO_GUIDE.md)
+
