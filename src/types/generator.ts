@@ -4,7 +4,13 @@ export type GeneratorFocusArea =
   | 'genel'
   | 'cek_senet'
   | 'kdv_islemleri'
-  | 'mal_ve_maliyet';
+  | 'mal_ve_maliyet'
+  | 'faiz_kredi'
+  | 'doviz'
+  | 'supheli_alacak'
+  | 'bordro'
+  | 'varlik_satisi'
+  | 'donem_sonu';
 
 export interface GeneratorConfig {
   difficulty: GeneratorDifficulty;

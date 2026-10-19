@@ -39,8 +39,8 @@ const FOCUS_OPTIONS: {
 }[] = [
   {
     id: 'genel',
-    title: 'Genel Karma (Tüm Konular)',
-    subtitle: 'Kasa, Banka, Çek, KDV ve Alış-Satış bir arada',
+    title: 'Genel Karma (Tüm Müfredat)',
+    subtitle: 'Kasa, Banka, Çek, KDV, Bordro ve Kapanış bir arada',
   },
   {
     id: 'cek_senet',
@@ -50,12 +50,42 @@ const FOCUS_OPTIONS: {
   {
     id: 'kdv_islemleri',
     title: 'KDV Hesaplamaları (191 / 391)',
-    subtitle: '%20 KDV’li alış-satış, kredi kartı (108) ve KDV kayıtları',
+    subtitle: '%20 KDV’li alış-satış, kredi kartı (108) ve KDV mahsubu',
   },
   {
     id: 'mal_ve_maliyet',
-    title: 'Alış-Satış & Gider Odaklı',
-    subtitle: 'Ticari mal alışı, kredili satış, tahsilat ve kira/gider',
+    title: 'Alış-Satış & STMM Maliyeti (621)',
+    subtitle: 'Ticari mal alışı, kredili satış, iskonto (611) ve maliyet kaydı',
+  },
+  {
+    id: 'faiz_kredi',
+    title: 'Banka Kredisi & Faiz (300 / 780)',
+    subtitle: 'Kısa vadeli kredi çekilmesi, faiz tahakkuku ve anapara taksiti',
+  },
+  {
+    id: 'doviz',
+    title: 'Dövizli İşlemler & Kambiyo (646 / 656)',
+    subtitle: 'Döviz kasası, kur artışı kârı ve döviz borç ödeme kur zararı',
+  },
+  {
+    id: 'supheli_alacak',
+    title: 'Şüpheli Alacak & Karşılık (128 / 129 / 654)',
+    subtitle: 'İcraya verilen alacaklar, karşılık ayırma ve tahsilat/iptal',
+  },
+  {
+    id: 'bordro',
+    title: 'Personel Bordrosu & SGK (335 / 361)',
+    subtitle: 'Brüt ücret, vergi/SGK kesintileri, avans mahsubu ve net maaş',
+  },
+  {
+    id: 'varlik_satisi',
+    title: 'Duran Varlık Satışı & Kâr/Zarar (679 / 689)',
+    subtitle: 'Taşıt/demirbaş satışı, 257 birikmiş amortisman itlafı ve kâr/zarar',
+  },
+  {
+    id: 'donem_sonu',
+    title: 'Dönem Sonu 690 Kapanış & Kâr Devri',
+    subtitle: 'Tüm gelir ve giderlerin 690 hesabına devri ve net kâr (590) aktarımı',
   },
 ];
 

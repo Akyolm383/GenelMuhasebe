@@ -30,6 +30,10 @@ export const ScenarioSelectionSection: React.FC<
   onOpenGenerator,
   onStart,
 }) => {
+  const [filterDifficulty, setFilterDifficulty] = React.useState<
+    'all' | 'Kolay' | 'Orta' | 'İleri'
+  >('all');
+
   const selectedScenario =
     scenarios.find((s) => s.id === selectedScenarioId) || scenarios[0];
 
@@ -39,7 +43,6 @@ export const ScenarioSelectionSection: React.FC<
         label: 'Seviye: Temel',
         badgeClass:
           'bg-secondary-fixed/50 dark:bg-[#113828] text-secondary dark:text-secondary-fixed',
-        metaText: 'Kasa, Banka & Çek (101/103)',
         metaClass: 'text-secondary dark:text-secondary-fixed font-semibold',
       };
     }
@@ -48,7 +51,6 @@ export const ScenarioSelectionSection: React.FC<
         label: 'Seviye: Orta (Vize)',
         badgeClass:
           'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300',
-        metaText: 'Çek Cirosu, POS & %20 KDV',
         metaClass: 'text-primary dark:text-[#FFB4A4] font-semibold',
       };
     }
@@ -56,9 +58,53 @@ export const ScenarioSelectionSection: React.FC<
       label: 'Seviye: İleri (Final)',
       badgeClass:
         'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300',
-      metaText: 'Senet, STMM (621) & Amortisman',
       metaClass: 'text-text-primary dark:text-zinc-100 font-semibold',
     };
+  };
+
+  const getScenarioTopicMeta = (scenario: CompanyScenario) => {
+    switch (scenario.id) {
+      case 'abc-ticaret-temel':
+        return 'Kuruluş, Kasa & Çek (101/103)';
+      case 'trend-eticaret-iskonto-kolay':
+        return 'POS, Kargo & İskonto (611)';
+      case 'bogazici-kredi-faiz-kolay':
+        return 'Banka Kredisi (300) & Faiz (780)';
+      case 'anadolu-cek-kdv-orta':
+        return 'Çek Cirosu, POS & %20 KDV';
+      case 'atlas-medikal-doviz-orta':
+        return 'Döviz Alımı & Kur Kâr/Zararı (646/656)';
+      case 'dogu-otomotiv-senet-orta':
+        return 'Senet Protestosu & Vade Farkı (121/642)';
+      case 'ege-lojistik-supheli-orta':
+        return 'Şüpheli Alacak & Karşılık (128/129/654)';
+      case 'marmara-endustri-ileri':
+        return 'Senet, STMM (621) & Amortisman';
+      case 'nova-teknoloji-bordro-ileri':
+        return 'Personel Bordrosu & SGK (335/361)';
+      case 'zirve-insaat-varlik-ileri':
+        return 'Duran Varlık Satışı & Kâr/Zarar (679/689)';
+      case 'doruk-sanayi-kapanis-ileri':
+        return 'Dönem Sonu 690 Devir & Net Kâr (590)';
+      default:
+        return scenario.difficulty === 'Kolay'
+          ? 'Temel Kasa & Çek'
+          : scenario.difficulty === 'Orta'
+          ? 'Ticari İşlemler & KDV'
+          : 'Dönem Sonu & Kapanış';
+    }
+  };
+
+  const filteredScenarios =
+    filterDifficulty === 'all'
+      ? scenarios
+      : scenarios.filter((s) => s.difficulty === filterDifficulty);
+
+  const counts = {
+    all: scenarios.length,
+    Kolay: scenarios.filter((s) => s.difficulty === 'Kolay').length,
+    Orta: scenarios.filter((s) => s.difficulty === 'Orta').length,
+    İleri: scenarios.filter((s) => s.difficulty === 'İleri').length,
   };
 
   return (
@@ -81,18 +127,68 @@ export const ScenarioSelectionSection: React.FC<
             className="w-14 h-14 rounded-2xl object-cover border border-border-subtle dark:border-zinc-800 shadow-xs shrink-0"
           />
           <p className="text-text-secondary dark:text-zinc-400 text-[0.9375rem] font-body-editorial leading-snug">
-            Temel çek işlemlerinden KDV mahsubuna ve dönem sonu amortisman
+            Temel çek işlemlerinden KDV mahsubuna, personel bordrosundan dönem sonu 690 kapanış
             kayıtlarına kadar istediğin soruyu seçip çözmeye başla.
           </p>
         </div>
       </div>
 
-      {/* Physical Folder Dossier Cards (3 Scenarios + 1 Generator Card) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 tabular-nums">
-        {scenarios.map((scenario, idx) => {
+      {/* Difficulty Filter Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <button
+          type="button"
+          onClick={() => setFilterDifficulty('all')}
+          className={`px-4 py-2 rounded-xl text-[0.8125rem] font-ledger-readout font-bold whitespace-nowrap transition-all cursor-pointer ${
+            filterDifficulty === 'all'
+              ? 'bg-surface-contrast text-surface dark:bg-[#F5F3EE] dark:text-[#18181B] shadow-xs'
+              : 'bg-surface dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 text-text-secondary dark:text-zinc-400 hover:text-text-primary dark:hover:text-white'
+          }`}
+        >
+          Tüm Sorular ({counts.all})
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilterDifficulty('Kolay')}
+          className={`px-4 py-2 rounded-xl text-[0.8125rem] font-ledger-readout font-bold whitespace-nowrap transition-all cursor-pointer ${
+            filterDifficulty === 'Kolay'
+              ? 'bg-secondary text-on-secondary shadow-xs'
+              : 'bg-surface dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 text-text-secondary dark:text-zinc-400 hover:text-secondary'
+          }`}
+        >
+          Temel Seviye ({counts.Kolay})
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilterDifficulty('Orta')}
+          className={`px-4 py-2 rounded-xl text-[0.8125rem] font-ledger-readout font-bold whitespace-nowrap transition-all cursor-pointer ${
+            filterDifficulty === 'Orta'
+              ? 'bg-amber-600 text-white shadow-xs'
+              : 'bg-surface dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 text-text-secondary dark:text-zinc-400 hover:text-amber-500'
+          }`}
+        >
+          Orta (Vize) Seviye ({counts.Orta})
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilterDifficulty('İleri')}
+          className={`px-4 py-2 rounded-xl text-[0.8125rem] font-ledger-readout font-bold whitespace-nowrap transition-all cursor-pointer ${
+            filterDifficulty === 'İleri'
+              ? 'bg-primary text-white shadow-xs'
+              : 'bg-surface dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 text-text-secondary dark:text-zinc-400 hover:text-primary'
+          }`}
+        >
+          İleri (Final) Seviye ({counts.İleri})
+        </button>
+      </div>
+
+      {/* Physical Folder Dossier Cards (Filtered Scenarios + 1 Generator Card) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 tabular-nums">
+        {filteredScenarios.map((scenario) => {
           const isSelected = scenario.id === selectedScenarioId;
           const diffMeta = getDifficultyBadgeStyle(scenario.difficulty);
-          const dossierNumber = String(idx + 1).padStart(2, '0');
+          const topicMeta = getScenarioTopicMeta(scenario);
+          const originalIdx = scenarios.findIndex((s) => s.id === scenario.id);
+          const dossierNumber = String(originalIdx + 1).padStart(2, '0');
 
           return (
             <div
@@ -154,10 +250,10 @@ export const ScenarioSelectionSection: React.FC<
                       {scenario.transactions.length} Yevmiye Sorusu
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Ders Konusu:</span>
-                    <span className={diffMeta.metaClass}>
-                      {diffMeta.metaText}
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="shrink-0">Ders Konusu:</span>
+                    <span className={`text-right truncate ${diffMeta.metaClass}`}>
+                      {topicMeta}
                     </span>
                   </div>
                 </div>

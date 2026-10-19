@@ -219,19 +219,29 @@ export function deriveBalanceSheet(ledgerAccounts: LedgerAccount[], date: string
     }
   });
 
-  // Henüz kapatılmamış gelir/giderden doğan kâr/zarar varsa özkaynaklara ekle
+  // Henüz kapatılmamış gelir/giderden doğan kâr/zarar varsa özkaynaklara ekle (veya var olan 590/591 ile birleştir)
   if (netIncome > 0) {
-    equityItems.push({
-      code: '590',
-      name: 'Dönem Net Kârı',
-      amount: netIncome,
-    });
+    const existing590 = equityItems.find(item => item.code === '590');
+    if (existing590) {
+      existing590.amount += netIncome;
+    } else {
+      equityItems.push({
+        code: '590',
+        name: 'Dönem Net Kârı',
+        amount: netIncome,
+      });
+    }
   } else if (netIncome < 0) {
-    equityItems.push({
-      code: '591',
-      name: 'Dönem Net Zararı (-)',
-      amount: netIncome, // negatif
-    });
+    const existing591 = equityItems.find(item => item.code === '591');
+    if (existing591) {
+      existing591.amount += netIncome;
+    } else {
+      equityItems.push({
+        code: '591',
+        name: 'Dönem Net Zararı (-)',
+        amount: netIncome, // negatif
+      });
+    }
   }
 
   const totalCurrent = currentAssetsItems.reduce((sum, item) => sum + item.amount, 0);

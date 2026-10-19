@@ -46,11 +46,28 @@
   - `src/components/JournalEntryForm.tsx` — Sağ sütundaki T-Cetveli ve Bilanço kartlarında doğrudan **`Kendin Doldur`** geçiş butonları; son işlemde **`T-Cetvelini Kendin Doldur`** ve **`Bilançoyu Kendin Doldur`** kısayolları.
   - `src/components/LedgerView.tsx` & `src/components/BalanceSheetView.tsx` — Öğrencinin kendi eliyle T-Cetveli borç/alacak toplamlarını, bakiye yönünü ve Aktif/Pasif bilanço kalemlerini (düzenleyici `103 (-)` ve `257 (-)` hesapları dahil) doldurup kontrol edebildiği interaktif sınav provası modu.
   - `src/core/accounts.ts`, `src/core/accountingEngine.ts`, `src/core/validator.ts`, `src/data/scenarios.ts`, `src/core/scenarioGenerator.ts` — `101 Alınan Çekler`, `103 Verilen Çekler (-)`, çek cirosu, `%20 KDV (191/391)`, kredi kartı slipleri (`108`), `610 Satıştan İadeler (-)`, `621 STMM`, `257 Birikmiş Amortismanlar (-)` ve konu odaklı soru üretici (`Genel Karma`, `Çek & Ciro`, `KDV İşlemleri`, `Alış-Satış & Gider`).
+- **Faz 4 — 8 Yeni Üniversite Senaryosu (Toplam 11 Hazır Vaka), Hesap Planı Genişletmesi ve Soru Üretici Güncellemesi:**
+  - `src/core/accounts.ts` — 16 yeni standart Tekdüzen hesabı kural ve pedagojik açıklamalarıyla eklendi (`122`, `128`, `129`, `196`, `335`, `361`, `370`, `611`, `644`, `646`, `654`, `656`, `657`, `679`, `689`, `690`, `691`).
+  - `src/core/accountingEngine.ts` — `deriveBalanceSheet` içinde `590`/`591` net kâr aktarımının kapanış hesaplarıyla mükemmel uyumlu çalışması sağlandı.
+  - `src/data/scenarios.ts` — 8 yeni üniversite vize/final vaka senaryosu (2 Kolay, 3 Orta, 3 İleri) her işlem için 4 aşamalı Sokratik İpuçları ve öğretmen açıklamalarıyla eklendi. Toplam 11 senaryo (67 tam dengeli yevmiye maddesi):
+    1. *ABC Ticaret İşletmesi* (Kolay, 8 İşlem) — Kuruluş, Kasa & Çek (101/103)
+    2. *Trend E-Ticaret Ltd.* (Kolay, 4 İşlem) — POS, Kargo & İskonto (611)
+    3. *Boğaziçi Yayıncılık* (Kolay, 4 İşlem) — Banka Kredisi (300) & Faiz (780)
+    4. *Anadolu Ticaret A.Ş.* (Orta, 7 İşlem) — Çek Cirosu, POS & %20 KDV
+    5. *Atlas Medikal A.Ş.* (Orta, 5 İşlem) — Döviz Alımı & Kur Kâr/Zararı (646/656)
+    6. *Doğu Otomotiv* (Orta, 5 İşlem) — Senet Protestosu & Vade Farkı (121/642)
+    7. *Ege Lojistik* (Orta, 5 İşlem) — Şüpheli Alacak & Karşılık (128/129/654)
+    8. *Marmara Endüstri A.Ş.* (İleri, 6 İşlem) — Senet, STMM (621) & Amortisman
+    9. *Nova Teknoloji A.Ş.* (İleri, 7 İşlem) — Personel Bordrosu & SGK (335/361)
+    10. *Zirve İnşaat & Taahhüt* (İleri, 7 İşlem) — Duran Varlık Satışı & Kâr/Zarar (679/689)
+    11. *Doruk Sanayi A.Ş.* (İleri, 8 İşlem) — Dönem Sonu 690 Devir & Net Kâr (590)
+  - `src/types/generator.ts`, `src/core/scenarioGenerator.ts`, `src/components/ScenarioGeneratorModal.tsx` — Dinamik soru oluşturucuya 10 farklı müfredat alanı (Kredi/Faiz, Döviz, Şüpheli Alacak, Bordro, Varlık Satışı, 690 Kapanış vb.) ve algoritmik şablonlar entegre edildi.
+  - `src/components/landing/ScenarioSelectionSection.tsx` — 11 senaryo için dinamik filtre sekmeleri (`Tüm Sorular (11)`, `Temel Seviye (3)`, `Orta (Vize) Seviye (4)`, `İleri (Final) Seviye (4)`) ve konuya özel rozetler eklendi.
 - **Otomatik Tarayıcı Testi (`1440px` Masaüstü & `375px` Mobil):**
   - Tüm ekranlar (`WelcomeScreen`, `WorkspaceScreen`, `LedgerView Practice`, `BalanceSheetView Practice`, `SummaryScreen`) `1440px` ve `375px` çözünürlüklerde `hasOverflow: false` (`0` yatay taşma) ve `0` konsol/sayfa hatasıyla doğrulandı.
 
 ---
 
 ## 4. Sıradaki Adımlar (Next Steps)
-1. **Gelir Tablosu (6xx Hesaplar) ve Dönem Sonu Kapanış Fişleri:** `600 Yurtiçi Satışlar` ve `621 Satılan Ticari Mallar Maliyeti` hesaplarının `690 Dönem Kârı veya Zararı` hesabına devredildiği dönem sonu kapanış simülasyonu.
-2. **Yazdırılabilir (@media print) Çalışma Kağıdı & Çözüm Özeti:** Öğrencinin çözdüğü Yevmiye, T-Cetveli ve Bilanço tablolarını tek tıkla PDF/kağıt çalışma föyü olarak indirmesi.
+1. **Yazdırılabilir (@media print) Çalışma Kağıdı & Çözüm Özeti:** Öğrencinin çözdüğü Yevmiye, T-Cetveli ve Bilanço tablolarını tek tıkla PDF/kağıt çalışma föyü olarak indirmesi.
+2. **Kişiselleştirilmiş Sınav Modu:** Öğrencinin seçtiği süre kısıtı ve karışık rastgele soru paketleriyle gerçek üniversite vize/final sınav simülasyonu.

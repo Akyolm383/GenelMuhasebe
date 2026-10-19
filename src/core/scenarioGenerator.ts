@@ -769,6 +769,477 @@ const ARCHETYPES: TransactionArchetype[] = [
       };
     },
   },
+
+  // 17. Bankadan Kısa Vadeli Kredi Çekilmesi
+  {
+    id: 'loan_take',
+    title: 'Bankadan Kısa Vadeli Kredi Çekilmesi (300)',
+    minDifficulty: 'Kolay',
+    tags: ['faiz_kredi', 'genel'],
+    isApplicable: ({ state }) => state.bankLoans < 80000,
+    generate: ({ dateStr, order }) => {
+      const amount = pickRoundAmount(30000, 70000, 10000);
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Bankadan Ticari Kredi Çekilmesi',
+          description: `İşletme, nakit ihtiyacı için bankadan ${fmt(amount)} tutarında 6 ay vadeli ticari kredi kullanmış; tutar işletmenin banka vadesiz mevduat hesabına yatırılmıştır.`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Bankadaki mevduatımız arttığı için 102 Bankalar (Aktif) borçlandırılır; bankaya olan kısa vadeli kredi borcumuz arttığı için 300 Banka Kredileri (Pasif) alacaklandırılır.',
+            lines: [
+              { accountCode: '102', debit: amount, credit: 0 },
+              { accountCode: '300', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content: `Bankamıza ${fmt(amount)} girdi ve bankaya kredi borcumuz oluştu.`,
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content: '102 Bankalar (Aktif) ve 300 Banka Kredileri (Pasif).',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `102 Bankalar BORÇ (${fmt(amount)}) / 300 Banka Kredileri ALACAK (${fmt(amount)}).`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `102 Bankalar (B: ${fmt(amount)}) / 300 Banka Kredileri (A: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.bank += amount;
+          s.bankLoans += amount;
+        },
+      };
+    },
+  },
+
+  // 18. Kredi Taksiti ve Faiz Ödemesi
+  {
+    id: 'loan_interest_pay',
+    title: 'Kredi Taksiti ve Faiz Ödemesi (780)',
+    minDifficulty: 'Kolay',
+    tags: ['faiz_kredi', 'genel'],
+    isApplicable: ({ state }) => state.bankLoans >= 20000 && state.bank >= 25000,
+    generate: ({ state, dateStr, order }) => {
+      const principal = Math.min(20000, state.bankLoans);
+      const interest = 3000;
+      const total = principal + interest;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Kredi Anapara Taksiti ve Faizinin Bankadan Ödenmesi',
+          description: `Banka kredisinin vadesi gelen taksiti olarak ${fmt(principal)} anapara ve ${fmt(interest)} kredi faizi olmak üzere toplam ${fmt(total)} işletmenin banka mevduatından ödenmiştir.`,
+          amount: total,
+          expectedEntry: {
+            educationalNotes:
+              'Kredi borcumuz azaldığı için 300 Banka Kredileri BORÇ; kredi faizi dönem finansman gideri olduğu için 780 Finansman Giderleri BORÇ; toplam ödeme için 102 Bankalar ALACAK yazılır.',
+            lines: [
+              { accountCode: '300', debit: principal, credit: 0 },
+              { accountCode: '780', debit: interest, credit: 0 },
+              { accountCode: '102', debit: 0, credit: total },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Ödemenin Kısımları Nelerdir?',
+              content: `${fmt(principal)} anapara borcumuzu kapatır, ${fmt(interest)} ise finansman faiz gideridir.`,
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Kredi Faizi Hangi Hesaba Yazılır?',
+              content: 'Kredi faizleri için "780 Finansman Giderleri" borçlandırılır.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `300 BORÇ (${fmt(principal)}), 780 BORÇ (${fmt(interest)}) / 102 ALACAK (${fmt(total)}).`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `300 (B: ${fmt(principal)}) - 780 (B: ${fmt(interest)}) / 102 (A: ${fmt(total)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.bankLoans -= principal;
+          s.bank -= total;
+          s.expenses += interest;
+        },
+      };
+    },
+  },
+
+  // 19. Müşteriye Erken Ödeme İskontosu Uygulanması
+  {
+    id: 'discount_sales',
+    title: 'Müşteriye Erken Ödeme İskontosu Tanınması (611)',
+    minDifficulty: 'Kolay',
+    tags: ['mal_ve_maliyet', 'genel'],
+    isApplicable: ({ state }) => state.receivables >= 10000,
+    generate: ({ dateStr, order }) => {
+      const receivableAmount = 10000;
+      const discount = 1000;
+      const cashCollected = receivableAmount - discount;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Müşteriye Erken Ödeme (Kasa) İskontosu Tanınması',
+          description: `Daha önce veresiye mal satın alan müşteri ${fmt(receivableAmount)} borcunu erken kapattığı için müşteriye %10 (${fmt(discount)}) iskonto uygulanmış, kalan ${fmt(cashCollected)} banka hesabımıza havale edilmiştir.`,
+          amount: receivableAmount,
+          expectedEntry: {
+            educationalNotes:
+              'Müşteriden yapılan tahsilat için 102 Bankalar BORÇ; tanınan erken ödeme indirimi için 611 Satış İskontoları (-) BORÇ; kapanan müşteri alacağı için 120 Alıcılar ALACAK yazılır.',
+            lines: [
+              { accountCode: '102', debit: cashCollected, credit: 0 },
+              { accountCode: '611', debit: discount, credit: 0 },
+              { accountCode: '120', debit: 0, credit: receivableAmount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Satış İskontosu Nedir?',
+              content: 'Faturadan sonra müşteriye tanınan erken ödeme veya tenzilat tutarıdır.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Hesap Kullanılır?',
+              content: 'Geliri düzenleyen gider karakterli hesap olan "611 Satış İskontoları (-)".',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `102 BORÇ (${fmt(cashCollected)}), 611 BORÇ (${fmt(discount)}) / 120 ALACAK (${fmt(receivableAmount)}).`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `102 (B: ${fmt(cashCollected)}) - 611 (B: ${fmt(discount)}) / 120 (A: ${fmt(receivableAmount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.receivables -= receivableAmount;
+          s.bank += cashCollected;
+        },
+      };
+    },
+  },
+
+  // 20. Şüpheli Alacak ve Karşılık
+  {
+    id: 'doubtful_provision',
+    title: 'Şüpheli Alacağa Karşılık Ayrılması (128 / 129 / 654)',
+    minDifficulty: 'Orta',
+    tags: ['supheli_alacak', 'genel'],
+    isApplicable: ({ state }) => state.receivables >= 20000,
+    generate: ({ dateStr, order }) => {
+      const amount = 20000;
+      const provAmount = 10000;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Vadesi Geçen Alacağın Şüpheli Hale Gelmesi ve Karşılık Ayrılması',
+          description: `Vadesinde tahsil edilemeyip icraya verilen ${fmt(amount)} tutarındaki alacak şüpheli alacaklar hesabına aktarılmış ve %50 oranında (${fmt(provAmount)}) değer düşüklüğü karşılığı ayrılmıştır.`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Şüpheli hale gelen alacak için 128 Şüpheli Alacaklar BORÇ; müşteri hesabı olan 120 Alıcılar ALACAK yazılır. (Takip eden karşılık kaydında 654 Borç / 129 Alacak yazılır).',
+            lines: [
+              { accountCode: '128', debit: amount, credit: 0 },
+              { accountCode: '120', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: İcraya Verilen Alacak Nereye Aktarılır?',
+              content: 'Normal müşteri hesabından çıkarılıp "128 Şüpheli Ticari Alacaklar" hesabına alınır.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content: '128 Şüpheli Ticari Alacaklar ve 120 Alıcılar.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `128 BORÇ (${fmt(amount)}) / 120 ALACAK (${fmt(amount)}).`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `128 Şüpheli Ticari Alacaklar (B: ${fmt(amount)}) / 120 Alıcılar (A: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.receivables -= amount;
+        },
+      };
+    },
+  },
+
+  // 21. Döviz Satış Kârı (646)
+  {
+    id: 'fx_gain',
+    title: 'Döviz Satışı ve Kur Farkı Kârı (646)',
+    minDifficulty: 'Orta',
+    tags: ['doviz', 'genel'],
+    isApplicable: ({ state }) => state.cash >= 25000,
+    generate: ({ dateStr, order }) => {
+      const cost = 20000;
+      const gain = 4000;
+      const sale = cost + gain;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Kasadaki Dövizin Kur Artışı ile Kârla Bozdurulması',
+          description: `Kasadaki dövizin ${fmt(cost)} maliyetli kısmı kurların yükselmesi üzerine ${fmt(sale)} karşılığında bozdurulmuş ve tutar banka mevduat hesabımıza yatırılmıştır.`,
+          amount: sale,
+          expectedEntry: {
+            educationalNotes:
+              'Bankaya giren tutar için 102 Bankalar BORÇ; kasadan çıkan maliyet için 100 Kasa ALACAK; aradaki kur artışı kârı için 646 Kambiyo Kârları ALACAK yazılır.',
+            lines: [
+              { accountCode: '102', debit: sale, credit: 0 },
+              { accountCode: '100', debit: 0, credit: cost },
+              { accountCode: '646', debit: 0, credit: gain },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Kur Artışı Kârı Nasıl Doğar?',
+              content: `Satış bedeli (${fmt(sale)}) ile maliyet (${fmt(cost)}) arasındaki ${fmt(gain)} kur kârıdır.`,
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Gelir Hesabı Kullanılır?',
+              content: 'Döviz kur artışları için "646 Kambiyo Kârları" alacaklandırılır.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `102 BORÇ (${fmt(sale)}) / 100 ALACAK (${fmt(cost)}), 646 ALACAK (${fmt(gain)}).`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `102 (B: ${fmt(sale)}) / 100 (A: ${fmt(cost)}) - 646 (A: ${fmt(gain)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.cash -= cost;
+          s.bank += sale;
+          s.revenues += gain;
+        },
+      };
+    },
+  },
+
+  // 22. Personel Bordro Tahakkuku (335 / 361)
+  {
+    id: 'payroll_accrual',
+    title: 'Aylık Ücret Bordrosu Tahakkuku (770 / 335 / 361)',
+    minDifficulty: 'İleri',
+    tags: ['bordro', 'genel'],
+    isApplicable: ({ state }) => state.bank >= 40000,
+    generate: ({ dateStr, order }) => {
+      const gross = 50000;
+      const tax = 7500;
+      const sgk = 17500;
+      const netPayable = 25000;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Aylık Personel Ücret Bordrosu Tahakkuku',
+          description: `Ay sonu personel bordrosu hesaplanmıştır:\n- Brüt Ücret + SGK İşveren Payı Gideri: ${fmt(gross)}\n- Kesilen Vergi (Gelir + Damga): ${fmt(tax)}\n- SGK Primleri Toplamı: ${fmt(sgk)}\n- Personele Ödenecek Net Ücret Borcu: ${fmt(netPayable)}`,
+          amount: gross,
+          expectedEntry: {
+            educationalNotes:
+              'Toplam işçilik maliyeti için 770 Genel Yönetim Giderleri BORÇ; kesilen vergiler için 360 Ödenecek Vergi ALACAK; SGK primleri için 361 Ödenecek SGK ALACAK; ödenecek net maaş için 335 Personele Borçlar ALACAK yazılır.',
+            lines: [
+              { accountCode: '770', debit: gross, credit: 0 },
+              { accountCode: '360', debit: 0, credit: tax },
+              { accountCode: '361', debit: 0, credit: sgk },
+              { accountCode: '335', debit: 0, credit: netPayable },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Bordro Gideri Nereye Yazılır?',
+              content: `Toplam işçilik maliyeti olan ${fmt(gross)} 770 Genel Yönetim Giderleri borcuna yazılır.`,
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Kesintiler Hangi Hesaplara Alacak Yazılır?',
+              content: 'Vergiler için 360, SGK için 361, personele ödenecek net maaş için 335.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `770 BORÇ (${fmt(gross)}) / 360: ${fmt(tax)}, 361: ${fmt(sgk)}, 335: ${fmt(netPayable)}.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `770 (B: ${fmt(gross)}) / 360 (A: ${fmt(tax)}) - 361 (A: ${fmt(sgk)}) - 335 (A: ${fmt(netPayable)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.expenses += gross;
+        },
+      };
+    },
+  },
+
+  // 23. Duran Varlık Satış Kârı (679)
+  {
+    id: 'asset_sale_gain',
+    title: 'Duran Varlığın Kârla Satışı (254 / 257 / 679)',
+    minDifficulty: 'İleri',
+    tags: ['varlik_satisi', 'genel'],
+    isApplicable: () => true,
+    generate: ({ dateStr, order }) => {
+      const assetCost = 100000;
+      const depr = 20000;
+      const netBookValue = assetCost - depr; // 80.000
+      const saleBase = 90000;
+      const vat = 18000;
+      const totalCash = saleBase + vat; // 108.000
+      const gain = saleBase - netBookValue; // 10.000
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Kayıtlı Taşıtın Kârla Satışı ve Amortisman İtlafı',
+          description: `Kayıtlı maliyeti ${fmt(assetCost)}, birikmiş amortismanı ${fmt(depr)} olan taşıt, ${fmt(saleBase)} + %20 KDV (${fmt(vat)}) olmak üzere toplam ${fmt(totalCash)} bedelle banka havalesiyle satılmıştır.`,
+          amount: totalCash,
+          expectedEntry: {
+            educationalNotes:
+              'Tahsilat için 102 BORÇ; birikmiş amortisman kapatıldığı için 257 BORÇ; taşıt kayıttan çıktığı için 254 ALACAK; KDV için 391 ALACAK; oluşan satış kârı için 679 Diğer Olağandışı Gelir ve Kârlar ALACAK yazılır.',
+            lines: [
+              { accountCode: '102', debit: totalCash, credit: 0 },
+              { accountCode: '257', debit: depr, credit: 0 },
+              { accountCode: '254', debit: 0, credit: assetCost },
+              { accountCode: '391', debit: 0, credit: vat },
+              { accountCode: '679', debit: 0, credit: gain },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Satış Kârı Nasıl Bulunur?',
+              content: `Net Defter Değeri = ${fmt(assetCost)} - ${fmt(depr)} = ${fmt(netBookValue)}. Satış tutarı ${fmt(saleBase)} olduğu için ${fmt(gain)} kâr doğmuştur.`,
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Amortisman Nasıl Kapatılır?',
+              content: '257 Birikmiş Amortismanlar (-) hesabı BORÇ yazılarak sıfırlanır.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `102 (${fmt(totalCash)}), 257 (${fmt(depr)}) BORÇ / 254 (${fmt(assetCost)}), 391 (${fmt(vat)}), 679 (${fmt(gain)}) ALACAK.`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `102 (B: ${fmt(totalCash)}) - 257 (B: ${fmt(depr)}) / 254 (A: ${fmt(assetCost)}) - 391 (A: ${fmt(vat)}) - 679 (A: ${fmt(gain)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.bank += totalCash;
+          s.revenues += gain;
+        },
+      };
+    },
+  },
+
+  // 24. Gelirlerin 690 Hesabına Devri
+  {
+    id: 'closing_revenues',
+    title: 'Gelir Hesaplarının 690 Hesabına Devri',
+    minDifficulty: 'İleri',
+    tags: ['donem_sonu', 'genel'],
+    isApplicable: ({ state }) => state.revenues >= 40000,
+    generate: ({ state, dateStr, order }) => {
+      const amount = state.revenues || 60000;
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Dönem Sonu Gelir Hesaplarının 690 Hesabına Devredilmesi',
+          description: `Dönem sonunda 600 Yurtiçi Satışlar hesabında biriken ${fmt(amount)} tutarındaki alacak bakiyesi borçlandırılarak kapatılmış ve 690 Dönem Kârı veya Zararı hesabına devredilmiştir.`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Gelir hesapları alacak bakiyesi verir. Kapatılmaları için borçlandırılır ve bakiye 690 Dönem Kârı veya Zararı hesabının ALACAĞINA aktarılır.',
+            lines: [
+              { accountCode: '600', debit: amount, credit: 0 },
+              { accountCode: '690', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: Gelir Hesapları Nasıl Kapatılır?',
+              content: '600 Yurtiçi Satışlar BORÇ yazılarak sıfırlanır, 690 ALACAK yazılır.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content: '600 ve 690.',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `600 BORÇ (${fmt(amount)}) / 690 ALACAK (${fmt(amount)}).`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `600 (B: ${fmt(amount)}) / 690 (A: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.revenues = 0;
+        },
+      };
+    },
+  },
 ];
 
 export function generateScenario(config: GeneratorConfig): CompanyScenario {
@@ -898,7 +1369,13 @@ export function generateScenario(config: GeneratorConfig): CompanyScenario {
     genel: 'Karma Müfredat',
     cek_senet: 'Çek & Senet Odaklı',
     kdv_islemleri: 'KDV & Mahsup Odaklı',
-    mal_ve_maliyet: 'Alış-Satış & Gider Odaklı',
+    mal_ve_maliyet: 'Alış-Satış & STMM Odaklı',
+    faiz_kredi: 'Banka Kredisi & Faiz Odaklı',
+    doviz: 'Döviz & Kambiyo Odaklı',
+    supheli_alacak: 'Şüpheli Alacak & Karşılık Odaklı',
+    bordro: 'Personel Bordrosu & SGK Odaklı',
+    varlik_satisi: 'Duran Varlık Satış Kârı/Zararı',
+    donem_sonu: 'Dönem Sonu 690 Kapanış Odaklı',
   };
 
   return {
