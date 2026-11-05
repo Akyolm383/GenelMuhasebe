@@ -63,9 +63,9 @@ const FOCUS_OPTIONS: {
     subtitle: 'Kısa vadeli kredi çekilmesi, faiz tahakkuku ve anapara taksiti',
   },
   {
-    id: 'doviz',
-    title: 'Dövizli İşlemler & Kambiyo (646 / 656)',
-    subtitle: 'Döviz kasası, kur artışı kârı ve döviz borç ödeme kur zararı',
+    id: 'hazir_degerler',
+    title: 'Çek Hareketleri & Hazır Değerler (101 / 103)',
+    subtitle: 'Müşteri çeki tahsili, ciro edilmesi, çek keşidesi ve bankadan ödeme',
   },
   {
     id: 'supheli_alacak',

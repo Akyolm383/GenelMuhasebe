@@ -23,6 +23,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Edit3,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 export const JournalEntryForm: React.FC = () => {
@@ -58,6 +60,9 @@ export const JournalEntryForm: React.FC = () => {
   const totalTx = scenario.transactions.length;
   const hasPrevTx = activeTransactionIndex > 0;
   const hasNextTx = activeTransactionIndex < totalTx - 1;
+
+  const [revealedHintTxId, setRevealedHintTxId] = React.useState<string | null>(null);
+  const showExpectedHints = revealedHintTxId === activeTx.id;
 
   const handleDebitChange = (lineId: string, val: string) => {
     const num = Math.max(0, parseFloat(val) || 0);
@@ -266,52 +271,103 @@ export const JournalEntryForm: React.FC = () => {
               Çift Taraflı Kayıt Mantığı
             </h3>
 
-            <div className="space-y-3 font-body-editorial text-text-secondary dark:text-zinc-300 text-xs sm:text-sm leading-relaxed">
-              {activeTx.expectedEntry.lines.map((expLine, idx) => {
-                const accDef = getAccountByCode(expLine.accountCode);
-                const isDebit = expLine.debit > 0;
-                return (
-                  <div key={idx} className="flex items-start gap-2.5">
-                    {isDebit ? (
-                      <ArrowUpRight className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
-                    ) : expLine.accountCode.includes('91') ? (
-                      <Receipt className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
-                    ) : (
-                      <Wallet className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    )}
-                    <p>
-                      <strong className="text-text-primary dark:text-white font-semibold">
-                        {accDef?.nature === 'AKTIF'
-                          ? isDebit
-                            ? 'Varlık Artışı:'
-                            : 'Varlık Azalışı:'
-                          : accDef?.nature === 'PASIF'
-                          ? isDebit
-                            ? 'Kaynak / Borç Azalışı:'
-                            : 'Kaynak / Borç Artışı:'
-                          : accDef?.nature === 'GIDER'
-                          ? 'Dönem Gideri:'
-                          : 'Dönem Geliri:'}
-                      </strong>{' '}
-                      <span className="font-ledger-readout font-semibold text-text-primary dark:text-zinc-200">
-                        {expLine.accountCode} {accDef?.name}
-                      </span>{' '}
-                      hesabı ({accDef?.nature || 'TDHP'}) etkilenir ve{' '}
-                      <span
-                        className={`font-ledger-readout font-bold ${
-                          isDebit
-                            ? 'text-secondary dark:text-secondary-fixed'
-                            : 'text-primary dark:text-[#FFB4A4]'
-                        }`}
-                      >
-                        {isDebit ? 'BORÇ' : 'ALACAK'}
-                      </span>{' '}
-                      tarafına işlenir.
-                    </p>
-                  </div>
-                );
-              })}
+            {/* Akıl Yürütme Kılavuzu (Spoiler içermeyen pedagojik rehber) */}
+            <div className="space-y-2.5 font-body-editorial text-text-secondary dark:text-zinc-300 text-xs sm:text-sm leading-relaxed">
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-surface-muted/40 dark:bg-zinc-900/40">
+                <ArrowUpRight className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                <p>
+                  <strong className="text-text-primary dark:text-white font-semibold">
+                    1. Giren Değer / Gider:
+                  </strong>{' '}
+                  Varlık artışı veya dönemsel maliyet doğduysa{' '}
+                  <span className="font-ledger-readout font-bold text-secondary dark:text-secondary-fixed">
+                    BORÇ
+                  </span>{' '}
+                  yazılır.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-surface-muted/40 dark:bg-zinc-900/40">
+                <Wallet className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <p>
+                  <strong className="text-text-primary dark:text-white font-semibold">
+                    2. Çıkan Değer / Kaynak:
+                  </strong>{' '}
+                  Ödeme aracı azalışı veya borç/gelir artışı{' '}
+                  <span className="font-ledger-readout font-bold text-primary dark:text-[#FFB4A4]">
+                    ALACAK
+                  </span>{' '}
+                  yazılır.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-surface-muted/40 dark:bg-zinc-900/40">
+                <Receipt className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                <p>
+                  <strong className="text-text-primary dark:text-white font-semibold">
+                    3. KDV Boyutu:
+                  </strong>{' '}
+                  Alışlarda 191 İndirilecek (Borç), satışlarda 391 Hesaplanan KDV (Alacak) eşlik eder.
+                </p>
+              </div>
             </div>
+
+            {/* Öğrenme modunda isteğe bağlı hesap ipucu akordiyonu */}
+            {mode === 'ogrenme' && (
+              <div className="space-y-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setRevealedHintTxId(showExpectedHints ? null : activeTx.id)
+                  }
+                  className="w-full inline-flex items-center justify-between px-3 py-1.5 rounded-xl bg-surface-muted/80 dark:bg-zinc-800 text-text-secondary dark:text-zinc-300 hover:text-text-primary dark:hover:text-white text-xs font-ledger-readout font-semibold transition-colors cursor-pointer"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    {showExpectedHints ? (
+                      <EyeOff className="w-3.5 h-3.5" />
+                    ) : (
+                      <Eye className="w-3.5 h-3.5" />
+                    )}
+                    <span>
+                      {showExpectedHints
+                        ? 'Hesap İpuçlarını Gizle'
+                        : 'Hesap İpuçlarını Göster'}
+                    </span>
+                  </span>
+                  <span className="text-[11px] text-text-muted">
+                    {activeTx.expectedEntry.lines.length} Hesap
+                  </span>
+                </button>
+
+                {showExpectedHints && (
+                  <div className="p-3 rounded-xl bg-accent-surface/30 dark:bg-[#2A1813]/40 border border-primary/20 space-y-2 animate-in fade-in duration-200">
+                    {activeTx.expectedEntry.lines.map((expLine, idx) => {
+                      const accDef = getAccountByCode(expLine.accountCode);
+                      const isDebit = expLine.debit > 0;
+                      return (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between text-xs font-ledger-readout"
+                        >
+                          <span className="text-text-primary dark:text-zinc-200 font-medium truncate">
+                            {expLine.accountCode} {accDef?.name}
+                          </span>
+                          <span
+                            className={`font-bold shrink-0 ml-2 ${
+                              isDebit
+                                ? 'text-secondary dark:text-secondary-fixed'
+                                : 'text-primary dark:text-[#FFB4A4]'
+                            }`}
+                          >
+                            {isDebit ? 'BORÇ' : 'ALACAK'}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="pt-4 mt-4 border-t border-border-subtle dark:border-zinc-800 flex flex-col sm:flex-row items-center gap-2">
@@ -367,7 +423,7 @@ export const JournalEntryForm: React.FC = () => {
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-muted dark:bg-zinc-800 hover:bg-border-subtle dark:hover:bg-zinc-700 text-text-primary dark:text-white font-ledger-readout text-xs font-semibold transition-colors cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>+ Yeni Satır Ekle</span>
+                  <span>Yeni Satır Ekle</span>
                 </button>
                 <button
                   type="button"
@@ -384,9 +440,6 @@ export const JournalEntryForm: React.FC = () => {
             {/* MOBİL KART GÖRÜNÜMÜ (< 768px) */}
             <div className="block md:hidden p-4 space-y-3 bg-background/60 dark:bg-zinc-950/50">
               {lines.map((line, index) => {
-                const accountDef = line.accountCode
-                  ? getAccountByCode(line.accountCode)
-                  : undefined;
                 const isCreditSide = line.credit > 0;
                 const isDebitSide = line.debit > 0;
 
@@ -435,11 +488,6 @@ export const JournalEntryForm: React.FC = () => {
                           updateLine(activeTx.id, line.id, { accountCode: code })
                         }
                       />
-                      {accountDef && (
-                        <div className="mt-1.5 text-[11px] text-text-muted font-body-editorial">
-                          Açıklama: {accountDef.description}
-                        </div>
-                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-2.5">
@@ -496,9 +544,6 @@ export const JournalEntryForm: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-border-subtle dark:divide-zinc-800 text-sm">
                   {lines.map((line, index) => {
-                    const accountDef = line.accountCode
-                      ? getAccountByCode(line.accountCode)
-                      : undefined;
                     const isCreditSide = line.credit > 0;
                     const isDebitSide = line.debit > 0;
 
@@ -553,15 +598,6 @@ export const JournalEntryForm: React.FC = () => {
                               />
                             </div>
                           </div>
-                          {accountDef && (
-                            <div
-                              className={`text-[12px] text-text-muted dark:text-zinc-400 font-body-editorial mt-1 ${
-                                isCreditSide ? 'pl-5' : ''
-                              }`}
-                            >
-                              Açıklama: {accountDef.description}
-                            </div>
-                          )}
                         </td>
 
                         {/* BORÇ (TL) Girişi */}
@@ -713,10 +749,26 @@ export const JournalEntryForm: React.FC = () => {
                     onClick={() =>
                       setActiveTransactionIndex(activeTransactionIndex + 1)
                     }
-                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-primary-container hover:bg-primary text-on-primary-container font-ledger-readout font-bold text-sm shadow-[0_4px_16px_rgba(200,75,49,0.3)] transition-all active:scale-[0.98] shrink-0 cursor-pointer"
+                    className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-ledger-readout font-bold text-sm transition-all active:scale-[0.98] shrink-0 cursor-pointer ${
+                      validation.isValid
+                        ? 'bg-secondary hover:bg-semantic-balance text-white shadow-[0_4px_16px_rgba(31,110,80,0.35)]'
+                        : 'bg-white/10 hover:bg-white/20 text-white/90 border border-white/20'
+                    }`}
                   >
-                    <span>Sonraki İşleme Geç (#{activeTx.order + 1})</span>
-                    <ArrowRight className="w-4 h-4" />
+                    {validation.isValid ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                        <span>
+                          Doğrulandı • Sonraki İşlem (#{activeTx.order + 1})
+                        </span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Sonraki İşleme Geç (#{activeTx.order + 1})</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 ) : (
                   <div className="flex flex-wrap items-center justify-center md:justify-end gap-2.5 w-full md:w-auto">

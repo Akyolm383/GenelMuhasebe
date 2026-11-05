@@ -1001,61 +1001,113 @@ const ARCHETYPES: TransactionArchetype[] = [
     },
   },
 
-  // 21. Döviz Satış Kârı (646)
+  // 21. Müşteri Çekinin Banka Hesabına Tahsil Edilmesi (102 / 101)
   {
-    id: 'fx_gain',
-    title: 'Döviz Satışı ve Kur Farkı Kârı (646)',
+    id: 'collect_customer_check_bank',
+    title: 'Müşteri Çekinin Banka Hesabına Tahsil Edilmesi (102 / 101)',
     minDifficulty: 'Orta',
-    tags: ['doviz', 'genel'],
-    isApplicable: ({ state }) => state.cash >= 25000,
-    generate: ({ dateStr, order }) => {
-      const cost = 20000;
-      const gain = 4000;
-      const sale = cost + gain;
+    tags: ['hazir_degerler', 'doviz', 'cek_senet', 'genel'],
+    isApplicable: ({ state }) => state.checksReceived >= 10000,
+    generate: ({ state, dateStr, order }) => {
+      const amount = state.checksReceived;
       return {
         transaction: {
           id: `gen-tx-${order}`,
           order,
           date: dateStr,
-          title: 'Kasadaki Dövizin Kur Artışı ile Kârla Bozdurulması',
-          description: `Kasadaki dövizin ${fmt(cost)} maliyetli kısmı kurların yükselmesi üzerine ${fmt(sale)} karşılığında bozdurulmuş ve tutar banka mevduat hesabımıza yatırılmıştır.`,
-          amount: sale,
+          title: 'Cüzdandaki Müşteri Çekinin Bankadan Tahsil Edilmesi',
+          description: `İşletmenin cüzdanında bulunan ${fmt(amount)} tutarındaki müşteri çeki vadesi geldiğinde tahsil edilmek üzere bankaya ibraz edilmiş ve bedel doğrudan vadesiz mevduat hesabımıza yatırılmıştır.`,
+          amount,
           expectedEntry: {
             educationalNotes:
-              'Bankaya giren tutar için 102 Bankalar BORÇ; kasadan çıkan maliyet için 100 Kasa ALACAK; aradaki kur artışı kârı için 646 Kambiyo Kârları ALACAK yazılır.',
+              'Müşteri çeki tahsil edildiğinde para banka hesabımıza girdiği için 102 Bankalar BORÇ; tahsil edilen çek cüzdanımızdan çıktığı için 101 Alınan Çekler ALACAK yazılır.',
             lines: [
-              { accountCode: '102', debit: sale, credit: 0 },
-              { accountCode: '100', debit: 0, credit: cost },
-              { accountCode: '646', debit: 0, credit: gain },
+              { accountCode: '102', debit: amount, credit: 0 },
+              { accountCode: '101', debit: 0, credit: amount },
             ],
           },
           hints: [
             {
               level: 1,
-              title: '1. Aşama: Kur Artışı Kârı Nasıl Doğar?',
-              content: `Satış bedeli (${fmt(sale)}) ile maliyet (${fmt(cost)}) arasındaki ${fmt(gain)} kur kârıdır.`,
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content: `Elimizdeki ${fmt(amount)} müşteri çeki tahsil edildi ve para banka mevduat hesabımıza geçti.`,
             },
             {
               level: 2,
-              title: '2. Aşama: Hangi Gelir Hesabı Kullanılır?',
-              content: 'Döviz kur artışları için "646 Kambiyo Kârları" alacaklandırılır.',
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content: 'Banka girişi için "102 Bankalar", çek portföyü çıkışı için "101 Alınan Çekler".',
             },
             {
               level: 3,
               title: '3. Aşama: Borç ve Alacak Yönleri',
-              content: `102 BORÇ (${fmt(sale)}) / 100 ALACAK (${fmt(cost)}), 646 ALACAK (${fmt(gain)}).`,
+              content: `102 Bankalar BORÇ (${fmt(amount)}) / 101 Alınan Çekler ALACAK (${fmt(amount)}).`,
             },
             {
               level: 4,
               title: '4. Aşama: Tam Yevmiye Kaydı',
-              content: `102 (B: ${fmt(sale)}) / 100 (A: ${fmt(cost)}) - 646 (A: ${fmt(gain)})`,
+              content: `102 Bankalar (B: ${fmt(amount)}) / 101 Alınan Çekler (A: ${fmt(amount)})`,
             },
           ],
         },
         applyState: (s) => {
-          s.cash -= cost;
-          s.bank += sale;
-          s.revenues += gain;
+          s.checksReceived -= amount;
+          s.bank += amount;
+        },
+      };
+    },
+  },
+
+  // 21b. Satıcıya Olan Borç İçin Çek Keşide Edilmesi (320 / 103)
+  {
+    id: 'pay_supplier_with_check',
+    title: 'Satıcıya Olan Borç İçin Çek Keşide Edilmesi (320 / 103)',
+    minDifficulty: 'Kolay',
+    tags: ['hazir_degerler', 'doviz', 'cek_senet', 'genel'],
+    isApplicable: ({ state }) => state.payables >= 10000,
+    generate: ({ state, dateStr, order }) => {
+      const amount = pickRoundAmount(10000, Math.min(state.payables, 30000), 5000);
+      return {
+        transaction: {
+          id: `gen-tx-${order}`,
+          order,
+          date: dateStr,
+          title: 'Satıcıya Olan Veresiye Borç İçin Çek Keşide Edilmesi',
+          description: `İşletme, satıcılara olan cari hesap (veresiye) borcunun ${fmt(amount)} tutarındaki kısmı için satıcı firmaya şirket çek defterinden çek düzenleyip (keşide edip) teslim etmiştir.`,
+          amount,
+          expectedEntry: {
+            educationalNotes:
+              'Satıcıya olan borcumuz azaldığı için pasif borç hesabı 320 Satıcılar BORÇLANDIRILIR; karşılığında kendi çekimiz düzenlendiği için aktifi düzenleyen 103 Verilen Çekler ve Ödeme Emirleri (-) hesabı ALACAKLANDIRILIR.',
+            lines: [
+              { accountCode: '320', debit: amount, credit: 0 },
+              { accountCode: '103', debit: 0, credit: amount },
+            ],
+          },
+          hints: [
+            {
+              level: 1,
+              title: '1. Aşama: İşlemde Neler Değişti?',
+              content: 'Satıcıya olan açık hesap borcumuz kapandı, yerine kendi banka çekimizi keşide ettik.',
+            },
+            {
+              level: 2,
+              title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+              content: 'Satıcı borcu için "320 Satıcılar", kendi çekimiz için "103 Verilen Çekler ve Ödeme Emirleri (-)".',
+            },
+            {
+              level: 3,
+              title: '3. Aşama: Borç ve Alacak Yönleri',
+              content: `320 Satıcılar BORÇ (${fmt(amount)}) / 103 Verilen Çekler ALACAK (${fmt(amount)}).`,
+            },
+            {
+              level: 4,
+              title: '4. Aşama: Tam Yevmiye Kaydı',
+              content: `320 Satıcılar (B: ${fmt(amount)}) / 103 Verilen Çekler (-) (A: ${fmt(amount)})`,
+            },
+          ],
+        },
+        applyState: (s) => {
+          s.payables -= amount;
+          s.checksIssued += amount;
         },
       };
     },
@@ -1371,7 +1423,8 @@ export function generateScenario(config: GeneratorConfig): CompanyScenario {
     kdv_islemleri: 'KDV & Mahsup Odaklı',
     mal_ve_maliyet: 'Alış-Satış & STMM Odaklı',
     faiz_kredi: 'Banka Kredisi & Faiz Odaklı',
-    doviz: 'Döviz & Kambiyo Odaklı',
+    hazir_degerler: 'Çek Hareketleri & Hazır Değerler Odaklı',
+    doviz: 'Çek Hareketleri & Hazır Değerler Odaklı',
     supheli_alacak: 'Şüpheli Alacak & Karşılık Odaklı',
     bordro: 'Personel Bordrosu & SGK Odaklı',
     varlik_satisi: 'Duran Varlık Satış Kârı/Zararı',

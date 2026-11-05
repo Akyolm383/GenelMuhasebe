@@ -6,6 +6,7 @@ export type GeneratorFocusArea =
   | 'kdv_islemleri'
   | 'mal_ve_maliyet'
   | 'faiz_kredi'
+  | 'hazir_degerler'
   | 'doviz'
   | 'supheli_alacak'
   | 'bordro'

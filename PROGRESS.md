@@ -54,17 +54,26 @@
     2. *Trend E-Ticaret Ltd.* (Kolay, 4 İşlem) — POS, Kargo & İskonto (611)
     3. *Boğaziçi Yayıncılık* (Kolay, 4 İşlem) — Banka Kredisi (300) & Faiz (780)
     4. *Anadolu Ticaret A.Ş.* (Orta, 7 İşlem) — Çek Cirosu, POS & %20 KDV
-    5. *Atlas Medikal A.Ş.* (Orta, 5 İşlem) — Döviz Alımı & Kur Kâr/Zararı (646/656)
+    5. *Atlas Ticaret A.Ş.* (Orta, 8 İşlem) — Alınan Çekler (101) & Verilen Çekler (103) Kapsamlı Döngüsü
     6. *Doğu Otomotiv* (Orta, 5 İşlem) — Senet Protestosu & Vade Farkı (121/642)
     7. *Ege Lojistik* (Orta, 5 İşlem) — Şüpheli Alacak & Karşılık (128/129/654)
     8. *Marmara Endüstri A.Ş.* (İleri, 6 İşlem) — Senet, STMM (621) & Amortisman
     9. *Nova Teknoloji A.Ş.* (İleri, 7 İşlem) — Personel Bordrosu & SGK (335/361)
     10. *Zirve İnşaat & Taahhüt* (İleri, 7 İşlem) — Duran Varlık Satışı & Kâr/Zarar (679/689)
     11. *Doruk Sanayi A.Ş.* (İleri, 8 İşlem) — Dönem Sonu 690 Devir & Net Kâr (590)
-  - `src/types/generator.ts`, `src/core/scenarioGenerator.ts`, `src/components/ScenarioGeneratorModal.tsx` — Dinamik soru oluşturucuya 10 farklı müfredat alanı (Kredi/Faiz, Döviz, Şüpheli Alacak, Bordro, Varlık Satışı, 690 Kapanış vb.) ve algoritmik şablonlar entegre edildi.
+  - `src/types/generator.ts`, `src/core/scenarioGenerator.ts`, `src/components/ScenarioGeneratorModal.tsx` — Sınav müfredatı gereği döviz/kambiyo kâr-zarar (646/656) işlemleri kaldırıldı; yerine `hazir_degerler` (Çek Hareketleri & Hazır Değerler: 101 tahsilatı, 103 keşidesi, ciro vb.) entegre edildi. Toplam 70 yevmiye maddesi tam dengeli ve hatasız doğrulandı.
   - `src/components/landing/ScenarioSelectionSection.tsx` — 11 senaryo için dinamik filtre sekmeleri (`Tüm Sorular (11)`, `Temel Seviye (3)`, `Orta (Vize) Seviye (4)`, `İleri (Final) Seviye (4)`), tek satır kart rozetleri ve alt "Çalışma Modu" komuta barının yatay segmente düzende (`Öğrenme Modu (İpuçlu Rehber)` / `Sınav Modu (Kendini Test Et)`) kırılmadan hizalanması sağlandı.
   - `src/components/landing/LandingNavbar.tsx` — Üst yüzen kapsül navigasyon barında tüm öğelerin (`GM / ATÖLYE`, başlık, 4 bölüm sekmesi, çalışma modu rozeti, ikonlar ve `Çözmeye Başla` butonu) kapsül sınırları içinde taşmadan (`navbarOverflow: false`) hizalanması sağlandı.
   - `SCENARIO_GUIDE.md` & `README.md` — Projeye yeni senaryo eklemek isteyenler için kapsamlı mimari ve pedagojik senaryo üretim rehberi oluşturuldu.
+- **Faz 5 — Yevmiye Defteri & Bilanço Çizimi UX İyileştirmeleri ve Bilişsel Yük Sadeleştirmesi:**
+  - `src/components/BalanceSheetView.tsx` — İnteraktif Bilanço Çizimi (Sınav Provası) modunda yaşanan grup seçim kutusunun ezilmesi ve Tutar (TL) girişinin ekran dışına taşarak kırpılması sorunu tamamen giderildi. 2 katmanlı responsive satır mimarisine geçildi (Satır 1: Tam genişlikli optgroup'lu hesap seçimi + çöp kutusu; Satır 2: Grup seçimi + ₺ etiketli tutar kutusu). Kart başlıkları tek kompakt komuta merkezinde toplandı ve alt kısma canlı bilanço terazisi çubuğu eklendi.
+  - `src/components/screens/WorkspaceScreen.tsx` — `İŞLEM ZİNCİRİ` şeridi yalnızca `yevmiye` sekmesine sınırlandırıldı; Bilanço, Mizan ve T-Cetveli sekmelerinde gizlenerek gereksiz görsel karmaşa ortadan kaldırıldı.
+  - `src/components/JournalEntryForm.tsx` (Yevmiye Defteri) — Ciddi UX ve pedagoji iyileştirmeleri yapıldı:
+    1. Üst Sokratik karttaki çözüm ifşası (doğrudan hesap adlarını ve borç/alacak yönünü peşinen yazan liste) kaldırıldı. Yerine borç-alacak nedenselliğini öğreten 3 maddeli "Çift Taraflı Akıl Yürütme Kılavuzu" getirildi; öğrenme modunda hesap ipuçları isteğe bağlı `Hesap İpuçlarını Göster` butonu arkasına alındı. Sınav modunda ise ipuçları gizlenerek sınav gerçekçiliği korundu.
+    2. Tablo satırlarında `AccountSelect` altında tekrarlayan ve satır yüksekliklerini deforme eden `Açıklama: {accountDef.description}` blokları kaldırıldı; nizami, tek tip 48px yüksekliğinde profesyonel muhasebe yevmiye tablosu elde edildi.
+    3. `+ + Yeni Satır Ekle` butonundaki çift artı yazım hatası giderildi.
+    4. Alt gezinme dock'undaki `Sonraki İşleme Geç` butonu dinamik validasyon durumuna bağlandı: Kayıt henüz denk/doğrulanmamışken nötr ikincil tonda kalırken, kayıt tam dengelendiğinde yeşil `Doğrulandı • Sonraki İşlem` olarak anlık pozitif geri bildirim veriyor.
+  - `src/components/LedgerView.tsx` — T-Cetveli başlıklarındaki `DUZENLEYICI_AKTIF` gibi taşan/kırpılan enum metinleri `formatNatureLabel` ile `DÜZENLEYİCİ (-)` biçiminde amber rengiyle biçimlendirildi (`GELİR` ve `GİDER` Türkçe karakter uyumu sağlandı).
 - **Otomatik Tarayıcı Testi (`1440px`, `1280px`, `1024px` Masaüstü/Laptop & `375px` Mobil):**
   - Tüm ekranlar (`WelcomeScreen`, `LandingNavbar`, `ScenarioSelectionSection` alt çalışma modu barı, `WorkspaceScreen`, `LedgerView Practice`, `BalanceSheetView Practice`, `SummaryScreen`) `1440px`, `1280px`, `1024px` ve `375px` çözünürlüklerde `navbarOverflow: false`, `modeBtnsSameRow: true` ve `0` lint/build/konsol hatasıyla doğrulandı.
 

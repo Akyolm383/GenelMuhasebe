@@ -261,57 +261,59 @@ export const WorkspaceScreen: React.FC<WorkspaceScreenProps> = ({
 
       {/* 2. ANA SİMÜLASYON ÇALIŞMA TEZGAHI */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 space-y-6">
-        {/* İŞLEM ZİNCİRİ (TRANSACTION STEPPER RIBBON) */}
-        <section className="bg-surface dark:bg-[#1C1B19] rounded-2xl p-3 border border-border-subtle dark:border-zinc-800 shadow-[0_4px_16px_-4px_rgba(24,24,27,0.04)]">
-          <div className="flex items-center gap-2 overflow-x-auto pb-0.5 tabular-nums">
-            <span className="font-ledger-readout text-[11px] uppercase tracking-wider text-text-muted dark:text-zinc-400 px-2 font-bold shrink-0">
-              İŞLEM ZİNCİRİ:
-            </span>
+        {/* İŞLEM ZİNCİRİ (Yalnızca Yevmiye Kayıt Adımında Gösterilir) */}
+        {activeTab === 'yevmiye' && (
+          <section className="bg-surface dark:bg-[#1C1B19] rounded-2xl p-3 border border-border-subtle dark:border-zinc-800 shadow-[0_4px_16px_-4px_rgba(24,24,27,0.04)]">
+            <div className="flex items-center gap-2 overflow-x-auto pb-0.5 tabular-nums">
+              <span className="font-ledger-readout text-[11px] uppercase tracking-wider text-text-muted dark:text-zinc-400 px-2 font-bold shrink-0">
+                İŞLEM ZİNCİRİ:
+              </span>
 
-            {scenario.transactions.map((tx, idx) => {
-              const isActive = idx === activeTransactionIndex;
-              const lines = userEntries[tx.id] || [];
-              const isRecorded = lines.some(
-                (l) => l.accountCode && (l.debit > 0 || l.credit > 0)
-              );
+              {scenario.transactions.map((tx, idx) => {
+                const isActive = idx === activeTransactionIndex;
+                const lines = userEntries[tx.id] || [];
+                const isRecorded = lines.some(
+                  (l) => l.accountCode && (l.debit > 0 || l.credit > 0)
+                );
 
-              return (
-                <button
-                  key={tx.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveTransactionIndex(idx);
-                    if (activeTab !== 'yevmiye') {
-                      setActiveTab('yevmiye');
-                    }
-                  }}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-ledger-readout text-xs transition-all shrink-0 cursor-pointer ${
-                    isActive
-                      ? 'bg-accent-surface dark:bg-[#3A1D16] border border-primary/40 text-primary dark:text-[#FFB4A4] font-semibold shadow-xs'
-                      : isRecorded
-                      ? 'bg-secondary-container/30 dark:bg-emerald-950/60 border border-secondary/25 text-on-secondary-container dark:text-emerald-300'
-                      : 'bg-surface-muted dark:bg-zinc-900 text-text-muted dark:text-zinc-400 hover:text-text-primary dark:hover:text-zinc-200'
-                  }`}
-                  title={tx.description}
-                >
-                  {isActive ? (
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                return (
+                  <button
+                    key={tx.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveTransactionIndex(idx);
+                      if (activeTab !== 'yevmiye') {
+                        setActiveTab('yevmiye');
+                      }
+                    }}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-ledger-readout text-xs transition-all shrink-0 cursor-pointer ${
+                      isActive
+                        ? 'bg-accent-surface dark:bg-[#3A1D16] border border-primary/40 text-primary dark:text-[#FFB4A4] font-semibold shadow-xs'
+                        : isRecorded
+                        ? 'bg-secondary-container/30 dark:bg-emerald-950/60 border border-secondary/25 text-on-secondary-container dark:text-emerald-300'
+                        : 'bg-surface-muted dark:bg-zinc-900 text-text-muted dark:text-zinc-400 hover:text-text-primary dark:hover:text-zinc-200'
+                    }`}
+                    title={tx.description}
+                  >
+                    {isActive ? (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                      </span>
+                    ) : isRecorded ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-secondary dark:text-emerald-400" />
+                    ) : null}
+
+                    <span>
+                      #{tx.order} {tx.title}
+                      {isActive ? ' [Aktif]' : ''}
                     </span>
-                  ) : isRecorded ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary dark:text-emerald-400" />
-                  ) : null}
-
-                  <span>
-                    #{tx.order} {tx.title}
-                    {isActive ? ' [Aktif]' : ''}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* AKTİF SEKME İÇERİĞİ */}
         {activeTab === 'yevmiye' && <JournalEntryForm />}

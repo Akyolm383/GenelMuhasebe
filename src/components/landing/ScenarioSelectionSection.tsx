@@ -72,8 +72,9 @@ export const ScenarioSelectionSection: React.FC<
         return 'Banka Kredisi (300) & Faiz (780)';
       case 'anadolu-cek-kdv-orta':
         return 'Çek Cirosu, POS & %20 KDV';
+      case 'atlas-ticaret-cek-orta':
       case 'atlas-medikal-doviz-orta':
-        return 'Döviz Alımı & Kur Kâr/Zararı (646/656)';
+        return 'Alınan Çekler (101) & Verilen Çekler (103)';
       case 'dogu-otomotiv-senet-orta':
         return 'Senet Protestosu & Vade Farkı (121/642)';
       case 'ege-lojistik-supheli-orta':

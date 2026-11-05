@@ -19,7 +19,6 @@ import {
   Plus,
   Trash2,
   Sparkles,
-  HelpCircle,
 } from 'lucide-react';
 
 export const BalanceSheetView: React.FC = () => {
@@ -80,6 +79,49 @@ export const BalanceSheetView: React.FC = () => {
     0
   );
 
+  const assetAccounts = ACCOUNTS_LIST.filter(
+    (a) => a.accountClass === 1 || a.accountClass === 2
+  );
+
+  const liabilityAccounts = [
+    ...ACCOUNTS_LIST.filter(
+      (a) => a.accountClass === 3 || a.accountClass === 4 || a.accountClass === 5
+    ),
+    {
+      code: '590',
+      name: 'Dönem Net Kârı',
+      nature: 'PASIF' as const,
+      accountClass: 5,
+      description: 'Dönem faaliyetleri sonucunda oluşan vergi sonrası net kâr.',
+      normalBalance: 'ALACAK' as const,
+      isContra: false,
+      statement: 'BILANCO' as const,
+      ruleExplanation: 'Öz kaynakları artırır, Pasif tarafında yer alır.',
+    },
+    {
+      code: '591',
+      name: 'Dönem Net Zararı (-)',
+      nature: 'PASIFI_DUZENLEYICI' as const,
+      accountClass: 5,
+      description: 'Dönem faaliyetleri sonucunda oluşan net zarar.',
+      normalBalance: 'BORC' as const,
+      isContra: true,
+      statement: 'BILANCO' as const,
+      ruleExplanation: 'Öz kaynakları azaltır, Pasif tarafında (-) eksi olarak yer alır.',
+    },
+  ];
+
+  const getAutoGroupForAsset = (code: string): 'DONEN' | 'DURAN' => {
+    if (code.startsWith('2')) return 'DURAN';
+    return 'DONEN';
+  };
+
+  const getAutoGroupForLiability = (code: string): 'KVYK' | 'UVYK' | 'OZKAYNAK' => {
+    if (code.startsWith('4')) return 'UVYK';
+    if (code.startsWith('5')) return 'OZKAYNAK';
+    return 'KVYK';
+  };
+
   const handleAddAsset = () => {
     setUserAssetItems((prev) => [
       ...prev,
@@ -98,7 +140,14 @@ export const BalanceSheetView: React.FC = () => {
 
   const handleUpdateAsset = (id: string, patch: Partial<CustomBalanceItem>) => {
     setUserAssetItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...patch } : item))
+      prev.map((item) => {
+        if (item.id !== id) return item;
+        const updated = { ...item, ...patch };
+        if (patch.code && !patch.group) {
+          updated.group = getAutoGroupForAsset(patch.code);
+        }
+        return updated;
+      })
     );
   };
 
@@ -123,7 +172,14 @@ export const BalanceSheetView: React.FC = () => {
     patch: Partial<CustomBalanceItem>
   ) => {
     setUserLiabilityItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...patch } : item))
+      prev.map((item) => {
+        if (item.id !== id) return item;
+        const updated = { ...item, ...patch };
+        if (patch.code && !patch.group) {
+          updated.group = getAutoGroupForLiability(patch.code);
+        }
+        return updated;
+      })
     );
   };
 
@@ -346,324 +402,468 @@ export const BalanceSheetView: React.FC = () => {
     });
   };
 
+  const userDiff = Math.abs(userTotalAssets - userTotalLiabilities);
+  const isUserBalanced = userDiff < 0.01 && userTotalAssets > 0;
+
   return (
     <div className="space-y-6">
-      {/* Üst Bilgi ve Mod Seçimi */}
-      <div className="bg-surface dark:bg-[#1C1B19] p-5 sm:p-6 rounded-[2rem] shadow-[0_12px_32px_-8px_rgba(24,24,27,0.05)] border border-border-subtle dark:border-zinc-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
-        <div>
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Landmark className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-card-title font-bold text-text-primary dark:text-white">
-              Bilanço ({scenario.companyName})
-            </h3>
-            {balanceSheet.isBalanced && balanceSheet.assets.totalAssets > 0 ? (
-              <span className="inline-flex items-center gap-1 text-xs font-ledger-readout bg-secondary-container/40 text-on-secondary-container px-2.5 py-0.5 rounded-full font-semibold border border-secondary/30">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Aktif = Pasif (Bilanço Dengeli)
-              </span>
-            ) : balanceSheet.difference !== 0 ? (
-              <span className="inline-flex items-center gap-1 text-xs font-ledger-readout bg-accent-surface text-primary px-2.5 py-0.5 rounded-full font-semibold border border-primary/30 tabular-nums">
-                <AlertTriangle className="w-3.5 h-3.5" />
-                Bilanço Dengesiz:{' '}
-                {formatCurrency(Math.abs(balanceSheet.difference))} Fark
-              </span>
-            ) : null}
-          </div>
-          <p className="text-xs sm:text-sm font-body-editorial text-text-secondary dark:text-zinc-400 mt-1">
-            {viewMode === 'auto'
-              ? 'İşletmenin varlıklarını (Aktif) ve kaynaklarını (Pasif) gösteren resmi T-Bilanço'
-              : 'Sınav Provası: Hesapları ve bakiyelerini Aktif/Pasif taraflarına kendiniz yerleştirin'}
-          </p>
-        </div>
-
-        <div className="flex bg-surface-muted dark:bg-zinc-900 p-1 rounded-full border border-border-subtle dark:border-zinc-800 text-xs font-ledger-readout font-semibold">
-          <button
-            type="button"
-            onClick={() => setViewMode('auto')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
-              viewMode === 'auto'
-                ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-bold shadow-xs'
-                : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary'
-            }`}
-          >
-            <Eye className="w-3.5 h-3.5" />
-            <span>Otomatik Bilanço</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('practice')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
-              viewMode === 'practice'
-                ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-bold shadow-xs'
-                : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary'
-            }`}
-          >
-            <Edit3 className="w-3.5 h-3.5" />
-            <span>Kendin Doldur (Sınav Provası)</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Sınav Provası İpuçları */}
-      {viewMode === 'practice' && (
-        <div className="bg-surface dark:bg-[#1C1B19] border border-border-subtle dark:border-zinc-800 rounded-[2rem] p-5 text-xs space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-start gap-2.5">
-              <HelpCircle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <div>
-                <strong className="block font-card-title text-sm font-bold text-text-primary dark:text-white">
-                  Bilanço Çıkarma Sınav Alıştırması
-                </strong>
-                <span className="text-text-secondary dark:text-zinc-300 font-body-editorial leading-relaxed">
-                  T-hesaplarındaki kalan bakiyelere bakarak:{' '}
-                  <strong>Aktif (Sol)</strong> tarafa işletmenin varlıklarını,{' '}
-                  <strong>Pasif (Sağ)</strong> tarafa ise borçlarını ve
-                  sermayesini yerleştiriniz.
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={handleAutoFillSolution}
-                className="px-3.5 py-2 bg-surface-muted dark:bg-zinc-800 border border-border-subtle dark:border-zinc-700 hover:bg-border-subtle text-text-primary dark:text-zinc-200 font-ledger-readout font-semibold rounded-full text-xs cursor-pointer flex items-center gap-1.5"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-primary" />
-                <span>Örnek Çözümü Yükle</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCheckPractice}
-                className="px-4 py-2 bg-primary-container hover:bg-primary text-on-primary-container font-ledger-readout font-bold rounded-full shadow-xs cursor-pointer text-xs"
-              >
-                Bilançomu Kontrol Et
-              </button>
-            </div>
-          </div>
-
-          {practiceFeedback.isChecked && (
-            <div
-              className={`mt-3 p-4 rounded-2xl border text-xs font-ledger-readout ${
-                practiceFeedback.isCorrect
-                  ? 'bg-secondary-fixed/25 border-secondary/30 text-secondary'
-                  : 'bg-accent-surface border-primary/30 text-primary'
-              }`}
-            >
-              {practiceFeedback.isCorrect ? (
-                <div className="flex items-center gap-2 font-bold">
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>
-                    Tebrikler! Bilançoyu eksiksiz, hesapları doğru taraflara
-                    yerleştirerek kuruşu kuruşuna denk çıkardınız.
+      {/* 1. BİRLEŞTİRİLMİŞ BİLANÇO ÜST KONTROL PANELİ */}
+      <div className="bg-surface dark:bg-[#1C1B19] p-5 sm:p-6 rounded-[2rem] shadow-[0_12px_32px_-8px_rgba(24,24,27,0.05)] border border-border-subtle dark:border-zinc-800 transition-colors space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Landmark className="w-5 h-5 text-primary" />
+              <h3 className="text-lg font-card-title font-bold text-text-primary dark:text-white">
+                Bilanço • {scenario.companyName}
+              </h3>
+              {viewMode === 'auto' ? (
+                balanceSheet.isBalanced && balanceSheet.assets.totalAssets > 0 ? (
+                  <span className="inline-flex items-center gap-1 text-xs font-ledger-readout bg-secondary-container/40 text-on-secondary-container px-2.5 py-0.5 rounded-full font-semibold border border-secondary/30">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary" />
+                    Aktif = Pasif (Bilanço Dengeli)
                   </span>
-                </div>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-xs font-ledger-readout bg-accent-surface text-primary px-2.5 py-0.5 rounded-full font-semibold border border-primary/30 tabular-nums">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    Bilanço Dengesiz: {formatCurrency(Math.abs(balanceSheet.difference))} Fark
+                  </span>
+                )
+              ) : isUserBalanced ? (
+                <span className="inline-flex items-center gap-1 text-xs font-ledger-readout bg-secondary-container/40 text-on-secondary-container px-2.5 py-0.5 rounded-full font-semibold border border-secondary/30">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-secondary" />
+                  Sınav Provası: Denk (0,00 ₺ Fark)
+                </span>
               ) : (
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2 font-bold">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>
-                      Bilançonuzda Düzeltilmesi Gereken Noktalar (
-                      {practiceFeedback.errors.length}):
-                    </span>
-                  </div>
-                  <ul className="list-disc list-inside space-y-1 text-text-primary pl-1">
-                    {practiceFeedback.errors.map((err, idx) => (
-                      <li key={idx}>{err}</li>
-                    ))}
-                  </ul>
-                </div>
+                <span className="inline-flex items-center gap-1 text-xs font-ledger-readout bg-surface-muted text-text-secondary dark:text-zinc-300 px-2.5 py-0.5 rounded-full font-semibold border border-border-subtle dark:border-zinc-700">
+                  <Edit3 className="w-3.5 h-3.5 text-primary" />
+                  İnteraktif Bilanço Çizimi
+                </span>
               )}
             </div>
-          )}
-        </div>
-      )}
+            <p className="text-xs sm:text-sm font-body-editorial text-text-secondary dark:text-zinc-400 mt-1">
+              {viewMode === 'auto'
+                ? 'İşletmenin varlıklarını (Aktif) ve kaynaklarını (Pasif) gösteren resmi T-Bilanço görünümü.'
+                : 'Sınav Alıştırması: T-hesaplarındaki kalan bakiyelere göre hesapları Aktif ve Pasif taraflarına yerleştiriniz.'}
+            </p>
+          </div>
 
-      {/* 1. KENDİN DOLDUR GÖRÜNÜMÜ */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Görünüm Modu Değiştirici */}
+            <div className="flex bg-surface-muted dark:bg-zinc-900 p-1 rounded-full border border-border-subtle dark:border-zinc-800 text-xs font-ledger-readout font-semibold">
+              <button
+                type="button"
+                onClick={() => setViewMode('auto')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
+                  viewMode === 'auto'
+                    ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-bold shadow-xs'
+                    : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary'
+                }`}
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Otomatik Bilanço</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('practice')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
+                  viewMode === 'practice'
+                    ? 'bg-surface dark:bg-zinc-800 text-text-primary dark:text-white font-bold shadow-xs'
+                    : 'text-text-secondary dark:text-zinc-400 hover:text-text-primary'
+                }`}
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>Kendin Doldur</span>
+              </button>
+            </div>
+
+            {/* Kendin Doldur Modu Aksiyon Butonları */}
+            {viewMode === 'practice' && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleAutoFillSolution}
+                  className="px-3.5 py-2 bg-surface-muted dark:bg-zinc-800 border border-border-subtle dark:border-zinc-700 hover:bg-border-subtle text-text-primary dark:text-zinc-200 font-ledger-readout font-semibold rounded-full text-xs cursor-pointer flex items-center gap-1.5 transition-colors"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  <span>Örnek Çözümü Yükle</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCheckPractice}
+                  className="px-4 py-2 bg-primary-container hover:bg-primary text-on-primary-container font-ledger-readout font-bold rounded-full shadow-xs cursor-pointer text-xs transition-colors"
+                >
+                  Bilançomu Kontrol Et
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Kontrol Sonucu Geri Bildirimi */}
+        {viewMode === 'practice' && practiceFeedback.isChecked && (
+          <div
+            className={`p-4 rounded-2xl border text-xs font-ledger-readout transition-all ${
+              practiceFeedback.isCorrect
+                ? 'bg-secondary-fixed/25 border-secondary/30 text-secondary dark:text-emerald-300'
+                : 'bg-accent-surface border-primary/30 text-primary dark:text-[#FFB4A4]'
+            }`}
+          >
+            {practiceFeedback.isCorrect ? (
+              <div className="flex items-center gap-2.5 font-bold">
+                <CheckCircle2 className="w-5 h-5 shrink-0" />
+                <span>
+                  Tebrikler! Bilançoyu eksiksiz, hesapları doğru taraflara yerleştirerek kuruşu kuruşuna denk çıkardınız.
+                </span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 font-bold">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>
+                    Bilançonuzda Düzeltilmesi Gereken Noktalar ({practiceFeedback.errors.length}):
+                  </span>
+                </div>
+                <ul className="list-disc list-inside space-y-1 text-text-primary dark:text-zinc-200 pl-1 font-body-editorial">
+                  {practiceFeedback.errors.map((err, idx) => (
+                    <li key={idx}>{err}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* 2. KENDİN DOLDUR (İNTERAKTİF BİLANÇO ÇİZİMİ) */}
       {viewMode === 'practice' && (
         <div className="bg-surface dark:bg-[#1C1B19] rounded-[2rem] shadow-[0_12px_32px_-8px_rgba(24,24,27,0.06)] border border-border-subtle dark:border-zinc-800 overflow-hidden transition-colors tabular-nums">
+          {/* Başlık Şeridi */}
           <div className="bg-surface-muted/70 dark:bg-zinc-900 text-text-primary dark:text-white py-3.5 px-6 text-center border-b border-border-subtle dark:border-zinc-800">
             <h2 className="text-sm font-card-title font-bold tracking-wide uppercase">
               {scenario.companyName}
             </h2>
             <p className="text-xs text-text-secondary dark:text-zinc-400 mt-0.5 font-ledger-readout">
-              Sınav Provası • İnteraktif Bilanço Çizimi
+              Resmi T-Bilanço Çizimi • Varlık ve Kaynak Eşitlemesi
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border-subtle dark:divide-zinc-800">
-            {/* AKTİF */}
+            {/* SOL SÜTUN: AKTİF (VARLIKLAR) */}
             <div className="flex flex-col">
-              <div className="bg-surface-muted/35 dark:bg-zinc-900/60 py-3 px-4 border-b border-border-subtle dark:border-zinc-800 flex items-center justify-between">
-                <span className="font-ledger-readout font-bold text-xs uppercase text-secondary tracking-wider">
-                  AKTİF (VARLIKLAR)
-                </span>
+              <div className="bg-surface-muted/35 dark:bg-zinc-900/60 py-3 px-5 border-b border-border-subtle dark:border-zinc-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-secondary" />
+                  <span className="font-ledger-readout font-bold text-xs uppercase text-secondary dark:text-secondary-fixed tracking-wider">
+                    AKTİF (VARLIKLAR)
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={handleAddAsset}
-                  className="px-3 py-1 bg-surface-contrast text-surface rounded-full text-xs font-ledger-readout font-semibold flex items-center gap-1 cursor-pointer"
+                  className="px-3 py-1.5 bg-surface-contrast text-surface rounded-full text-xs font-ledger-readout font-bold flex items-center gap-1.5 hover:bg-black dark:hover:bg-zinc-700 transition-colors cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Varlık Ekle</span>
                 </button>
               </div>
 
-              <div className="p-4 space-y-3 flex-1">
-                {userAssetItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-2 bg-surface-muted/40 dark:bg-zinc-900 p-2 rounded-xl border border-border-subtle dark:border-zinc-800"
-                  >
-                    <select
-                      value={item.code}
-                      onChange={(e) =>
-                        handleUpdateAsset(item.id, { code: e.target.value })
-                      }
-                      className="flex-1 p-1.5 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-xs font-ledger-readout text-text-primary dark:text-white cursor-pointer"
-                    >
-                      <option value="">Hesap Seçin...</option>
-                      {ACCOUNTS_LIST.map((acc) => (
-                        <option key={acc.code} value={acc.code}>
-                          {acc.code} {acc.name} ({acc.nature})
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={item.group}
-                      onChange={(e) =>
-                        handleUpdateAsset(item.id, {
-                          group: e.target.value as 'DONEN' | 'DURAN',
-                        })
-                      }
-                      className="w-32 p-1.5 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-xs font-ledger-readout text-text-secondary dark:text-zinc-300 cursor-pointer"
-                    >
-                      <option value="DONEN">I. Dönen Varlık</option>
-                      <option value="DURAN">II. Duran Varlık</option>
-                    </select>
-
-                    <input
-                      type="number"
-                      value={item.amount > 0 ? item.amount : ''}
-                      onChange={(e) =>
-                        handleUpdateAsset(item.id, {
-                          amount: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      placeholder="Tutar (TL)"
-                      className="w-28 p-1.5 text-right font-ledger-readout text-xs bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-text-primary dark:text-white"
-                    />
-
+              <div className="p-4 sm:p-5 space-y-3.5 flex-1">
+                {userAssetItems.length === 0 ? (
+                  <div className="p-8 text-center border-2 border-dashed border-border-subtle dark:border-zinc-800 rounded-2xl text-text-muted text-xs font-body-editorial space-y-2">
+                    <p>Henüz aktif varlık kalemi eklenmedi.</p>
                     <button
                       type="button"
-                      onClick={() => handleRemoveAsset(item.id)}
-                      className="text-text-muted hover:text-error p-1 cursor-pointer"
-                      title="Sil"
+                      onClick={handleAddAsset}
+                      className="inline-flex items-center gap-1 text-primary dark:text-[#FFB4A4] font-semibold hover:underline cursor-pointer"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Plus className="w-3.5 h-3.5" />
+                      İlk Varlık Hesabını Ekle
                     </button>
                   </div>
-                ))}
+                ) : (
+                  userAssetItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-surface-muted/30 dark:bg-zinc-900/70 p-3 sm:p-3.5 rounded-2xl border border-border-subtle dark:border-zinc-800 space-y-2.5 transition-all hover:border-zinc-400 dark:hover:border-zinc-700"
+                    >
+                      {/* Üst Satır: Hesap Seçimi + Silme Butonu */}
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1 min-w-0">
+                          <select
+                            value={item.code}
+                            onChange={(e) =>
+                              handleUpdateAsset(item.id, { code: e.target.value })
+                            }
+                            className="w-full pl-3 pr-8 py-2 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-xl text-xs font-ledger-readout font-semibold text-text-primary dark:text-white truncate cursor-pointer focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary"
+                          >
+                            <option value="">-- Varlık Hesabı Seçin --</option>
+                            <optgroup label="I. DÖNEN VARLIKLAR (1xx)">
+                              {assetAccounts
+                                .filter((a) => a.accountClass === 1)
+                                .map((acc) => (
+                                  <option key={acc.code} value={acc.code}>
+                                    {acc.code} {acc.name} {acc.nature.includes('DUZENLEYICI') ? '(-)' : ''}
+                                  </option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="II. DURAN VARLIKLAR (2xx)">
+                              {assetAccounts
+                                .filter((a) => a.accountClass === 2)
+                                .map((acc) => (
+                                  <option key={acc.code} value={acc.code}>
+                                    {acc.code} {acc.name} {acc.nature.includes('DUZENLEYICI') ? '(-)' : ''}
+                                  </option>
+                                ))}
+                            </optgroup>
+                          </select>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveAsset(item.id)}
+                          className="p-2 text-text-muted hover:text-error hover:bg-error-container/20 rounded-xl transition-colors cursor-pointer shrink-0"
+                          title="Kalemi Sil"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Alt Satır: Grup Seçimi + Tutar Girişi (Asla taşmaz) */}
+                      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 pt-2 border-t border-border-subtle/50 dark:border-zinc-800">
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-[10px] font-ledger-readout font-bold uppercase text-text-muted">
+                            GRUP:
+                          </span>
+                          <select
+                            value={item.group}
+                            onChange={(e) =>
+                              handleUpdateAsset(item.id, {
+                                group: e.target.value as 'DONEN' | 'DURAN',
+                              })
+                            }
+                            className="px-2.5 py-1 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-[11px] font-ledger-readout font-bold text-secondary dark:text-emerald-400 cursor-pointer"
+                          >
+                            <option value="DONEN">I. Dönen Varlık</option>
+                            <option value="DURAN">II. Duran Varlık</option>
+                          </select>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 ml-auto">
+                          <label className="text-[10px] font-ledger-readout font-bold uppercase text-text-muted">
+                            TUTAR:
+                          </label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={item.amount !== 0 ? item.amount : ''}
+                            onChange={(e) =>
+                              handleUpdateAsset(item.id, {
+                                amount: parseFloat(e.target.value) || 0,
+                              })
+                            }
+                            placeholder="0,00"
+                            className="w-28 sm:w-32 py-1 px-2.5 text-right font-ledger-readout font-bold text-xs bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-text-primary dark:text-white tabular-nums focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary"
+                          />
+                          <span className="font-ledger-readout font-bold text-xs text-text-secondary">
+                            ₺
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
-              <div className="bg-surface-contrast text-surface p-4 flex items-center justify-between font-ledger-readout font-bold text-sm">
-                <span className="uppercase tracking-wider">
+              <div className="bg-surface-contrast text-surface p-4 flex items-center justify-between font-ledger-readout font-bold text-sm border-t border-border-subtle">
+                <span className="uppercase tracking-wider text-xs sm:text-sm">
                   HESAPLANAN AKTİF TOPLAMI:
                 </span>
-                <span className="text-secondary-fixed">
+                <span className="text-secondary-fixed text-base sm:text-lg">
                   {formatCurrency(userTotalAssets)}
                 </span>
               </div>
             </div>
 
-            {/* PASİF */}
+            {/* SAĞ SÜTUN: PASİF (KAYNAKLAR) */}
             <div className="flex flex-col">
-              <div className="bg-surface-muted/35 dark:bg-zinc-900/60 py-3 px-4 border-b border-border-subtle dark:border-zinc-800 flex items-center justify-between">
-                <span className="font-ledger-readout font-bold text-xs uppercase text-primary tracking-wider">
-                  PASİF (KAYNAKLAR)
-                </span>
+              <div className="bg-surface-muted/35 dark:bg-zinc-900/60 py-3 px-5 border-b border-border-subtle dark:border-zinc-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+                  <span className="font-ledger-readout font-bold text-xs uppercase text-primary dark:text-[#FFB4A4] tracking-wider">
+                    PASİF (KAYNAKLAR)
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={handleAddLiability}
-                  className="px-3 py-1 bg-surface-contrast text-surface rounded-full text-xs font-ledger-readout font-semibold flex items-center gap-1 cursor-pointer"
+                  className="px-3 py-1.5 bg-surface-contrast text-surface rounded-full text-xs font-ledger-readout font-bold flex items-center gap-1.5 hover:bg-black dark:hover:bg-zinc-700 transition-colors cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Kaynak Ekle</span>
                 </button>
               </div>
 
-              <div className="p-4 space-y-3 flex-1">
-                {userLiabilityItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-2 bg-surface-muted/40 dark:bg-zinc-900 p-2 rounded-xl border border-border-subtle dark:border-zinc-800"
-                  >
-                    <select
-                      value={item.code}
-                      onChange={(e) =>
-                        handleUpdateLiability(item.id, { code: e.target.value })
-                      }
-                      className="flex-1 p-1.5 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-xs font-ledger-readout text-text-primary dark:text-white cursor-pointer"
-                    >
-                      <option value="">Hesap Seçin...</option>
-                      {ACCOUNTS_LIST.map((acc) => (
-                        <option key={acc.code} value={acc.code}>
-                          {acc.code} {acc.name} ({acc.nature})
-                        </option>
-                      ))}
-                      <option value="590">590 Dönem Net Kârı</option>
-                    </select>
-
-                    <select
-                      value={item.group}
-                      onChange={(e) =>
-                        handleUpdateLiability(item.id, {
-                          group: e.target.value as
-                            | 'KVYK'
-                            | 'UVYK'
-                            | 'OZKAYNAK',
-                        })
-                      }
-                      className="w-32 p-1.5 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-xs font-ledger-readout text-text-secondary dark:text-zinc-300 cursor-pointer"
-                    >
-                      <option value="KVYK">III. Kısa Vadeli</option>
-                      <option value="UVYK">IV. Uzun Vadeli</option>
-                      <option value="OZKAYNAK">V. Öz Kaynak</option>
-                    </select>
-
-                    <input
-                      type="number"
-                      value={item.amount > 0 ? item.amount : ''}
-                      onChange={(e) =>
-                        handleUpdateLiability(item.id, {
-                          amount: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      placeholder="Tutar (TL)"
-                      className="w-28 p-1.5 text-right font-ledger-readout text-xs bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-text-primary dark:text-white"
-                    />
-
+              <div className="p-4 sm:p-5 space-y-3.5 flex-1">
+                {userLiabilityItems.length === 0 ? (
+                  <div className="p-8 text-center border-2 border-dashed border-border-subtle dark:border-zinc-800 rounded-2xl text-text-muted text-xs font-body-editorial space-y-2">
+                    <p>Henüz pasif kaynak kalemi eklenmedi.</p>
                     <button
                       type="button"
-                      onClick={() => handleRemoveLiability(item.id)}
-                      className="text-text-muted hover:text-error p-1 cursor-pointer"
-                      title="Sil"
+                      onClick={handleAddLiability}
+                      className="inline-flex items-center gap-1 text-primary dark:text-[#FFB4A4] font-semibold hover:underline cursor-pointer"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Plus className="w-3.5 h-3.5" />
+                      İlk Kaynak Hesabını Ekle
                     </button>
                   </div>
-                ))}
+                ) : (
+                  userLiabilityItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-surface-muted/30 dark:bg-zinc-900/70 p-3 sm:p-3.5 rounded-2xl border border-border-subtle dark:border-zinc-800 space-y-2.5 transition-all hover:border-zinc-400 dark:hover:border-zinc-700"
+                    >
+                      {/* Üst Satır: Hesap Seçimi + Silme Butonu */}
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1 min-w-0">
+                          <select
+                            value={item.code}
+                            onChange={(e) =>
+                              handleUpdateLiability(item.id, {
+                                code: e.target.value,
+                              })
+                            }
+                            className="w-full pl-3 pr-8 py-2 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-xl text-xs font-ledger-readout font-semibold text-text-primary dark:text-white truncate cursor-pointer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                          >
+                            <option value="">-- Kaynak Hesabı Seçin --</option>
+                            <optgroup label="III. KISA VADELİ YABANCI KAYNAKLAR (3xx)">
+                              {liabilityAccounts
+                                .filter((a) => a.accountClass === 3)
+                                .map((acc) => (
+                                  <option key={acc.code} value={acc.code}>
+                                    {acc.code} {acc.name} {acc.nature.includes('DUZENLEYICI') ? '(-)' : ''}
+                                  </option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="IV. UZUN VADELİ YABANCI KAYNAKLAR (4xx)">
+                              {liabilityAccounts
+                                .filter((a) => a.accountClass === 4)
+                                .map((acc) => (
+                                  <option key={acc.code} value={acc.code}>
+                                    {acc.code} {acc.name} {acc.nature.includes('DUZENLEYICI') ? '(-)' : ''}
+                                  </option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="V. ÖZ KAYNAKLAR (5xx)">
+                              {liabilityAccounts
+                                .filter((a) => a.accountClass === 5)
+                                .map((acc) => (
+                                  <option key={acc.code} value={acc.code}>
+                                    {acc.code} {acc.name} {acc.nature.includes('DUZENLEYICI') ? '(-)' : ''}
+                                  </option>
+                                ))}
+                            </optgroup>
+                          </select>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveLiability(item.id)}
+                          className="p-2 text-text-muted hover:text-error hover:bg-error-container/20 rounded-xl transition-colors cursor-pointer shrink-0"
+                          title="Kalemi Sil"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Alt Satır: Grup Seçimi + Tutar Girişi (Asla taşmaz) */}
+                      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 pt-2 border-t border-border-subtle/50 dark:border-zinc-800">
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-[10px] font-ledger-readout font-bold uppercase text-text-muted">
+                            GRUP:
+                          </span>
+                          <select
+                            value={item.group}
+                            onChange={(e) =>
+                              handleUpdateLiability(item.id, {
+                                group: e.target.value as
+                                  | 'KVYK'
+                                  | 'UVYK'
+                                  | 'OZKAYNAK',
+                              })
+                            }
+                            className="px-2.5 py-1 bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-[11px] font-ledger-readout font-bold text-primary dark:text-[#FFB4A4] cursor-pointer"
+                          >
+                            <option value="KVYK">III. Kısa Vadeli</option>
+                            <option value="UVYK">IV. Uzun Vadeli</option>
+                            <option value="OZKAYNAK">V. Öz Kaynak</option>
+                          </select>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 ml-auto">
+                          <label className="text-[10px] font-ledger-readout font-bold uppercase text-text-muted">
+                            TUTAR:
+                          </label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={item.amount !== 0 ? item.amount : ''}
+                            onChange={(e) =>
+                              handleUpdateLiability(item.id, {
+                                amount: parseFloat(e.target.value) || 0,
+                              })
+                            }
+                            placeholder="0,00"
+                            className="w-28 sm:w-32 py-1 px-2.5 text-right font-ledger-readout font-bold text-xs bg-surface dark:bg-zinc-950 border border-border-subtle dark:border-zinc-700 rounded-lg text-text-primary dark:text-white tabular-nums focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                          <span className="font-ledger-readout font-bold text-xs text-text-secondary">
+                            ₺
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
-              <div className="bg-surface-contrast text-surface p-4 flex items-center justify-between font-ledger-readout font-bold text-sm">
-                <span className="uppercase tracking-wider">
+              <div className="bg-surface-contrast text-surface p-4 flex items-center justify-between font-ledger-readout font-bold text-sm border-t border-border-subtle">
+                <span className="uppercase tracking-wider text-xs sm:text-sm">
                   HESAPLANAN PASİF TOPLAMI:
                 </span>
-                <span className="text-primary-fixed">
+                <span className="text-primary-fixed text-base sm:text-lg">
                   {formatCurrency(userTotalLiabilities)}
                 </span>
               </div>
+            </div>
+          </div>
+
+          {/* Ortak Denge Terazisi Alt Barı */}
+          <div className="bg-surface-muted/80 dark:bg-zinc-950 px-6 py-4 border-t border-border-subtle dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-ledger-readout tabular-nums">
+            <div className="flex items-center gap-3">
+              <span className="text-text-secondary dark:text-zinc-400">
+                Bilanço Denkliği:
+              </span>
+              <span className="font-bold text-text-primary dark:text-white">
+                Aktif {formatCurrency(userTotalAssets)}
+              </span>
+              <span className="text-text-muted font-bold">=</span>
+              <span className="font-bold text-text-primary dark:text-white">
+                Pasif {formatCurrency(userTotalLiabilities)}
+              </span>
+            </div>
+
+            <div>
+              {isUserBalanced ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/40 text-on-secondary-container font-bold border border-secondary/30">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-secondary" />
+                  Bilanço Eşitliği Sağlandı ✓ (Fark: 0,00 ₺)
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-surface text-primary font-bold border border-primary/30">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  Fark: {formatCurrency(userDiff)} • {userTotalAssets > userTotalLiabilities ? 'Aktif > Pasif' : 'Pasif > Aktif'}
+                </span>
+              )}
             </div>
           </div>
         </div>

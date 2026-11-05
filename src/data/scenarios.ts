@@ -1327,34 +1327,39 @@ export const SCENARIOS: CompanyScenario[] = [
     ],
   },
   {
-    id: 'atlas-medikal-doviz-orta',
-    title: 'Atlas Medikal A.Ş. - Dövizli İşlemler, İthalat ve Kambiyo Kâr/Zararı',
+    id: 'atlas-ticaret-cek-orta',
+    title: 'Atlas Ticaret A.Ş. - Alınan Çekler (101), Verilen Çekler (103) ve Çek Döngüsü',
     difficulty: 'Orta',
-    companyName: 'Atlas Medikal Cihazlar A.Ş.',
+    companyName: 'Atlas Toptan Ticaret A.Ş.',
     establishedDate: '01.11.2026',
     initialCapital: 300000,
     description:
-      'Döviz alımı, dövizli tıbbi cihaz ithalatı, döviz kurlarının yükselmesinden doğan kambiyo kârı (646) ve yabancı para borç ödemesindeki kambiyo zararı (656) muhasebesi.',
+      'Mal alımında çek keşidesi (103), mal satışında müşteri çeki alınması (101), satıcıya açık hesap borcu için çek verilmesi, müşteri çekinin yeni mal alımında ciro edilmesi (101 alacak tuzağı), cüzdandaki çekin bankadan tahsili ve keşide edilen çekin bankadan ödenmesini içeren kapsamlı sınav senaryosu.',
     learningObjectives: [
-      'Banka mevduatından nakit döviz kasasına aktarma (100 Borç / 102 Alacak)',
-      'Dövizli ticari mal alımının TL karşılığı ile kaydedilmesi',
-      'Kur artışında döviz satışından doğan kârın 646 Kambiyo Kârları hesabına alacak yazılması',
-      'Kur artışında döviz borcu ödenirken doğan zararın 656 Kambiyo Zararları (-) hesabına borç yazılması',
+      'Bileşik sermaye (Kasa + Banka) ile kuruluş kaydının yapılması',
+      'Ticari mal alımında kendi çekimizin keşide edilmesi ve 103 Verilen Çekler (-) hesabının alacaklandırılması',
+      'Veresiye mal alımında 320 Satıcılar borcunun doğuşu',
+      'Mal satışında müşteri çeki (101) ve nakit tahsilatın ayrıştırılması',
+      'Satıcıya olan veresiye borç için çek keşide edilmesi (320 Borç / 103 Alacak)',
+      'Sınav Klasiği: Müşteri çekinin ciro edilmesinde 103 değil, 101 Alınan Çekler hesabının alacaklandırılması',
+      'Cüzdandaki müşteri çekinin banka hesabına tahsil edilmesi (102 Borç / 101 Alacak)',
+      'Keşide edilen çekin bankadaki mevduattan ödenmesi ve 103 hesabının borçlandırılarak kapatılması',
     ],
     transactions: [
       {
         id: 'tx-at1',
         order: 1,
         date: '01.11.2026',
-        title: 'İşletmenin Banka Sermayesi ile Kuruluşu',
+        title: 'Bileşik Sermaye ile Şirket Kuruluşu',
         description:
-          'Şirket 300.000 TL nakit sermaye ile kurulmuş, sermaye tutarının tamamı şirket adına bankada açılan vadesiz TL hesabına yatırılmıştır.',
+          'Atlas Toptan Ticaret A.Ş. 300.000 TL sermaye taahhüdü ile kurulmuştur. Ortaklar sermayenin 100.000 TL\'sini nakit olarak şirket kasasına, kalan 200.000 TL\'sini ise şirketin banka mevduat hesabına yatırmıştır.',
         amount: 300000,
         expectedEntry: {
           educationalNotes:
-            'Bankadaki TL mevduatımız arttığı için 102 Bankalar borçlandırılır; şirkete taahhüt edilen sermaye için 500 Sermaye alacaklandırılır.',
+            'Kasamıza nakit girdiği için 100 Kasa BORÇ; bankaya para yattığı için 102 Bankalar BORÇ; taahhüt edilen toplam sermaye için 500 Sermaye ALACAK yazılır.',
           lines: [
-            { accountCode: '102', debit: 300000, credit: 0 },
+            { accountCode: '100', debit: 100000, credit: 0 },
+            { accountCode: '102', debit: 200000, credit: 0 },
             { accountCode: '500', debit: 0, credit: 300000 },
           ],
         },
@@ -1362,182 +1367,299 @@ export const SCENARIOS: CompanyScenario[] = [
           {
             level: 1,
             title: '1. Aşama: İşlemde Neler Değişti?',
-            content: 'Banka hesabımıza 300.000 TL girdi ve şirketin sermayesi oluştu.',
+            content: 'Kasaya 100.000 TL nakit, bankaya 200.000 TL mevduat girdi ve şirket sermayesi oluştu.',
           },
           {
             level: 2,
             title: '2. Aşama: Hangi Hesaplar Kullanılır?',
-            content: '102 Bankalar (Aktif) ve 500 Sermaye (Pasif).',
+            content: '100 Kasa (Aktif), 102 Bankalar (Aktif) ve 500 Sermaye (Öz Kaynak).',
           },
           {
             level: 3,
             title: '3. Aşama: Borç ve Alacak Yönleri',
-            content: '102 Bankalar BORÇ (300.000 TL) / 500 Sermaye ALACAK (300.000 TL).',
+            content: '100 Kasa BORÇ (100.000 TL), 102 Bankalar BORÇ (200.000 TL) / 500 Sermaye ALACAK (300.000 TL).',
           },
           {
             level: 4,
             title: '4. Aşama: Tam Yevmiye Kaydı',
-            content: '102 Bankalar (B: 300.000) / 500 Sermaye (A: 300.000)',
+            content: '100 Kasa (B: 100.000) - 102 Bankalar (B: 200.000) / 500 Sermaye (A: 300.000)',
           },
         ],
       },
       {
         id: 'tx-at2',
         order: 2,
-        date: '03.11.2026',
-        title: 'İthalat İçin Bankadan Çekilen TL ile Nakit Döviz Alımı',
+        date: '04.11.2026',
+        title: '%20 KDV\'li Mal Alışı ve Şirket Çekinin Keşide Edilmesi (103)',
         description:
-          'İthalat hazırlığı amacıyla bankadaki TL hesabımızdan 120.000 TL çekilerek 1 USD = 30 TL kuru üzerinden 4.000 USD nakit satın alınmış ve şirket kasasına konulmuştur.',
-        amount: 120000,
+          'İşletme, toptancıdan 60.000 TL + %20 KDV (12.000 TL KDV, toplam 72.000 TL) tutarında ticari mal satın almıştır. Toplam 72.000 TL borç için satıcıya şirket çek defterinden 72.000 TL tutarında vadeli çek düzenleyip (keşide edip) vermiştir.',
+        amount: 60000,
         expectedEntry: {
           educationalNotes:
-            'Tekdüzen hesap planında döviz mevcudu 100 Kasa hesabının döviz alt hesabında izlenir. Kasamızdaki para arttığı için 100 Kasa borçlandırılır; bankadaki TL azaldığı için 102 Bankalar alacaklandırılır.',
+            'Önemli Sınav Kuralı: Kendi çekimizi düzenleyip (keşide edip) verdiğimizde aktifi düzenleyen pasif karakterli hesap olan "103 Verilen Çekler ve Ödeme Emirleri (-)" ALACAKLANDIRILIR. Mal bedeli 153 Ticari Mallar hesabına, KDV ise 191 İndirilecek KDV hesabına BORÇ yazılır.',
           lines: [
-            { accountCode: '100', debit: 120000, credit: 0 },
-            { accountCode: '102', debit: 0, credit: 120000 },
+            { accountCode: '153', debit: 60000, credit: 0 },
+            { accountCode: '191', debit: 12000, credit: 0 },
+            { accountCode: '103', debit: 0, credit: 72000 },
           ],
         },
         hints: [
           {
             level: 1,
             title: '1. Aşama: İşlemde Neler Değişti?',
-            content: 'Kasamıza döviz girdi (TL karşılığı 120.000 TL), bankadaki TL mevduatımız azaldı.',
+            content: 'Depomuza 60.000 TL mal girdi, 12.000 TL KDV doğdu ve satıcıya kendi banka çekimizi keşide ettik.',
           },
           {
             level: 2,
-            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
-            content: 'Nakit döviz için "100 Kasa", banka çıkışı için "102 Bankalar".',
+            title: '2. Aşama: 101 mi, 103 mü?',
+            content: 'Müşteriden çek almadık, kendi çekimizi verdik! Kendi verdiğimiz çekler için "103 Verilen Çekler ve Ödeme Emirleri (-)" kullanılır.',
           },
           {
             level: 3,
             title: '3. Aşama: Borç ve Alacak Yönleri',
-            content: '100 Kasa BORÇ (120.000 TL) / 102 Bankalar ALACAK (120.000 TL).',
+            content: '153 Ticari Mallar BORÇ (60.000 TL), 191 İndirilecek KDV BORÇ (12.000 TL) / 103 Verilen Çekler (-) ALACAK (72.000 TL).',
           },
           {
             level: 4,
             title: '4. Aşama: Tam Yevmiye Kaydı',
-            content: '100 Kasa (B: 120.000) / 102 Bankalar (A: 120.000)',
+            content: '153 Ticari Mallar (B: 60.000) - 191 İnd. KDV (B: 12.000) / 103 Verilen Çekler (-) (A: 72.000)',
           },
         ],
       },
       {
         id: 'tx-at3',
         order: 3,
-        date: '07.11.2026',
-        title: 'Döviz Kasasından Tıbbi Mal Alımı ve KDV\'nin Bankadan Ödenmesi',
+        date: '08.11.2026',
+        title: '%20 KDV\'li Veresiye Ticari Mal Alımı (320 Satıcılar)',
         description:
-          'İşletme 2.000 USD (60.000 TL maliyet) tutarında tıbbi cihaz malı satın almış ve bedelini döviz kasasından ödemiştir. İşlemin %20 KDV\'si olan 12.000 TL ise banka hesabından havale edilmiştir.',
-        amount: 72000,
+          'İşletme, toptancı firmadan 35.000 TL + %20 KDV (7.000 TL KDV, toplam 42.000 TL) tutarında yeni ticari mal satın almış; bedelin tamamı daha sonra ödenmek üzere veresiye (açık hesap) borçlanılmıştır.',
+        amount: 35000,
         expectedEntry: {
           educationalNotes:
-            'Alınan tıbbi mallar TL maliyet bedeliyle 153 Ticari Mallar hesabında borçlandırılır; ödenen KDV için 191 borçlandırılır; döviz kasasından çıkış için 100 Kasa ve KDV ödemesi için 102 Bankalar alacaklandırılır.',
+            'Alınan mallar için 153 Ticari Mallar BORÇ, alış KDV\'si için 191 İndirilecek KDV BORÇ; satıcıya olan senetsiz veresiye borcumuz için 320 Satıcılar hesabı ALACAK yazılır.',
           lines: [
-            { accountCode: '153', debit: 60000, credit: 0 },
-            { accountCode: '191', debit: 12000, credit: 0 },
-            { accountCode: '100', debit: 0, credit: 60000 },
-            { accountCode: '102', debit: 0, credit: 12000 },
+            { accountCode: '153', debit: 35000, credit: 0 },
+            { accountCode: '191', debit: 7000, credit: 0 },
+            { accountCode: '320', debit: 0, credit: 42000 },
           ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Giren ve Çıkan Varlıklar Nelerdir?',
-            content: 'Depomuza 60.000 TL mal girdi, 12.000 TL KDV hakkı doğdu; kasadan 60.000 TL döviz, bankadan 12.000 TL çıktı.',
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content: 'Depomuza 35.000 TL mal girdi, 7.000 TL KDV doğdu; karşılığında satıcıya 42.000 TL açık hesap (veresiye) borçlandık.',
           },
           {
             level: 2,
             title: '2. Aşama: Hangi Hesaplar Kullanılır?',
-            content: '153 Ticari Mallar, 191 İnd. KDV, 100 Kasa ve 102 Bankalar.',
+            content: '153 Ticari Mallar, 191 İndirilecek KDV ve senetsiz borç için 320 Satıcılar.',
           },
           {
             level: 3,
             title: '3. Aşama: Borç ve Alacak Yönleri',
-            content: '153 BORÇ (60.000 TL), 191 BORÇ (12.000 TL) / 100 ALACAK (60.000 TL), 102 ALACAK (12.000 TL).',
+            content: '153 BORÇ (35.000 TL), 191 BORÇ (7.000 TL) / 320 Satıcılar ALACAK (42.000 TL).',
           },
           {
             level: 4,
             title: '4. Aşama: Tam Yevmiye Kaydı',
-            content: '153 (B: 60.000) - 191 (B: 12.000) / 100 (A: 60.000) - 102 (A: 12.000)',
+            content: '153 Ticari Mallar (B: 35.000) - 191 İnd. KDV (B: 7.000) / 320 Satıcılar (A: 42.000)',
           },
         ],
       },
       {
         id: 'tx-at4',
         order: 4,
-        date: '15.11.2026',
-        title: 'Kalan Dövizin Kur Artışı ile Kârla Bozdurulması (646)',
+        date: '12.11.2026',
+        title: '%20 KDV\'li Mal Satışı (Müşteri Çeki + Nakit Tahsilat)',
         description:
-          'Kasadaki kalan 2.000 USD döviz (kayıtlı maliyeti 60.000 TL), dolar kurunun 1 USD = 34 TL seviyesine yükselmesiyle 68.000 TL karşılığında bozdurulmuş ve tutar banka hesabımıza yatırılmıştır.',
-        amount: 68000,
+          'İşletme, müşteriye 90.000 TL + %20 KDV (18.000 TL KDV, toplam 108.000 TL) tutarında mal satmıştır. Müşteri bedelin 75.000 TL\'si için müşteri çeki teslim etmiş, kalan 33.000 TL\'sini ise işletme kasasına nakit ödemiştir.',
+        amount: 90000,
         expectedEntry: {
           educationalNotes:
-            'Bankaya giren 68.000 TL için 102 Bankalar BORÇ yazılır; kasadan çıkan kayıtlı maliyet 60.000 TL için 100 Kasa ALACAK yazılır; kur artışından doğan 8.000 TL kâr ise gelir hesabı olan 646 Kambiyo Kârları hesabına ALACAK yazılır.',
+            'Müşteriden çek aldığımızda portföyümüze giren çek için 101 Alınan Çekler BORÇ; kasaya giren nakit için 100 Kasa BORÇ; satış geliri için 600 Yurtiçi Satışlar ALACAK ve satış KDV\'si için 391 Hesaplanan KDV ALACAK yazılır.',
           lines: [
-            { accountCode: '102', debit: 68000, credit: 0 },
-            { accountCode: '100', debit: 0, credit: 60000 },
-            { accountCode: '646', debit: 0, credit: 8000 },
+            { accountCode: '101', debit: 75000, credit: 0 },
+            { accountCode: '100', debit: 33000, credit: 0 },
+            { accountCode: '600', debit: 0, credit: 90000 },
+            { accountCode: '391', debit: 0, credit: 18000 },
           ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Döviz Satışında Kâr Nasıl Hesaplanır?',
-            content: 'Satış bedeli (68.000 TL) - Kayıtlı defter maliyeti (60.000 TL) = 8.000 TL Kur Farkı Kârı.',
+            title: '1. Aşama: Tahsilat Araçlarını Belirleme',
+            content: '75.000 TL çek aldık (101 hesabı), 33.000 TL nakit tahsil ettik (100 hesabı). Toplam 108.000 TL tahsilat gerçekleşti.',
           },
           {
             level: 2,
-            title: '2. Aşama: Kur Kârı Hangi Hesaba Yazılır?',
-            content: 'Döviz kur artış gelirleri için "646 Kambiyo Kârları" hesabı alacaklandırılır.',
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content: '101 Alınan Çekler, 100 Kasa, 600 Yurtiçi Satışlar ve 391 Hesaplanan KDV.',
           },
           {
             level: 3,
             title: '3. Aşama: Borç ve Alacak Yönleri',
-            content: '102 Bankalar BORÇ (68.000 TL) / 100 Kasa ALACAK (60.000 TL), 646 Kambiyo Kârları ALACAK (8.000 TL).',
+            content: '101 BORÇ (75.000 TL), 100 BORÇ (33.000 TL) / 600 ALACAK (90.000 TL), 391 ALACAK (18.000 TL).',
           },
           {
             level: 4,
             title: '4. Aşama: Tam Yevmiye Kaydı',
-            content: '102 Bankalar (B: 68.000) / 100 Kasa (A: 60.000) - 646 Kambiyo Kârları (A: 8.000)',
+            content: '101 Alınan Çekler (B: 75.000) - 100 Kasa (B: 33.000) / 600 Yurtiçi Satışlar (A: 90.000) - 391 Hes. KDV (A: 18.000)',
           },
         ],
       },
       {
         id: 'tx-at5',
         order: 5,
-        date: '25.11.2026',
-        title: 'Dövizli Satıcı Borcunun Kur Artışı Zararıyla Ödenmesi (656)',
+        date: '16.11.2026',
+        title: 'Satıcıya Olan Veresiye Borç İçin Çek Keşide Edilmesi (320 / 103)',
         description:
-          'Daha önce 1 USD = 30 TL kuruyla 1.000 USD (30.000 TL) borçlanılan yabancı satıcıya olan borç, kur 1 USD = 33 TL seviyesine yükseldiğinde 33.000 TL olarak bankadan havale edilmiştir.',
-        amount: 33000,
+          'İşletme, 3. işlemde veresiye mal aldığı toptancıya olan 42.000 TL tutarındaki cari hesap borcunu kapatmak amacıyla, satıcıya şirket çek defterinden 42.000 TL tutarında vadeli çek keşide edip vermiştir.',
+        amount: 42000,
         expectedEntry: {
           educationalNotes:
-            'Satıcıya olan kayıtlı 30.000 TL borç kapandığı için 320 Satıcılar BORÇ yazılır; kur artışı yüzünden fazladan ödenen 3.000 TL kur zararı için 656 Kambiyo Zararları (-) BORÇ yazılır; bankadan fiilen çıkan 33.000 TL için 102 Bankalar ALACAK yazılır.',
+            'Satıcıya olan açık hesap (veresiye) borcumuz azaldığı için pasif borç hesabı 320 Satıcılar BORÇLANDIRILIR; karşılığında kendi çekimizi düzenlediğimiz için aktifi düzenleyen pasif karakterli hesap olan 103 Verilen Çekler ve Ödeme Emirleri (-) ALACAKLANDIRILIR.',
           lines: [
-            { accountCode: '320', debit: 30000, credit: 0 },
-            { accountCode: '656', debit: 3000, credit: 0 },
-            { accountCode: '102', debit: 0, credit: 33000 },
+            { accountCode: '320', debit: 42000, credit: 0 },
+            { accountCode: '103', debit: 0, credit: 42000 },
           ],
         },
         hints: [
           {
             level: 1,
-            title: '1. Aşama: Döviz Borcunda Kur Artışı Neden Zarardır?',
-            content: '30.000 TL borç için kur yükseldiği için cebimizden 33.000 TL çıkmıştır; aradaki 3.000 TL işletme için kur zararıdır.',
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content: 'Satıcıya olan veresiye borcumuz kapandı, borcun yerine kendi banka çekimizi verdik.',
           },
           {
             level: 2,
-            title: '2. Aşama: Kur Zararı Hangi Hesaba Yazılır?',
-            content: 'Olumsuz kur farkları ve döviz zararları için "656 Kambiyo Zararları (-)" borçlandırılır.',
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content: '320 Satıcılar ve kendi çekimiz için "103 Verilen Çekler ve Ödeme Emirleri (-)".',
           },
           {
             level: 3,
             title: '3. Aşama: Borç ve Alacak Yönleri',
-            content: '320 Satıcılar BORÇ (30.000 TL), 656 Kambiyo Zararları BORÇ (3.000 TL) / 102 Bankalar ALACAK (33.000 TL).',
+            content: '320 Satıcılar BORÇ (42.000 TL) / 103 Verilen Çekler (-) ALACAK (42.000 TL).',
           },
           {
             level: 4,
             title: '4. Aşama: Tam Yevmiye Kaydı',
-            content: '320 Satıcılar (B: 30.000) - 656 Kambiyo Zararları (-) (B: 3.000) / 102 Bankalar (A: 33.000)',
+            content: '320 Satıcılar (B: 42.000) / 103 Verilen Çekler ve Ödeme Emirleri (-) (A: 42.000)',
+          },
+        ],
+      },
+      {
+        id: 'tx-at6',
+        order: 6,
+        date: '20.11.2026',
+        title: 'Müşteri Çekinin Ciro Edilerek Yeni Mal Satın Alınması (Sınav Klasiği!)',
+        description:
+          'İşletme, 40.000 TL tutarında yeni ticari mal satın almıştır (KDV dahil/ihmal). Bedeli ödemek için kendi çekini yazmak yerine, 4. işlemde müşteriden aldığı 75.000 TL\'lik çekten 40.000 TL nominal değerli müşteri çekini arkasını kaşeleyip imzalayarak (ciro ederek) satıcıya teslim etmiştir.',
+        amount: 40000,
+        expectedEntry: {
+          educationalNotes:
+            'EN ÇOK YAPILAN SINAV HATASI: Çek satıcıya veriliyor diye öğrenciler genellikle yanlışlıkla 103 yazar! Oysa burada kendi çek defterimizden çek yazmadık; portföyümüzdeki müşteri çekini ciro ettik. Cüzdandan müşteri çeki çıktığı için "101 Alınan Çekler" hesabı ALACAKLANDIRILIR.',
+          lines: [
+            { accountCode: '153', debit: 40000, credit: 0 },
+            { accountCode: '101', debit: 0, credit: 40000 },
+          ],
+        },
+        hints: [
+          {
+            level: 1,
+            title: '1. Aşama: Çek Ciro Etmek Ne Demektir?',
+            content: 'Daha önce müşteriden alıp kasamızda (101 hesabında) sakladığımız müşteri çekini satıcıya devretmektir.',
+          },
+          {
+            level: 2,
+            title: '2. Aşama: Sınav Tuzağı — 101 mi, 103 mü?',
+            content: 'Kendi çekimizi düzenlemedik! Elimizdeki müşteri çekini verdik. Bu yüzden 103 değil, "101 Alınan Çekler" hesabı azalır.',
+          },
+          {
+            level: 3,
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content: 'Mal aldığımız için 153 Ticari Mallar BORÇ (40.000 TL) / Müşteri çeki çıktığı için 101 Alınan Çekler ALACAK (40.000 TL).',
+          },
+          {
+            level: 4,
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content: '153 Ticari Mallar (B: 40.000) / 101 Alınan Çekler (A: 40.000)',
+          },
+        ],
+      },
+      {
+        id: 'tx-at7',
+        order: 7,
+        date: '24.11.2026',
+        title: 'Kalan Müşteri Çekinin Banka Hesabına Tahsil Edilmesi',
+        description:
+          'İşletme, 4. işlemden cüzdanında kalan 35.000 TL tutarındaki müşteri çekini (75.000 - 40.000 = 35.000 TL) vadesi geldiğinde tahsil edilmek üzere bankaya ibraz etmiştir. Çek tutarı tam olarak işletmenin bankadaki vadesiz mevduat hesabına yatırılmıştır.',
+        amount: 35000,
+        expectedEntry: {
+          educationalNotes:
+            'Müşteri çeki tahsil edildiğinde para banka hesabımıza girdiği için 102 Bankalar BORÇLANDIRILIR; tahsil edilen müşteri çeki portföyden çıktığı için 101 Alınan Çekler hesabı ALACAKLANDIRILARAK kapatılır.',
+          lines: [
+            { accountCode: '102', debit: 35000, credit: 0 },
+            { accountCode: '101', debit: 0, credit: 35000 },
+          ],
+        },
+        hints: [
+          {
+            level: 1,
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content: 'Cüzdanımızdaki 35.000 TL müşteri çeki tahsil edildi ve para banka mevduat hesabımıza geçti.',
+          },
+          {
+            level: 2,
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content: '102 Bankalar (Aktif artışı) ve 101 Alınan Çekler (Aktif azalışı).',
+          },
+          {
+            level: 3,
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content: '102 Bankalar BORÇ (35.000 TL) / 101 Alınan Çekler ALACAK (35.000 TL).',
+          },
+          {
+            level: 4,
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content: '102 Bankalar (B: 35.000) / 101 Alınan Çekler (A: 35.000)',
+          },
+        ],
+      },
+      {
+        id: 'tx-at8',
+        order: 8,
+        date: '28.11.2026',
+        title: 'Keşide Ettiğimiz İlk Çekin (103) Banka Hesabından Ödenmesi',
+        description:
+          '2. işlemde mal alırken satıcıya keşide edip verdiğimiz 72.000 TL tutarındaki şirket çekinin ödeme günü gelmiş ve hamil (satıcı) tarafından bankamızdan tahsil edilmiştir. Bedel işletmenin bankadaki vadesiz mevduat hesabından çekilmiştir.',
+        amount: 72000,
+        expectedEntry: {
+          educationalNotes:
+            'Keşide edilen çek ödendiğinde, pasif karakterli düzenleyici hesap 103 Verilen Çekler ve Ödeme Emirleri (-) hesabı BORÇLANDIRILARAK kapatılır; bankadaki mevduatımız azaldığı için 102 Bankalar ALACAKLANDIRILIR.',
+          lines: [
+            { accountCode: '103', debit: 72000, credit: 0 },
+            { accountCode: '102', debit: 0, credit: 72000 },
+          ],
+        },
+        hints: [
+          {
+            level: 1,
+            title: '1. Aşama: İşlemde Neler Değişti?',
+            content: 'Satıcıya verdiğimiz 72.000 TL\'lik çek banka hesabımızdan ödendi ve çek yükümlülüğümüz kapandı.',
+          },
+          {
+            level: 2,
+            title: '2. Aşama: Hangi Hesaplar Kullanılır?',
+            content: '103 Verilen Çekler ve Ödeme Emirleri (-) ve 102 Bankalar.',
+          },
+          {
+            level: 3,
+            title: '3. Aşama: Borç ve Alacak Yönleri',
+            content: '103 Verilen Çekler (-) BORÇ (72.000 TL) / 102 Bankalar ALACAK (72.000 TL).',
+          },
+          {
+            level: 4,
+            title: '4. Aşama: Tam Yevmiye Kaydı',
+            content: '103 Verilen Çekler ve Ödeme Emirleri (-) (B: 72.000) / 102 Bankalar (A: 72.000)',
           },
         ],
       },

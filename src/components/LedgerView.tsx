@@ -181,18 +181,28 @@ export const LedgerView: React.FC = () => {
     setPracticeData(filled);
   };
 
+  const formatNatureLabel = (nature: string) => {
+    if (nature.includes('DUZENLEYICI') || nature.includes('DÜZENLEYİCİ')) return 'DÜZENLEYİCİ (-)';
+    if (nature === 'GELIR') return 'GELİR';
+    if (nature === 'GIDER') return 'GİDER';
+    return nature;
+  };
+
   const getNatureBadgeColor = (nature: string) => {
+    if (nature.includes('DUZENLEYICI') || nature.includes('DÜZENLEYİCİ')) {
+      return 'bg-amber-500/10 text-amber-600 border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40';
+    }
     switch (nature) {
       case 'AKTIF':
-        return 'bg-secondary-container/40 text-on-secondary-container border-secondary/30';
+        return 'bg-secondary-container/40 text-on-secondary-container border-secondary/30 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/40';
       case 'PASIF':
-        return 'bg-accent-surface text-primary border-primary/30';
+        return 'bg-accent-surface text-primary border-primary/30 dark:bg-[#3A1D16] dark:text-[#FFB4A4] dark:border-primary/40';
       case 'GELIR':
-        return 'bg-secondary-fixed/50 text-secondary border-secondary/30';
+        return 'bg-secondary-fixed/50 text-secondary border-secondary/30 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/40';
       case 'GIDER':
-        return 'bg-error-container/60 text-semantic-warning border-semantic-warning/30';
+        return 'bg-error-container/60 text-semantic-warning border-semantic-warning/30 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/40';
       default:
-        return 'bg-surface-muted text-text-secondary border-border-subtle';
+        return 'bg-surface-muted text-text-secondary border-border-subtle dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
     }
   };
 
@@ -392,7 +402,7 @@ export const LedgerView: React.FC = () => {
                         acc.nature
                       )}`}
                     >
-                      {acc.nature}
+                      {formatNatureLabel(acc.nature)}
                     </span>
                   </div>
 
@@ -508,7 +518,7 @@ export const LedgerView: React.FC = () => {
                       acc.nature
                     )}`}
                   >
-                    {acc.nature}
+                    {formatNatureLabel(acc.nature)}
                   </span>
                 </div>
 
