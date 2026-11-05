@@ -74,6 +74,15 @@
     3. `+ + Yeni Satır Ekle` butonundaki çift artı yazım hatası giderildi.
     4. Alt gezinme dock'undaki `Sonraki İşleme Geç` butonu dinamik validasyon durumuna bağlandı: Kayıt henüz denk/doğrulanmamışken nötr ikincil tonda kalırken, kayıt tam dengelendiğinde yeşil `Doğrulandı • Sonraki İşlem` olarak anlık pozitif geri bildirim veriyor.
   - `src/components/LedgerView.tsx` — T-Cetveli başlıklarındaki `DUZENLEYICI_AKTIF` gibi taşan/kırpılan enum metinleri `formatNatureLabel` ile `DÜZENLEYİCİ (-)` biçiminde amber rengiyle biçimlendirildi (`GELİR` ve `GİDER` Türkçe karakter uyumu sağlandı).
+- **Faz 6 — Üniversite Sınavı Provası Formatında T-Cetveli (Büyük Defter) Dönüşümü:**
+  - `src/store/useAccountingStore.ts` — `PracticeLedgerMovement` (id, entryNo, amount) ve `PracticeLedgerEntry` (debitMovements, creditMovements, isClosed) genişletildi; öğrencinin açtığı hesapları tutan `practiceAccountCodes: string[]` durumu ve kalıcılık desteği eklendi.
+  - `src/components/LedgerView.tsx` — Gerçek üniversite vize/final sınav kağıdı simülasyonu inşa edildi:
+    1. **Bölünmüş 2 Sütunlu Çalışma Tezgahı:** Sol panelde dikey kaydırılabilir, tek tıkla katlanabilir **Yevmiye Kayıt Defteri Referansı** (öğrencinin çözdüğü fişler veya senaryo resmi maddeleri).
+    2. **Boş Sınav Kağıdı & Hesap Açma:** Başlangıçta boş gelen kağıtta öğrenci yevmiyede geçen hesapları kendisi bularak `Yeni T-Cetveli Aç` modalından veya hızlı ekleme butonlarından açar.
+    3. **Satır Satır Yevmiye Hareketi Aktarımı:** Her T-hesabının Borç (Sol) ve Alacak (Sağ) kollarına `# Madde No` ve `Tutar (TL)` satırları eklenir (`+ Borç Hareketi Ekle`, `+ Alacak Hareketi Ekle`).
+    4. **Toplamlar, Bakiye & Çift Çizgiyle Hesabı Kapatma:** Borç toplamı, Alacak toplamı ve Kalan Bakiye kutuları doldurulur; Bakiye Türü seçilir ve `Hesabı Kapat` butonuna tıklandığında T-cetvelinin altına resmi muhasebe çift alt çizgisi (`double underline`) çekilir ve yeşil `HESAP KAPATILDI` mührü vurulur.
+    5. **Akıllı SMMM Sınav Denetim Motoru:** `T-Cetvellerimi Kontrol Et` butonu eksik açılan hesapları, gereksiz açılan hesapları, borç/alacak hareketlerindeki tutar uyuşmazlıklarını, alt toplamları, bakiye farkını, bakiye yönünü ve kapatılmamış hesapları tek tek denetler; %100 doğrulukta konfeti kutlaması patlatır.
+    6. **Destek Araçları:** Takıldığında doğru çözümü yükleyen `Örnek Çözümü Yükle` ve `Temizle` butonları entegre edildi. Masaüstünde yan yana, mobilde (375px) tek tıkla açılır akordiyon düzeni sağlandı.
 - **Otomatik Tarayıcı Testi (`1440px`, `1280px`, `1024px` Masaüstü/Laptop & `375px` Mobil):**
   - Tüm ekranlar (`WelcomeScreen`, `LandingNavbar`, `ScenarioSelectionSection` alt çalışma modu barı, `WorkspaceScreen`, `LedgerView Practice`, `BalanceSheetView Practice`, `SummaryScreen`) `1440px`, `1280px`, `1024px` ve `375px` çözünürlüklerde `navbarOverflow: false`, `modeBtnsSameRow: true` ve `0` lint/build/konsol hatasıyla doğrulandı.
 

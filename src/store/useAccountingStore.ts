@@ -13,11 +13,20 @@ export type AppScreen = 'welcome' | 'workspace' | 'summary';
 export type AppTheme = 'light' | 'dark';
 export type PracticeViewMode = 'auto' | 'practice';
 
+export interface PracticeLedgerMovement {
+  id: string;
+  entryNo: string;
+  amount: string;
+}
+
 export interface PracticeLedgerEntry {
+  debitMovements?: PracticeLedgerMovement[];
+  creditMovements?: PracticeLedgerMovement[];
   debitTotal: string;
   creditTotal: string;
   balance: string;
   direction: 'BORC' | 'ALACAK' | 'DENK';
+  isClosed?: boolean;
 }
 
 export interface CustomBalanceItem {
@@ -58,6 +67,7 @@ interface AccountingStore {
   ledgerViewMode: PracticeViewMode;
   balanceViewMode: PracticeViewMode;
   practiceLedgerData: Record<string, PracticeLedgerEntry>;
+  practiceAccountCodes: string[];
   practiceAssetItems: CustomBalanceItem[];
   practiceLiabilityItems: CustomBalanceItem[];
 
@@ -90,6 +100,9 @@ interface AccountingStore {
     updater:
       | Record<string, PracticeLedgerEntry>
       | ((prev: Record<string, PracticeLedgerEntry>) => Record<string, PracticeLedgerEntry>)
+  ) => void;
+  setPracticeAccountCodes: (
+    updater: string[] | ((prev: string[]) => string[])
   ) => void;
   setPracticeAssetItems: (
     updater: CustomBalanceItem[] | ((prev: CustomBalanceItem[]) => CustomBalanceItem[])
@@ -145,6 +158,7 @@ export const useAccountingStore = create<AccountingStore>()(
       ledgerViewMode: 'auto',
       balanceViewMode: 'auto',
       practiceLedgerData: {},
+      practiceAccountCodes: [],
       practiceAssetItems: getInitialPracticeAssets(),
       practiceLiabilityItems: getInitialPracticeLiabilities(),
 
@@ -238,6 +252,10 @@ export const useAccountingStore = create<AccountingStore>()(
           currentScreen: 'workspace',
           showAuditModal: false,
           showHintModal: false,
+          practiceLedgerData: {},
+          practiceAccountCodes: [],
+          practiceAssetItems: getInitialPracticeAssets(),
+          practiceLiabilityItems: getInitialPracticeLiabilities(),
         });
       },
       startCustomScenario: (scenario, mode) => {
@@ -254,6 +272,7 @@ export const useAccountingStore = create<AccountingStore>()(
           showAuditModal: false,
           showHintModal: false,
           practiceLedgerData: {},
+          practiceAccountCodes: [],
           practiceAssetItems: getInitialPracticeAssets(),
           practiceLiabilityItems: getInitialPracticeLiabilities(),
         }));
@@ -280,6 +299,7 @@ export const useAccountingStore = create<AccountingStore>()(
           activeTransactionIndex: 0,
           activeTab: 'yevmiye',
           practiceLedgerData: {},
+          practiceAccountCodes: [],
           practiceAssetItems: getInitialPracticeAssets(),
           practiceLiabilityItems: getInitialPracticeLiabilities(),
           currentScreen: 'summary',
@@ -314,6 +334,7 @@ export const useAccountingStore = create<AccountingStore>()(
           hintLevels: remainingHints,
           activeTransactionIndex: 0,
           practiceLedgerData: {},
+          practiceAccountCodes: [],
           practiceAssetItems: getInitialPracticeAssets(),
           practiceLiabilityItems: getInitialPracticeLiabilities(),
         });
@@ -328,6 +349,11 @@ export const useAccountingStore = create<AccountingStore>()(
         set((state) => ({
           practiceLedgerData:
             typeof updater === 'function' ? updater(state.practiceLedgerData) : updater,
+        })),
+      setPracticeAccountCodes: (updater) =>
+        set((state) => ({
+          practiceAccountCodes:
+            typeof updater === 'function' ? updater(state.practiceAccountCodes) : updater,
         })),
       setPracticeAssetItems: (updater) =>
         set((state) => ({
@@ -468,6 +494,7 @@ export const useAccountingStore = create<AccountingStore>()(
         ledgerViewMode: state.ledgerViewMode,
         balanceViewMode: state.balanceViewMode,
         practiceLedgerData: state.practiceLedgerData,
+        practiceAccountCodes: state.practiceAccountCodes,
         practiceAssetItems: state.practiceAssetItems,
         practiceLiabilityItems: state.practiceLiabilityItems,
       }),
